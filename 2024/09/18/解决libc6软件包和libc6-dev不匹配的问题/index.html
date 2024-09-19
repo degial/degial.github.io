@@ -6,14 +6,14 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>解决libc6和软件包不匹配的问题 | Hexo</title>
+  <title>解决libc6软件包和libc6-dev不匹配的问题 | Hexo</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <meta name="description" content="之前在学vm内核调试的时候，不小心把libc6-dev之类的包给删掉了，导致后面gcc编译不了，重新下载libc6-dev时，会弹出这样的报错，这种报错之前很常见。 1234下列软件包有未满足的依赖关系： libc6-dev : 依赖: libc6 (&#x3D; 2.27-3ubuntu1.6) 但是 2.35-0ubuntu3 正要被安装             依赖: libc-dev-bin (&#x3D;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="解决libc6和软件包不匹配的问题">
-<meta property="og:url" content="http://example.com/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E5%92%8C%E8%BD%AF%E4%BB%B6%E5%8C%85%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="解决libc6软件包和libc6-dev不匹配的问题">
+<meta property="og:url" content="http://example.com/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="之前在学vm内核调试的时候，不小心把libc6-dev之类的包给删掉了，导致后面gcc编译不了，重新下载libc6-dev时，会弹出这样的报错，这种报错之前很常见。 1234下列软件包有未满足的依赖关系： libc6-dev : 依赖: libc6 (&#x3D; 2.27-3ubuntu1.6) 但是 2.35-0ubuntu3 正要被安装             依赖: libc-dev-bin (&#x3D;">
 <meta property="og:locale" content="en_US">
@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918211910349.png">
 <meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918212931846.png">
 <meta property="article:published_time" content="2024-09-18T12:27:44.000Z">
-<meta property="article:modified_time" content="2024-09-19T13:02:59.885Z">
+<meta property="article:modified_time" content="2024-09-19T13:03:57.427Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918204615913.png">
@@ -212,14 +212,14 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-解决libc6和软件包不匹配的问题" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-解决libc6软件包和libc6-dev不匹配的问题" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
   
   
     <h1 class="article-title" itemprop="name">
-      解决libc6和软件包不匹配的问题
+      解决libc6软件包和libc6-dev不匹配的问题
     </h1>
   
 
@@ -231,7 +231,7 @@
               <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
         </span>
 
-<a href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E5%92%8C%E8%BD%AF%E4%BB%B6%E5%8C%85%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/" class="archive-article-date">
+<a href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/" class="archive-article-date">
         <time datetime="2024-09-18T12:27:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-09-18</time>
 </a>
 
@@ -331,7 +331,7 @@
         </li>
         <li>
           <strong>本文链接：</strong>
-          <a href="http://example.com/2024/09/18/解决libc6和软件包不匹配的问题/" title="解决libc6和软件包不匹配的问题" target="_blank">http://example.com/2024/09/18/解决libc6和软件包不匹配的问题/</a>
+          <a href="http://example.com/2024/09/18/解决libc6软件包和libc6-dev不匹配的问题/" title="解决libc6软件包和libc6-dev不匹配的问题" target="_blank">http://example.com/2024/09/18/解决libc6软件包和libc6-dev不匹配的问题/</a>
         </li>
         
         <li>
@@ -398,7 +398,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E5%92%8C%E8%BD%AF%E4%BB%B6%E5%8C%85%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/" alt="微信分享二维码"> -->
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/" alt="微信分享二维码"> -->
     </div>
 </div>
 
