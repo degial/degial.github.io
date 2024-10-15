@@ -1,0 +1,166 @@
+.menu-item-search {
+  display: none;
+}
+
+/* #################### 自适应 #################### */
+
+@media screen and (max-width: 768px) {
+    /*#sidebar{
+        display: none;
+    }*/
+
+    #content-inner {
+        width: 100%;
+        display: block;
+        padding: 0;
+    }
+    #recent-posts-box {
+        width: 100%;
+    }
+    #details {
+        display: block;
+    }
+    #details-post {
+        width: 100%;
+    }
+
+    /*#toc {
+        display: none;
+    }*/
+
+    #wrapper {
+        background: rgb(245, 245, 213);
+    }
+
+    .recent-post-item {
+        width: 100%;
+        margin-top: 25px;
+        box-sizing: border-box;
+    }
+
+    #top-bar {
+        display: none;
+    }
+
+    #details-post-item {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #details-post {
+    	min-width: 100%;
+    }
+
+    #recent-posts-paginator {
+    	width: 100%;
+    }
+
+    code.has-numbering {
+        margin-left: 30px;
+    }
+    .pre-numbering {
+        width: 22px;
+    }
+    .category-item time, .tag-item time, .archive-item time {
+      position: relative;
+      right: 0;
+    }
+
+    .menu-item:last-of-type {
+    	display: none;
+    }
+
+
+}
+
+/*竖屏*/
+@media all and (orientation : portrait) {
+
+    /*special*/
+
+    /*body {*/
+
+        /*Bug : if not portrait screen but width <= 624px, the font size is so large.*/
+
+        /*font-size: 300%;*/
+    /*}*/
+
+    /*This is very important: change 'flex' to 'block'.*/
+    #details {
+        display: block;
+    }
+
+    #lv-container {
+        display: none;
+        width: 100%;
+    }
+
+    /*mutual*/
+
+    /*#sidebar {
+        display: none;
+    }*/
+
+    #content-inner {
+        width: 100%;
+        display: block;
+        padding: 0;
+    }
+    #recent-posts-box {
+        width: 100%;
+
+    }
+
+
+    /*#toc {
+        display: none;
+    }*/
+
+    #wrapper {
+        background: rgb(245, 245, 213);
+    }
+
+    .recent-post-item {
+        width: 100%;
+        margin-top: 25px;
+        box-sizing: border-box;
+    }
+
+    #top-bar {
+        display: none;
+    }
+
+    #details-post-item {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #details-post {
+    	min-width: 100%;
+    }
+
+    #recent-posts-paginator {
+    	width: 100%;
+    }
+
+    code.has-numbering {
+        margin-left: 30px;
+    }
+    .pre-numbering {
+        width: 22px;
+    }
+
+    .category-item time, .tag-item time, .archive-item time {
+      position: relative;
+      right: 0;
+    }
+
+    .menu-item:last-of-type {
+    	display: none;
+    }
+
+}
+
+
+
+/* #################### 自适应 #################### 
