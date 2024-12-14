@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——200~house_of_force | lonely is alwals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——200~house_of_force`
+  </script>
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="https://github.com/degial/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"ACTF_2019_OneRepeater","path":"/posts/319d974/"},{"title":"GUESS","path":"/posts/c587cd26/"},{"title":"ACTF_2019_message","path":"/posts/f5d1b033/"},{"title":"SWPUCTF_2019_login","path":"/posts/61db3fed/"},{"title":"b00ks","path":"/posts/be955ceb/"},{"title":"b0verfl0w","path":"/posts/b656e51/"},{"title":"babyheap_0ctf_2017","path":"/posts/1a2f921f/"},{"title":"bad","path":"/posts/822b39fb/"},{"title":"bbctf_2020_write","path":"/posts/75171fcc/"},{"title":"checkin","path":"/posts/e1631c91/"},{"title":"ciscn_2019_c_5","path":"/posts/eeb50a42/"},{"title":"ciscn_2019_es_1","path":"/posts/90ce1974/"},{"title":"ciscn_2019_es_7","path":"/posts/79adbc41/"},{"title":"ciscn_final_2","path":"/posts/9a3dca0e/"},{"title":"ciscn_final_5","path":"/posts/4595fad/"},{"title":"ciscn_pwn","path":"/posts/344ab8fb/"},{"title":"easyshell","path":"/posts/9ea1a33f/"},{"title":"glibc","path":"/posts/58b6dd93/"},{"title":"gostack","path":"/posts/ad559ced/"},{"title":"heap","path":"/posts/bd2922e1/"},{"title":"heapcreator","path":"/posts/707c38cf/"},{"title":"hitcon2014_stkof","path":"/posts/78860fdf/"},{"title":"NewStar","path":"/posts/d23e595a/"},{"title":"200~house_of_force","path":"/posts/a8db7475/"},{"title":"ciscn_2019_c_3","path":"/posts/7d6af77/"},{"title":"","path":"/posts/0/"},{"title":"SWPUCTF_2019_p1KkHeap","path":"/posts/a25249b0/"},{"title":"inndy_rop","path":"/posts/19fdcc0c/"},{"title":"jiandan_pwn1","path":"/posts/595198b9/"},{"title":"lctf2016_pwn200","path":"/posts/6f5f7bb7/"},{"title":"freenote_x64","path":"/posts/231495d9/"},{"title":"mergeheap","path":"/posts/709727a2/"},{"title":"metasequoia_2020_samsara","path":"/posts/dff3306c/"},{"title":"note2","path":"/posts/c0d78a/"},{"title":"","path":"/posts/0/"},{"title":"overlapping_chunks","path":"/posts/37a70f1c/"},{"title":"pstack","path":"/posts/3d6a2015/"},{"title":"","path":"/posts/0/"},{"title":"python课设","path":"/posts/5eca8ee9/"},{"title":"qwnt2024","path":"/posts/a036fd99/"},{"title":"roarctf_2019_easypwn","path":"/posts/29aca647/"},{"title":"sctf2019_easy_heap","path":"/posts/b5a0cf5/"},{"title":"sctf_2019_easy_heap","path":"/posts/afe33925/"},{"title":"sleepyHolder_hitcon_2016","path":"/posts/b1e92899/"},{"title":"starctf_2019_girlfriend","path":"/posts/2672e039/"},{"title":"stdout","path":"/posts/c2c94c1c/"},{"title":"STKOF","path":"/posts/696f0fbd/"},{"title":"level4","path":"/posts/7792b02a/"},{"title":"login","path":"/posts/aa08cb10/"},{"title":"","path":"/posts/0/"},{"title":"解决libc6软件包和libc6-dev不匹配的问题","path":"/posts/24332419/"},{"title":"武功论剑","path":"/posts/6ca732a0/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"xpdf","path":"/posts/7e7e55f1/"},{"title":"CVE-2020-8423","path":"/posts/24932e9/"},{"title":"沙箱","path":"/posts/fbdf783e/"},{"title":"trick","path":"/posts/d8f0a91e/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">pa1n</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">longely</span>
+          <span class="main-left--tag">sad</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>57 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1033天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">200~house_of_force</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-11-03 18:14:32</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <p>利用条件：能控制topchunk_size，能够自由控制申请的堆块大小。需要知道top_chunk地址与目的地址的偏移量，如果还不对齐，即结果不是0x0结尾，需要多减8，然后减去SIZE_SZ（8）</p>
+<p>结果：能将topcunk的地址控制到我们想要的地址，再申请内存就可以控制这个地址的值。</p>
+<h4 id="check1"><a href="#check1" class="headerlink" title="check1"></a>check1</h4><p>对topchunk_size的检查，(unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE)</p>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前的top chunk，并计算其对应的大小</span></span><br><span class="line">victim = av-&gt;top;</span><br><span class="line">size   = <span class="built_in">chunksize</span>(victim);</span><br><span class="line"><span class="comment">// 如果在分割之后，其大小仍然满足 chunk 的最小大小，那么就可以直接进行分割。</span></span><br><span class="line"><span class="keyword">if</span> ((<span class="type">unsigned</span> <span class="type">long</span>) (size) &gt;= (<span class="type">unsigned</span> <span class="type">long</span>) (nb + MINSIZE)) </span><br><span class="line">{</span><br><span class="line">    remainder_size = size - nb;</span><br><span class="line">    remainder      = <span class="built_in">chunk_at_offset</span>(victim, nb);</span><br><span class="line">    av-&gt;top        = remainder;</span><br><span class="line">    #设置top_chunk的头，附近值会有所变化</span><br><span class="line">    <span class="built_in">set_head</span>(victim, nb | PREV_INUSE |</span><br><span class="line">            (av != &amp;main_arena ? NON_MAIN_ARENA : <span class="number">0</span>));</span><br><span class="line">    <span class="built_in">set_head</span>(remainder, remainder_size | PREV_INUSE);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">check_malloced_chunk</span>(av, victim, nb);</span><br><span class="line">    <span class="type">void</span> *p = <span class="built_in">chunk2mem</span>(victim);</span><br><span class="line">    <span class="built_in">alloc_perturb</span>(p, bytes);</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>所以把size改为-1，在补码中为很大的数，能够满足条件</p>
+<h5 id="新的remainder即top-chunk的地址-remainder-chunk-at-offset-victim-nb-，需要算出topchunk的地址和目标地址的偏移"><a href="#新的remainder即top-chunk的地址-remainder-chunk-at-offset-victim-nb-，需要算出topchunk的地址和目标地址的偏移" class="headerlink" title="新的remainder即top_chunk的地址  **remainder = chunk_at_offset(victim, nb);**，需要算出topchunk的地址和目标地址的偏移"></a>新的remainder即top_chunk的地址  <code>**remainder = chunk_at_offset(victim, nb);**</code>，需要算出topchunk的地址和目标地址的偏移</h5><h4 id="check2"><a href="#check2" class="headerlink" title="check2"></a>check2</h4><p>对申请的size的检查</p>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">   Check if a request is so large that it would wrap around zero when</span></span><br><span class="line"><span class="comment">   padded and aligned. To simplify some other code, the bound is made</span></span><br><span class="line"><span class="comment">   low enough so that adding MINSIZE will also not wrap around zero.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">#这里的req即是nb.对req的大小的检查，((<span class="type">unsigned</span> <span class="type">long</span>) (req)要小于 (<span class="type">unsigned</span> <span class="type">long</span>) (INTERNAL_SIZE_T)(<span class="number">-2</span> * MINSIZE))</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> REQUEST_OUT_OF_RANGE(req)                                              \</span></span><br><span class="line"><span class="meta">    ((unsigned long) (req) &gt;= (unsigned long) (INTERNAL_SIZE_T)(-2 * MINSIZE))</span></span><br><span class="line"><span class="comment">/* pad request bytes into a usable size -- internal version */</span></span><br><span class="line"><span class="comment">//MALLOC_ALIGN_MASK = 2 * SIZE_SZ -1</span></span><br><span class="line"></span><br><span class="line"># 对nb加 SIZE_SZ加 MALLOC_ALIGN_MASK,最后和MALLOC_ALIGN_MASK按位与对齐,这里的SIZE_SZ是<span class="number">8</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> request2size(req)                                                      \</span></span><br><span class="line"><span class="meta">    (((req) + SIZE_SZ + MALLOC_ALIGN_MASK &lt; MINSIZE)                           \</span></span><br><span class="line"><span class="meta">         ? MINSIZE                                                             \</span></span><br><span class="line"><span class="meta">         : ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*  Same, except also perform argument check */</span></span><br><span class="line"><span class="meta"># req不能大于 -2 * MINSIZE，否则会报错</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> checked_request2size(req, sz)                                          \</span></span><br><span class="line"><span class="meta">    <span class="keyword">if</span> (REQUEST_OUT_OF_RANGE(req)) {                                           \</span></span><br><span class="line"><span class="meta">        __set_errno(ENOMEM);                                                   \</span></span><br><span class="line"><span class="meta">        return 0;                                                              \</span></span><br><span class="line"><span class="meta">    }                                                                          \</span></span><br><span class="line"><span class="meta">    (sz) = request2size(req);</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="首先-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-，即无符号的nb要小于无符号的-2-MINSIZE，即req不能大于-2MINSIZE-，一般都能满足条件。"><a href="#首先-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-，即无符号的nb要小于无符号的-2-MINSIZE，即req不能大于-2MINSIZE-，一般都能满足条件。" class="headerlink" title="首先  ((unsigned long) (req) <= (unsigned long) (INTERNAL_SIZE_T)(-2  MINSIZE))，即无符号的nb要小于无符号的  **-2  MINSIZE，即req不能大于-2MINSIZE*，一般都能满足条件。"></a>首先  ((unsigned long) (req) &lt;= (unsigned long) (INTERNAL_SIZE_T)(-2 <em> MINSIZE))，即无符号的nb要小于无符号的  **-2 </em> MINSIZE<strong>，即req不能大于</strong>-2<em>MINSIZE*</em>，一般都能满足条件。</h5><h5 id="其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8"><a href="#其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8" class="headerlink" title="其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8"></a>其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8</h5><h5 id="req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-，这里的结果是最后申请的大小。由于-req-SIZE-SZ，SIZE-SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC-ALIGN-MASK，但是最后会被对齐掉，就不用多减掉MALLOC-ALIGN-MASK了"><a href="#req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-，这里的结果是最后申请的大小。由于-req-SIZE-SZ，SIZE-SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC-ALIGN-MASK，但是最后会被对齐掉，就不用多减掉MALLOC-ALIGN-MASK了" class="headerlink" title="((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了"></a>((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了</h5><p><code>MALLOC_ALIGN</code> 通常指的是内存块对齐的要求。如果req不对齐，不是0x0结尾的，需要多减掉8</p>
+<h2 id="bcloud-bctf-2016"><a href="#bcloud-bctf-2016" class="headerlink" title="bcloud_bctf_2016"></a>bcloud_bctf_2016</h2><p>只开了栈上的保护</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104192949440.png" alt="image-20241104192949440"></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104193057354.png" alt="image-20241104193057354"></p>
+<p>这里会把堆的地址给到v2的指针，后续会打印出来</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241104193219359.png" alt="image-20241104193219359"></p>
+<p>🐕Ⅷ题目，调试的时候完全不是题目逻辑，算了。</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="/posts/a8db7475/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#check1"><span class="toc-number">1.</span> <span class="toc-text">check1</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B0%E7%9A%84remainder%E5%8D%B3top-chunk%E7%9A%84%E5%9C%B0%E5%9D%80-remainder-chunk-at-offset-victim-nb-%EF%BC%8C%E9%9C%80%E8%A6%81%E7%AE%97%E5%87%BAtopchunk%E7%9A%84%E5%9C%B0%E5%9D%80%E5%92%8C%E7%9B%AE%E6%A0%87%E5%9C%B0%E5%9D%80%E7%9A%84%E5%81%8F%E7%A7%BB"><span class="toc-number">1.1.</span> <span class="toc-text">新的remainder即top_chunk的地址  **remainder &#x3D; chunk_at_offset(victim, nb);**，需要算出topchunk的地址和目标地址的偏移</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#check2"><span class="toc-number">2.</span> <span class="toc-text">check2</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%A6%96%E5%85%88-unsigned-long-req-lt-unsigned-long-INTERNAL-SIZE-T-2-MINSIZE-%EF%BC%8C%E5%8D%B3%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%9A%84nb%E8%A6%81%E5%B0%8F%E4%BA%8E%E6%97%A0%E7%AC%A6%E5%8F%B7%E7%9A%84-2-MINSIZE%EF%BC%8C%E5%8D%B3req%E4%B8%8D%E8%83%BD%E5%A4%A7%E4%BA%8E-2MINSIZE-%EF%BC%8C%E4%B8%80%E8%88%AC%E9%83%BD%E8%83%BD%E6%BB%A1%E8%B6%B3%E6%9D%A1%E4%BB%B6%E3%80%82"><span class="toc-number">2.1.</span> <span class="toc-text">首先  ((unsigned long) (req) &lt;&#x3D; (unsigned long) (INTERNAL_SIZE_T)(-2  MINSIZE))，即无符号的nb要小于无符号的  **-2  MINSIZE，即req不能大于-2MINSIZE*，一般都能满足条件。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B6%E6%AC%A1%E6%98%AF%E5%AF%B9req%E7%9A%84%E5%AF%B9%E9%BD%90%E7%9A%84%E6%A3%80%E6%9F%A5%EF%BC%8Creq%E9%9C%80%E8%A6%81%E6%98%AF0x0%E7%BB%93%E5%B0%BE%E6%9D%A5%E5%AF%B9%E9%BD%90%EF%BC%8C%E5%90%A6%E5%88%99%E5%BE%97%E5%A4%9A%E5%87%8F8"><span class="toc-number">2.2.</span> <span class="toc-text">其次是对req的对齐的检查，req需要是0x0结尾来对齐，否则得多减8</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#req-SIZE-SZ-MALLOC-ALIGN-MASK-amp-MALLOC-ALIGN-MASK-%EF%BC%8C%E8%BF%99%E9%87%8C%E7%9A%84%E7%BB%93%E6%9E%9C%E6%98%AF%E6%9C%80%E5%90%8E%E7%94%B3%E8%AF%B7%E7%9A%84%E5%A4%A7%E5%B0%8F%E3%80%82%E7%94%B1%E4%BA%8E-req-SIZE-SZ%EF%BC%8CSIZE-SZ%E6%98%AF8%EF%BC%8C%E6%89%80%E4%BB%A5%E7%AE%97%E5%87%BA%E5%81%8F%E7%A7%BB%E5%90%8E%E8%BF%98%E9%9C%80%E8%A6%81%E5%87%8F%E5%8E%BB8%EF%BC%8C%E8%99%BD%E7%84%B6req%E4%BC%9A%E5%8A%A0%E4%B8%8AMALLOC-ALIGN-MASK%EF%BC%8C%E4%BD%86%E6%98%AF%E6%9C%80%E5%90%8E%E4%BC%9A%E8%A2%AB%E5%AF%B9%E9%BD%90%E6%8E%89%EF%BC%8C%E5%B0%B1%E4%B8%8D%E7%94%A8%E5%A4%9A%E5%87%8F%E6%8E%89MALLOC-ALIGN-MASK%E4%BA%86"><span class="toc-number">2.3.</span> <span class="toc-text">((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)，这里的结果是最后申请的大小。由于(req) + SIZE_SZ，SIZE_SZ是8，所以算出偏移后还需要减去8，虽然req会加上MALLOC_ALIGN_MASK，但是最后会被对齐掉，就不用多减掉MALLOC_ALIGN_MASK了</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bcloud-bctf-2016"><span class="toc-number"></span> <span class="toc-text">bcloud_bctf_2016</span></a>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a target="_blank" rel="noopener" href="//posts/0/"></a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a target="_blank" rel="noopener" href="//posts/0/"></a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '/posts/a8db7475/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系可乐爱宅着，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"daylight","artist":"Seredris","url":"music/daylight.mp3","cover":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3"},{"name":"lies","artist":"Gragon","url":"music/lies.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

